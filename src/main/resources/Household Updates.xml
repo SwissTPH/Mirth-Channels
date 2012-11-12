@@ -7,10 +7,10 @@ It&apos;s important to point out that this is intentionally not included with up
   <enabled>true</enabled>
   <version>2.2.1.5861</version>
   <lastModified>
-    <time>1352398985546</time>
+    <time>1352688153590</time>
     <timezone>America/New_York</timezone>
   </lastModified>
-  <revision>28</revision>
+  <revision>12</revision>
   <sourceConnector>
     <name>sourceConnector</name>
     <properties>
@@ -20,56 +20,26 @@ It&apos;s important to point out that this is intentionally not included with up
       <property name="pollingType">interval</property>
       <property name="script">var forms = new java.util.ArrayList()
 
-function resultToXml(rs, xmlElement) {
-  var rsmd = rs.getMetaData();
-  var result = new XML(xmlElement);
-
-  for (var i = 1; i &lt;= rsmd.getColumnCount(); i++)  {
-	var value = rs.getString(i);
-
-    if (value === &quot;null&quot;) {
-      value = null;
-    }
-
-    result[rsmd.getColumnName(i).toLowerCase()] = value;
-  }
-
-  return result;
-}
-
-function addResultsToForms(results, xmlElement) {
-  while(results.next()) {
-    var om = resultToXml(results, xmlElement)
-    forms.add(om.toString());
-  }
-}
-
-var dbConn = DatabaseConnectionFactory.createDatabaseConnection(&apos;com.mysql.jdbc.Driver&apos;,&apos;jdbc:mysql://localhost/odk_prod&apos;,&apos;root&apos;,&apos;password&apos;);
+var dbConn = DatabaseConnectionFactory.createDatabaseConnection(&apos;com.mysql.jdbc.Driver&apos;, globalMap.get(&quot;ODK_DATABASE_URL&quot;), globalMap.get(&quot;ODK_DATABASE_USER&quot;),globalMap.get(&quot;ODK_DATABASE_PASSWORD&quot;));
 
 // only attempt to process household updates if all visits have been processed
-visitResult = dbConn.executeCachedQuery(&quot;SELECT _URI FROM visit_registration_core WHERE processed_by_mirth is null&quot;);
+visitResult = dbConn.executeCachedQuery(&quot;SELECT _URI FROM &quot; + globalMap.get(&quot;VISIT_TABLE&quot;) + &quot; WHERE processed_by_mirth is null&quot;);
 if (visitResult.next()) {
   dbConn.close();
   return forms;
 }
 
-var householdResult = dbConn.executeCachedQuery(&quot;SELECT _URI, _CREATION_DATE, HOUSEHOLD_ID, FIELD_WORKER_ID, GROUP_NAME, SOCIAL_GROUP_TYPE, INDIVIDUAL_ID FROM social_group_registration_core WHERE processed_by_mirth is null&quot;);
-while(householdResult.next()) {
-  forms.add(resultToXml(householdResult, &quot;&lt;household event=&apos;household&apos; table-name=&apos;social_group_registration_core&apos;/&gt;&quot;).toString());
-}
+var householdResult = dbConn.executeCachedQuery(&quot;SELECT _URI, _CREATION_DATE, HOUSEHOLD_ID, FIELD_WORKER_ID, GROUP_NAME, SOCIAL_GROUP_TYPE, INDIVIDUAL_ID FROM &quot; + globalMap.get(&quot;SOCIAL_GROUP_TABLE&quot;) + &quot; WHERE processed_by_mirth is null&quot;);
+forms.addAll(resultsToForms(householdResult, &quot;&lt;household event=&apos;household&apos; table-name=&apos;&quot; + globalMap.get(&quot;SOCIAL_GROUP_TABLE&quot;) + &quot;&apos;/&gt;&quot;));
 
-var relationshipResult = dbConn.executeCachedQuery(&quot;SELECT _URI, _CREATION_DATE, START_DATE, INDIVIDUAL_A, FIELD_WORKER_ID, INDIVIDUAL_B, RELATIONSHIP_TYPE FROM relationship_core WHERE processed_by_mirth is null&quot;);
-while(relationshipResult.next()) {
-  forms.add(resultToXml(relationshipResult, &quot;&lt;relationship event=&apos;relationship&apos; table-name=&apos;relationship_core&apos;/&gt;&quot;).toString());
-}
+var relationshipResult = dbConn.executeCachedQuery(&quot;SELECT _URI, _CREATION_DATE, START_DATE, INDIVIDUAL_A, FIELD_WORKER_ID, INDIVIDUAL_B, RELATIONSHIP_TYPE FROM &quot; + globalMap.get(&quot;RELATIONSHIP_TABLE&quot;) + &quot; WHERE processed_by_mirth is null&quot;);
+forms.addAll(resultsToForms(relationshipResult, &quot;&lt;relationship event=&apos;relationship&apos; table-name=&apos;&quot; + globalMap.get(&quot;RELATIONSHIP_TABLE&quot;) + &quot;&apos;/&gt;&quot;));
 
-var membershipResult = dbConn.executeCachedQuery(&quot;SELECT _URI, _CREATION_DATE, START_DATE, FIELD_WORKER_ID, HOUSEHOLD_ID, RELATIONSHIP_TO_GROUP_HEAD, INDIVIDUAL_ID FROM membership_core WHERE processed_by_mirth is null&quot;);
-while(membershipResult.next()) {
-  forms.add(resultToXml(membershipResult, &quot;&lt;membership event=&apos;membership&apos; table-name=&apos;membership_core&apos;/&gt;&quot;).toString());
-}
+var membershipResult = dbConn.executeCachedQuery(&quot;SELECT _URI, _CREATION_DATE, START_DATE, FIELD_WORKER_ID, HOUSEHOLD_ID, RELATIONSHIP_TO_GROUP_HEAD, INDIVIDUAL_ID FROM &quot; + globalMap.get(&quot;MEMBERSHIP_TABLE&quot;) + &quot; WHERE processed_by_mirth is null&quot;);
+forms.addAll(resultsToForms(membershipResult, &quot;&lt;membership event=&apos;membership&apos; table-name=&apos;&quot; + globalMap.get(&quot;MEMBERSHIP_TABLE&quot;) + &quot;&apos;/&gt;&quot;));
 
 dbConn.close();
-// You may access this result below with $(&apos;column_name&apos;)
+
 return forms;</property>
     </properties>
     <transformer>
@@ -133,12 +103,12 @@ return forms;</property>
                 <string></string>
               </entry>
               <entry>
-                <string>RegularExpressions</string>
-                <list/>
-              </entry>
-              <entry>
                 <string>Mapping</string>
                 <string>msg[&apos;field_worker_id&apos;].toString().toUpperCase()</string>
+              </entry>
+              <entry>
+                <string>RegularExpressions</string>
+                <list/>
               </entry>
             </data>
           </step>
@@ -157,12 +127,12 @@ return forms;</property>
                 <string></string>
               </entry>
               <entry>
-                <string>RegularExpressions</string>
-                <list/>
-              </entry>
-              <entry>
                 <string>Mapping</string>
                 <string>msg[&apos;individual_a&apos;].toString().toUpperCase()</string>
+              </entry>
+              <entry>
+                <string>RegularExpressions</string>
+                <list/>
               </entry>
             </data>
           </step>
@@ -181,12 +151,12 @@ return forms;</property>
                 <string></string>
               </entry>
               <entry>
-                <string>RegularExpressions</string>
-                <list/>
-              </entry>
-              <entry>
                 <string>Mapping</string>
                 <string>msg[&apos;individual_b&apos;].toString().toUpperCase()</string>
+              </entry>
+              <entry>
+                <string>RegularExpressions</string>
+                <list/>
               </entry>
             </data>
           </step>
@@ -205,12 +175,12 @@ return forms;</property>
                 <string></string>
               </entry>
               <entry>
-                <string>RegularExpressions</string>
-                <list/>
-              </entry>
-              <entry>
                 <string>Mapping</string>
                 <string>msg[&apos;start_date&apos;].toString()</string>
+              </entry>
+              <entry>
+                <string>RegularExpressions</string>
+                <list/>
               </entry>
             </data>
           </step>
@@ -229,12 +199,12 @@ return forms;</property>
                 <string></string>
               </entry>
               <entry>
-                <string>RegularExpressions</string>
-                <list/>
-              </entry>
-              <entry>
                 <string>Mapping</string>
                 <string>msg[&apos;relationship_type&apos;].toString()</string>
+              </entry>
+              <entry>
+                <string>RegularExpressions</string>
+                <list/>
               </entry>
             </data>
           </step>
@@ -321,12 +291,12 @@ ICA8YUlzVG9CPjwvYUlzVG9CPgo8L3JlbGF0aW9uc2hpcD4=</outboundTemplate>
                 <string></string>
               </entry>
               <entry>
-                <string>RegularExpressions</string>
-                <list/>
-              </entry>
-              <entry>
                 <string>Mapping</string>
                 <string>msg[&apos;field_worker_id&apos;].toString().toUpperCase()</string>
+              </entry>
+              <entry>
+                <string>RegularExpressions</string>
+                <list/>
               </entry>
             </data>
           </step>
@@ -345,12 +315,12 @@ ICA8YUlzVG9CPjwvYUlzVG9CPgo8L3JlbGF0aW9uc2hpcD4=</outboundTemplate>
                 <string></string>
               </entry>
               <entry>
-                <string>RegularExpressions</string>
-                <list/>
-              </entry>
-              <entry>
                 <string>Mapping</string>
                 <string>msg[&apos;household_id&apos;].toString().toUpperCase()</string>
+              </entry>
+              <entry>
+                <string>RegularExpressions</string>
+                <list/>
               </entry>
             </data>
           </step>
@@ -369,12 +339,12 @@ ICA8YUlzVG9CPjwvYUlzVG9CPgo8L3JlbGF0aW9uc2hpcD4=</outboundTemplate>
                 <string></string>
               </entry>
               <entry>
-                <string>RegularExpressions</string>
-                <list/>
-              </entry>
-              <entry>
                 <string>Mapping</string>
                 <string>msg[&apos;group_name&apos;].toString().toUpperCase()</string>
+              </entry>
+              <entry>
+                <string>RegularExpressions</string>
+                <list/>
               </entry>
             </data>
           </step>
@@ -393,12 +363,12 @@ ICA8YUlzVG9CPjwvYUlzVG9CPgo8L3JlbGF0aW9uc2hpcD4=</outboundTemplate>
                 <string></string>
               </entry>
               <entry>
-                <string>RegularExpressions</string>
-                <list/>
-              </entry>
-              <entry>
                 <string>Mapping</string>
                 <string>msg[&apos;individual_id&apos;].toString().toUpperCase()</string>
+              </entry>
+              <entry>
+                <string>RegularExpressions</string>
+                <list/>
               </entry>
             </data>
           </step>
@@ -417,12 +387,12 @@ ICA8YUlzVG9CPjwvYUlzVG9CPgo8L3JlbGF0aW9uc2hpcD4=</outboundTemplate>
                 <string></string>
               </entry>
               <entry>
-                <string>RegularExpressions</string>
-                <list/>
-              </entry>
-              <entry>
                 <string>Mapping</string>
                 <string>msg[&apos;social_group_type&apos;].toString()</string>
+              </entry>
+              <entry>
+                <string>RegularExpressions</string>
+                <list/>
               </entry>
             </data>
           </step>
@@ -508,12 +478,12 @@ b3VwSGVhZD4KICAgIDxncm91cFR5cGU+PC9ncm91cFR5cGU+Cjwvc29jaWFsZ3JvdXA+</outboundTe
                 <string></string>
               </entry>
               <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;field_worker_id&apos;].toString().toUpperCase()</string>
-              </entry>
-              <entry>
                 <string>RegularExpressions</string>
                 <list/>
+              </entry>
+              <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;field_worker_id&apos;].toString().toUpperCase()</string>
               </entry>
             </data>
           </step>
@@ -532,12 +502,12 @@ b3VwSGVhZD4KICAgIDxncm91cFR5cGU+PC9ncm91cFR5cGU+Cjwvc29jaWFsZ3JvdXA+</outboundTe
                 <string></string>
               </entry>
               <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;individual_id&apos;].toString().toUpperCase()</string>
-              </entry>
-              <entry>
                 <string>RegularExpressions</string>
                 <list/>
+              </entry>
+              <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;individual_id&apos;].toString().toUpperCase()</string>
               </entry>
             </data>
           </step>
@@ -556,12 +526,12 @@ b3VwSGVhZD4KICAgIDxncm91cFR5cGU+PC9ncm91cFR5cGU+Cjwvc29jaWFsZ3JvdXA+</outboundTe
                 <string></string>
               </entry>
               <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;household_id&apos;].toString().toUpperCase()</string>
-              </entry>
-              <entry>
                 <string>RegularExpressions</string>
                 <list/>
+              </entry>
+              <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;household_id&apos;].toString().toUpperCase()</string>
               </entry>
             </data>
           </step>
@@ -580,12 +550,12 @@ b3VwSGVhZD4KICAgIDxncm91cFR5cGU+PC9ncm91cFR5cGU+Cjwvc29jaWFsZ3JvdXA+</outboundTe
                 <string></string>
               </entry>
               <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;start_date&apos;].toString()</string>
-              </entry>
-              <entry>
                 <string>RegularExpressions</string>
                 <list/>
+              </entry>
+              <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;start_date&apos;].toString()</string>
               </entry>
             </data>
           </step>
@@ -604,12 +574,12 @@ b3VwSGVhZD4KICAgIDxncm91cFR5cGU+PC9ncm91cFR5cGU+Cjwvc29jaWFsZ3JvdXA+</outboundTe
                 <string></string>
               </entry>
               <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;relationship_to_group_head&apos;].toString()</string>
-              </entry>
-              <entry>
                 <string>RegularExpressions</string>
                 <list/>
+              </entry>
+              <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;relationship_to_group_head&apos;].toString()</string>
               </entry>
             </data>
           </step>
@@ -672,14 +642,7 @@ SXNUb0E+PC9iSXNUb0E+CjwvbWVtYmVyc2hpcD4=</outboundTemplate>
 return message;</preprocessingScript>
   <postprocessingScript>// This script executes once after a message has been processed
 
-var originalXml = new XML(messageObject.getRawData());
-// retrieve the table to update
-var tableName = originalXml[&quot;@table-name&quot;].toString();
-var uri = originalXml[&quot;_uri&quot;].toString();
-
-var dbConn = DatabaseConnectionFactory.createDatabaseConnection(&apos;com.mysql.jdbc.Driver&apos;,&apos;jdbc:mysql://localhost/odk_prod&apos;,&apos;root&apos;,&apos;password&apos;);
-var result = dbConn.executeUpdate(&quot;UPDATE &quot; + tableName + &quot; SET processed_by_mirth = true WHERE _URI = &apos;&quot; + uri + &quot;&apos;&quot;);
-dbConn.close();
+markRecordAsProcessed(messageObject.getRawData());
 
 return;</postprocessingScript>
   <deployScript>// This script executes once when the channel is deployed
