@@ -13,10 +13,12 @@ return;</string>
 // odk information
 globalMap.put(&apos;ODK_DATABASE_URL&apos;,&apos;jdbc:mysql://localhost/odk_prod&apos;);
 globalMap.put(&apos;ODK_DATABASE_USER&apos;,&apos;odk_user&apos;);
-globalMap.put(&apos;ODK_DATABASE_PASSWORD&apos;,&apos;test&apos;);
+globalMap.put(&apos;ODK_DATABASE_PASSWORD&apos;,&apos;odk_password&apos;);
+
+
 
 // openhds information
-globalMap.put(&apos;OPENHDS_PATH&apos;,&apos;localhost:8080/openhds&apos;);
+globalMap.put(&apos;OPENHDS_PATH&apos;,&apos;&apos;);
 globalMap.put(&apos;OPENHDS_USER&apos;,&apos;admin&apos;);
 globalMap.put(&apos;OPENHDS_PASSWORD&apos;,&apos;test&apos;);
 

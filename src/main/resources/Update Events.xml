@@ -1,6 +1,6 @@
 <channel>
-  <id>2e6af2d4-7d7c-4114-9907-5b9a3ad2541a</id>
-  <name>Update Events</name>
+  <id>5722b86e-351a-4b03-84cd-8db6577037c8</id>
+  <name>Update Events-Urban</name>
   <description>This channel will attempt to read the submissions from ODK in a dependency aware way. Though XForms has no notion of dependency, there is an inherit dependency betweens update forms. The dependenc looks like:&#xd;
 Update Events -&gt; Visit -&gt; Location&#xd;
 where all update events depend on a visit, and a visit might potentially depend on a location therefore, forms are processed in this order:&#xd;
@@ -11,12 +11,12 @@ Location - Optional, only if the visit is at a new locattion not already registe
 Visit &#xd;
 Any events...</description>
   <enabled>true</enabled>
-  <version>2.2.1.5861</version>
+  <version>2.2.2.6388</version>
   <lastModified>
-    <time>1352688173237</time>
-    <timezone>America/New_York</timezone>
+    <time>1383760225263</time>
+    <timezone>Africa/Dar_es_Salaam</timezone>
   </lastModified>
-  <revision>39</revision>
+  <revision>14</revision>
   <sourceConnector>
     <name>sourceConnector</name>
     <properties>
@@ -27,13 +27,13 @@ Any events...</description>
       <property name="script">var forms = new java.util.ArrayList()
 
 var dbConn = DatabaseConnectionFactory.createDatabaseConnection(&apos;com.mysql.jdbc.Driver&apos;, globalMap.get(&quot;ODK_DATABASE_URL&quot;), globalMap.get(&quot;ODK_DATABASE_USER&quot;), globalMap.get(&quot;ODK_DATABASE_PASSWORD&quot;));
-var visitResult = dbConn.executeCachedQuery(&quot;SELECT _URI, VISIT_DATE, VISIT_ID, LOCATION_ID, FIELD_WORKER_ID, ROUND_NUMBER FROM &quot; + globalMap.get(&quot;VISIT_TABLE&quot;) + &quot; WHERE processed_by_mirth is null LIMIT 5&quot;);
+var visitResult = dbConn.executeCachedQuery(&quot;SELECT _URI, VISIT_DATE, VISIT_ID, LOCATION_ID, FIELD_WORKER_ID, ROUND_NUMBER FROM &quot; + globalMap.get(&quot;VISIT_TABLE&quot;) + &quot; WHERE processed_by_mirth is null LIMIT 20&quot;);
 
 while(visitResult.next()) {
   var visitXml = resultSetToXml(visitResult, &quot;&lt;visit event=&apos;visit&apos; table-name=&apos;&quot; + globalMap.get(&quot;VISIT_TABLE&quot;) + &quot;&apos;/&gt;&quot;);
   // does this visit depend on a newly created location ?
   // a visit will not be processed correctly if the location it refers to does not yet exist
-  var location = dbConn.executeCachedQuery(&quot;SELECT _URI, HIERARCHY_ID, LOCATION_ID, FIELD_WORKER_ID, LOCATION_TYPE, LOCATION_NAME FROM &quot; + globalMap.get(&quot;LOCATION_TABLE&quot;) + &quot; WHERE LOCATION_ID = &apos;&quot; + visitXml[&apos;location_id&apos;].toString() + &quot;&apos; AND processed_by_mirth is null&quot;);
+  var location = dbConn.executeCachedQuery(&quot;SELECT _URI, HIERARCHY_ID, LOCATION_ID, FIELD_WORKER_ID, LOCATION_TYPE, LOCATION_NAME, GEOPOINT_ACC, GEOPOINT_ALT, GEOPOINT_LNG, GEOPOINT_LAT FROM &quot; + globalMap.get(&quot;LOCATION_TABLE&quot;) + &quot; WHERE LOCATION_ID = &apos;&quot; + visitXml[&apos;location_id&apos;].toString() + &quot;&apos; AND processed_by_mirth is null&quot;);
   
   if (location.next()) {
     var loc = resultSetToXml(location, &quot;&lt;location event=&apos;location&apos; table-name=&apos;&quot; + globalMap.get(&quot;LOCATION_TABLE&quot;) + &quot;&apos;/&gt;&quot;);
@@ -46,6 +46,7 @@ while(visitResult.next()) {
 
   forms.addAll(addDeaths(visitId, dbConn));
   forms.addAll(addOutMigrations(visitId, dbConn));
+  forms.addAll(addOutMigrationsIM(visitId, dbConn));
   forms.addAll(addPregnancyObs(visitId, dbConn));
   forms.addAll(addInternalInmigrations(visitId, dbConn));
   forms.addAll(addExternalInmigrations(visitId, dbConn));
@@ -75,7 +76,7 @@ return forms;</property>
     <transportName>JavaScript Reader</transportName>
     <mode>SOURCE</mode>
     <enabled>true</enabled>
-    <version>2.2.1.5861</version>
+    <version>2.2.2.6388</version>
   </sourceConnector>
   <destinationConnectors>
     <connector>
@@ -91,12 +92,12 @@ return forms;</property>
         <property name="dispatcherMethod">post</property>
         <property name="dispatcherMultipart">0</property>
         <property name="dispatcherParameters">&lt;properties/&gt;</property>
-        <property name="dispatcherPassword">${OPENHDS_PASSWORD}</property>
+        <property name="dispatcherPassword">test</property>
         <property name="dispatcherReplyChannelId">sink</property>
         <property name="dispatcherSocketTimeout">30000</property>
         <property name="dispatcherUseAuthentication">1</property>
-        <property name="dispatcherUsername">${OPENHDS_USER}</property>
-        <property name="host">${OPENHDS_PATH}/api/rest/locations</property>
+        <property name="dispatcherUsername">admin</property>
+        <property name="host">http://localhost:8080/openhds/api/rest/locations</property>
         <property name="queuePollInterval">200</property>
         <property name="reconnectMillisecs">10000</property>
         <property name="rotateQueue">0</property>
@@ -119,12 +120,12 @@ return forms;</property>
                 <string></string>
               </entry>
               <entry>
-                <string>RegularExpressions</string>
-                <list/>
-              </entry>
-              <entry>
                 <string>Mapping</string>
                 <string>msg[&apos;field_worker_id&apos;].toString().toUpperCase()</string>
+              </entry>
+              <entry>
+                <string>RegularExpressions</string>
+                <list/>
               </entry>
             </data>
           </step>
@@ -215,12 +216,108 @@ return forms;</property>
                 <string></string>
               </entry>
               <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;location_id&apos;].toString().toUpperCase()</string>
+              </entry>
+              <entry>
                 <string>RegularExpressions</string>
                 <list/>
               </entry>
+            </data>
+          </step>
+          <step>
+            <sequenceNumber>5</sequenceNumber>
+            <name>geopoint_acc (out)</name>
+            <script>tmp[&apos;geopoint_acc&apos;] = validate(msg[&apos;geopoint_acc&apos;].toString(), &apos;&apos;, new Array());</script>
+            <type>Message Builder</type>
+            <data class="map">
+              <entry>
+                <string>Variable</string>
+                <string>tmp[&apos;geopoint_acc&apos;]</string>
+              </entry>
+              <entry>
+                <string>DefaultValue</string>
+                <string></string>
+              </entry>
               <entry>
                 <string>Mapping</string>
-                <string>msg[&apos;location_id&apos;].toString().toUpperCase()</string>
+                <string>msg[&apos;geopoint_acc&apos;].toString()</string>
+              </entry>
+              <entry>
+                <string>RegularExpressions</string>
+                <list/>
+              </entry>
+            </data>
+          </step>
+          <step>
+            <sequenceNumber>6</sequenceNumber>
+            <name>geopoint_alt (out)</name>
+            <script>tmp[&apos;geopoint_alt&apos;] = validate(msg[&apos;geopoint_alt&apos;].toString(), &apos;&apos;, new Array());</script>
+            <type>Message Builder</type>
+            <data class="map">
+              <entry>
+                <string>Variable</string>
+                <string>tmp[&apos;geopoint_alt&apos;]</string>
+              </entry>
+              <entry>
+                <string>DefaultValue</string>
+                <string></string>
+              </entry>
+              <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;geopoint_alt&apos;].toString()</string>
+              </entry>
+              <entry>
+                <string>RegularExpressions</string>
+                <list/>
+              </entry>
+            </data>
+          </step>
+          <step>
+            <sequenceNumber>7</sequenceNumber>
+            <name>geopoint_lng (out)</name>
+            <script>tmp[&apos;geopoint_lng&apos;] = validate(msg[&apos;geopoint_lng&apos;].toString(), &apos;&apos;, new Array());</script>
+            <type>Message Builder</type>
+            <data class="map">
+              <entry>
+                <string>Variable</string>
+                <string>tmp[&apos;geopoint_lng&apos;]</string>
+              </entry>
+              <entry>
+                <string>DefaultValue</string>
+                <string></string>
+              </entry>
+              <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;geopoint_lng&apos;].toString()</string>
+              </entry>
+              <entry>
+                <string>RegularExpressions</string>
+                <list/>
+              </entry>
+            </data>
+          </step>
+          <step>
+            <sequenceNumber>8</sequenceNumber>
+            <name>geopoint_lat (out)</name>
+            <script>tmp[&apos;geopoint_lat&apos;] = validate(msg[&apos;geopoint_lat&apos;].toString(), &apos;&apos;, new Array());</script>
+            <type>Message Builder</type>
+            <data class="map">
+              <entry>
+                <string>Variable</string>
+                <string>tmp[&apos;geopoint_lat&apos;]</string>
+              </entry>
+              <entry>
+                <string>DefaultValue</string>
+                <string></string>
+              </entry>
+              <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;geopoint_lat&apos;].toString()</string>
+              </entry>
+              <entry>
+                <string>RegularExpressions</string>
+                <list/>
               </entry>
             </data>
           </step>
@@ -229,12 +326,17 @@ return forms;</property>
 aW9uX2NvcmUiPgogICAgPF91cmk+PC9fdXJpPgogICAgPGhpZXJhcmNoeV9pZD48L2hpZXJhcmNo
 eV9pZD4KICAgIDxsb2NhdGlvbl9pZD48L2xvY2F0aW9uX2lkPgogICAgPGZpZWxkX3dvcmtlcl9p
 ZD48L2ZpZWxkX3dvcmtlcl9pZD4KICAgIDxsb2NhdGlvbl90eXBlPjwvbG9jYXRpb25fdHlwZT4K
-ICAgIDxsb2NhdGlvbl9uYW1lPjwvbG9jYXRpb25fbmFtZT4KPC9sb2NhdGlvbj4=</inboundTemplate>
+ICAgIDxsb2NhdGlvbl9uYW1lPjwvbG9jYXRpb25fbmFtZT4KICAgIDxnZW9wb2ludF9hY2M+PC9n
+ZW9wb2ludF9hY2M+CiAgICA8Z2VvcG9pbnRfYWx0PjwvZ2VvcG9pbnRfYWx0PgogICAgPGdlb3Bv
+aW50X2xuZz48L2dlb3BvaW50X2xuZz4KICAgIDxnZW9wb2ludF9sYXQ+PC9nZW9wb2ludF9sYXQ+
+CjwvbG9jYXRpb24+</inboundTemplate>
         <outboundTemplate encoding="base64">PGxvY2F0aW9uPgogICAgPGV4dElkPjwvZXh0SWQ+CiAgICA8Y29sbGVjdGVkQnk+CiAgICAgICAg
 PGV4dElkPjwvZXh0SWQ+CiAgICA8L2NvbGxlY3RlZEJ5PgogICAgPGxvY2F0aW9uTGV2ZWw+CiAg
 ICAgICAgPGV4dElkPjwvZXh0SWQ+CiAgICA8L2xvY2F0aW9uTGV2ZWw+CiAgICA8bG9jYXRpb25O
-YW1lPjwvbG9jYXRpb25OYW1lPgogICAgPGxvY2F0aW9uVHlwZT48L2xvY2F0aW9uVHlwZT4KPC9s
-b2NhdGlvbj4=</outboundTemplate>
+YW1lPjwvbG9jYXRpb25OYW1lPgogICAgPGxvY2F0aW9uVHlwZT48L2xvY2F0aW9uVHlwZT4KICAg
+IDxnZW9wb2ludF9hY2M+PC9nZW9wb2ludF9hY2M+CiAgICA8Z2VvcG9pbnRfYWx0PjwvZ2VvcG9p
+bnRfYWx0PgogICAgPGdlb3BvaW50X2xuZz48L2dlb3BvaW50X2xuZz4KICAgIDxnZW9wb2ludF9s
+YXQ+PC9nZW9wb2ludF9sYXQ+CjwvbG9jYXRpb24+</outboundTemplate>
         <inboundProtocol>XML</inboundProtocol>
         <outboundProtocol>XML</outboundProtocol>
         <inboundProperties>
@@ -264,7 +366,7 @@ b2NhdGlvbj4=</outboundTemplate>
       <transportName>HTTP Sender</transportName>
       <mode>DESTINATION</mode>
       <enabled>true</enabled>
-      <version>2.2.1.5861</version>
+      <version>2.2.2.6388</version>
     </connector>
     <connector>
       <name>Visit</name>
@@ -279,12 +381,12 @@ b2NhdGlvbj4=</outboundTemplate>
         <property name="dispatcherMethod">post</property>
         <property name="dispatcherMultipart">0</property>
         <property name="dispatcherParameters">&lt;properties/&gt;</property>
-        <property name="dispatcherPassword">${OPENHDS_PASSWORD}</property>
+        <property name="dispatcherPassword">test</property>
         <property name="dispatcherReplyChannelId">sink</property>
         <property name="dispatcherSocketTimeout">30000</property>
         <property name="dispatcherUseAuthentication">1</property>
-        <property name="dispatcherUsername">${OPENHDS_USER}</property>
-        <property name="host">${OPENHDS_PATH}/api/rest/visits</property>
+        <property name="dispatcherUsername">admin</property>
+        <property name="host">http://localhost:8080/openhds/api/rest/visits</property>
         <property name="queuePollInterval">200</property>
         <property name="reconnectMillisecs">10000</property>
         <property name="rotateQueue">0</property>
@@ -451,7 +553,7 @@ PgogIDwvdmlzaXRMb2NhdGlvbj4KPC92aXNpdD4=</outboundTemplate>
       <transportName>HTTP Sender</transportName>
       <mode>DESTINATION</mode>
       <enabled>true</enabled>
-      <version>2.2.1.5861</version>
+      <version>2.2.2.6388</version>
     </connector>
     <connector>
       <name>Death</name>
@@ -466,12 +568,12 @@ PgogIDwvdmlzaXRMb2NhdGlvbj4KPC92aXNpdD4=</outboundTemplate>
         <property name="dispatcherMethod">post</property>
         <property name="dispatcherMultipart">0</property>
         <property name="dispatcherParameters">&lt;properties/&gt;</property>
-        <property name="dispatcherPassword">${OPENHDS_PASSWORD}</property>
+        <property name="dispatcherPassword">test</property>
         <property name="dispatcherReplyChannelId">sink</property>
         <property name="dispatcherSocketTimeout">30000</property>
         <property name="dispatcherUseAuthentication">1</property>
-        <property name="dispatcherUsername">${OPENHDS_USER}</property>
-        <property name="host">${OPENHDS_PATH}/api/rest/deaths</property>
+        <property name="dispatcherUsername">admin</property>
+        <property name="host">http://localhost:8080/openhds/api/rest/deaths</property>
         <property name="queuePollInterval">200</property>
         <property name="reconnectMillisecs">10000</property>
         <property name="rotateQueue">0</property>
@@ -663,7 +765,7 @@ ICA8L2NvbGxlY3RlZEJ5Pgo8L2RlYXRoPg==</outboundTemplate>
       <transportName>HTTP Sender</transportName>
       <mode>DESTINATION</mode>
       <enabled>true</enabled>
-      <version>2.2.1.5861</version>
+      <version>2.2.2.6388</version>
     </connector>
     <connector>
       <name>Out Migration</name>
@@ -678,12 +780,12 @@ ICA8L2NvbGxlY3RlZEJ5Pgo8L2RlYXRoPg==</outboundTemplate>
         <property name="dispatcherMethod">post</property>
         <property name="dispatcherMultipart">0</property>
         <property name="dispatcherParameters">&lt;properties/&gt;</property>
-        <property name="dispatcherPassword">${OPENHDS_PASSWORD}</property>
+        <property name="dispatcherPassword">test</property>
         <property name="dispatcherReplyChannelId">sink</property>
         <property name="dispatcherSocketTimeout">30000</property>
         <property name="dispatcherUseAuthentication">1</property>
-        <property name="dispatcherUsername">${OPENHDS_USER}</property>
-        <property name="host">${OPENHDS_PATH}/api/rest/outmigrations</property>
+        <property name="dispatcherUsername">admin</property>
+        <property name="host">http://localhost:8080/openhds/api/rest/outmigrations</property>
         <property name="queuePollInterval">200</property>
         <property name="reconnectMillisecs">10000</property>
         <property name="rotateQueue">0</property>
@@ -877,7 +979,221 @@ bj4=</outboundTemplate>
       <transportName>HTTP Sender</transportName>
       <mode>DESTINATION</mode>
       <enabled>true</enabled>
-      <version>2.2.1.5861</version>
+      <version>2.2.2.6388</version>
+    </connector>
+    <connector>
+      <name>Out Mig IM</name>
+      <properties>
+        <property name="DataType">HTTP Sender</property>
+        <property name="dispatcherAuthenticationType">Basic</property>
+        <property name="dispatcherCharset">UTF-8</property>
+        <property name="dispatcherContent">${message.transformedData}</property>
+        <property name="dispatcherContentType">application/xml</property>
+        <property name="dispatcherHeaders">&lt;properties/&gt;</property>
+        <property name="dispatcherIncludeHeadersInResponse">0</property>
+        <property name="dispatcherMethod">post</property>
+        <property name="dispatcherMultipart">0</property>
+        <property name="dispatcherParameters">&lt;properties/&gt;</property>
+        <property name="dispatcherPassword">test</property>
+        <property name="dispatcherReplyChannelId">sink</property>
+        <property name="dispatcherSocketTimeout">30000</property>
+        <property name="dispatcherUseAuthentication">1</property>
+        <property name="dispatcherUsername">admin</property>
+        <property name="host">http://localhost:8080/openhds/api/rest/outmigrations</property>
+        <property name="queuePollInterval">200</property>
+        <property name="reconnectMillisecs">10000</property>
+        <property name="rotateQueue">0</property>
+        <property name="usePersistentQueues">0</property>
+      </properties>
+      <transformer>
+        <steps>
+          <step>
+            <sequenceNumber>0</sequenceNumber>
+            <name>collectedBy - extId (out)</name>
+            <script>tmp[&apos;collectedBy&apos;][&apos;extId&apos;] = validate(msg[&apos;field_worker_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
+            <type>Message Builder</type>
+            <data class="map">
+              <entry>
+                <string>Variable</string>
+                <string>tmp[&apos;collectedBy&apos;][&apos;extId&apos;]</string>
+              </entry>
+              <entry>
+                <string>DefaultValue</string>
+                <string></string>
+              </entry>
+              <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;field_worker_id&apos;].toString().toUpperCase()</string>
+              </entry>
+              <entry>
+                <string>RegularExpressions</string>
+                <list/>
+              </entry>
+            </data>
+          </step>
+          <step>
+            <sequenceNumber>1</sequenceNumber>
+            <name>individual - extId (out)</name>
+            <script>tmp[&apos;individual&apos;][&apos;extId&apos;] = validate(msg[&apos;individual_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
+            <type>Message Builder</type>
+            <data class="map">
+              <entry>
+                <string>Variable</string>
+                <string>tmp[&apos;individual&apos;][&apos;extId&apos;]</string>
+              </entry>
+              <entry>
+                <string>DefaultValue</string>
+                <string></string>
+              </entry>
+              <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;individual_id&apos;].toString().toUpperCase()</string>
+              </entry>
+              <entry>
+                <string>RegularExpressions</string>
+                <list/>
+              </entry>
+            </data>
+          </step>
+          <step>
+            <sequenceNumber>2</sequenceNumber>
+            <name>destination (out)</name>
+            <script>tmp[&apos;destination&apos;] = validate(msg[&apos;name_of_destination&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
+            <type>Message Builder</type>
+            <data class="map">
+              <entry>
+                <string>Variable</string>
+                <string>tmp[&apos;destination&apos;]</string>
+              </entry>
+              <entry>
+                <string>DefaultValue</string>
+                <string></string>
+              </entry>
+              <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;name_of_destination&apos;].toString().toUpperCase()</string>
+              </entry>
+              <entry>
+                <string>RegularExpressions</string>
+                <list/>
+              </entry>
+            </data>
+          </step>
+          <step>
+            <sequenceNumber>3</sequenceNumber>
+            <name>reason (out)</name>
+            <script>tmp[&apos;reason&apos;] = validate(msg[&apos;reason_for_out_migration&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
+            <type>Message Builder</type>
+            <data class="map">
+              <entry>
+                <string>Variable</string>
+                <string>tmp[&apos;reason&apos;]</string>
+              </entry>
+              <entry>
+                <string>DefaultValue</string>
+                <string></string>
+              </entry>
+              <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;reason_for_out_migration&apos;].toString().toUpperCase()</string>
+              </entry>
+              <entry>
+                <string>RegularExpressions</string>
+                <list/>
+              </entry>
+            </data>
+          </step>
+          <step>
+            <sequenceNumber>4</sequenceNumber>
+            <name>visit - extId (out)</name>
+            <script>tmp[&apos;visit&apos;][&apos;extId&apos;] = validate(msg[&apos;visit_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
+            <type>Message Builder</type>
+            <data class="map">
+              <entry>
+                <string>Variable</string>
+                <string>tmp[&apos;visit&apos;][&apos;extId&apos;]</string>
+              </entry>
+              <entry>
+                <string>DefaultValue</string>
+                <string></string>
+              </entry>
+              <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;visit_id&apos;].toString().toUpperCase()</string>
+              </entry>
+              <entry>
+                <string>RegularExpressions</string>
+                <list/>
+              </entry>
+            </data>
+          </step>
+          <step>
+            <sequenceNumber>5</sequenceNumber>
+            <name>recordedDate (out)</name>
+            <script>tmp[&apos;recordedDate&apos;] = validate(msg[&apos;date_of_migration&apos;].toString(), &apos;&apos;, new Array());</script>
+            <type>Message Builder</type>
+            <data class="map">
+              <entry>
+                <string>Variable</string>
+                <string>tmp[&apos;recordedDate&apos;]</string>
+              </entry>
+              <entry>
+                <string>DefaultValue</string>
+                <string></string>
+              </entry>
+              <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;date_of_migration&apos;].toString()</string>
+              </entry>
+              <entry>
+                <string>RegularExpressions</string>
+                <list/>
+              </entry>
+            </data>
+          </step>
+        </steps>
+        <inboundTemplate encoding="base64">PG91dG1pZ3JhdGlvbj4KICAgIDxfdXJpPjwvX3VyaT4KICAgIDx2aXNpdF9pZD48L3Zpc2l0X2lk
+PgogICAgPG5hbWVfb2ZfZGVzdGluYXRpb24+PC9uYW1lX29mX2Rlc3RpbmF0aW9uPgogICAgPGZp
+ZWxkX3dvcmtlcl9pZD48L2ZpZWxkX3dvcmtlcl9pZD4KICAgIDxkYXRlX29mX21pZ3JhdGlvbj48
+L2RhdGVfb2ZfbWlncmF0aW9uPgogICAgPHJlYXNvbl9mb3Jfb3V0X21pZ3JhdGlvbj48L3JlYXNv
+bl9mb3Jfb3V0X21pZ3JhdGlvbj4KICAgIDxpbmRpdmlkdWFsX2lkPjwvaW5kaXZpZHVhbF9pZD4K
+PC9vdXRtaWdyYXRpb24+</inboundTemplate>
+        <outboundTemplate encoding="base64">PG91dG1pZ3JhdGlvbj4KICAgIDxjb2xsZWN0ZWRCeT4KICAgICAgICA8ZXh0SWQ+PC9leHRJZD4K
+ICAgIDwvY29sbGVjdGVkQnk+CiAgICA8aW5kaXZpZHVhbD4KICAgICAgICA8ZXh0SWQ+PC9leHRJ
+ZD4KICAgIDwvaW5kaXZpZHVhbD4KICAgIDxkZXN0aW5hdGlvbj48L2Rlc3RpbmF0aW9uPgogICAg
+PHJlYXNvbj48L3JlYXNvbj4KICAgIDx2aXNpdD4KICAgICAgICA8ZXh0SWQ+PC9leHRJZD4KICAg
+IDwvdmlzaXQ+CiAgICA8cmVjb3JkZWREYXRlPjwvcmVjb3JkZWREYXRlPgo8L291dG1pZ3JhdGlv
+bj4=</outboundTemplate>
+        <inboundProtocol>XML</inboundProtocol>
+        <outboundProtocol>XML</outboundProtocol>
+        <inboundProperties>
+          <property name="stripNamespaces">true</property>
+        </inboundProperties>
+        <outboundProperties>
+          <property name="stripNamespaces">true</property>
+        </outboundProperties>
+      </transformer>
+      <filter>
+        <rules>
+          <rule>
+            <sequenceNumber>0</sequenceNumber>
+            <name>New Rule</name>
+            <data class="map">
+              <entry>
+                <string>Script</string>
+                <string>return msg[&quot;@event&quot;].toString() === &quot;outmigrationIM&quot;;</string>
+              </entry>
+            </data>
+            <type>JavaScript</type>
+            <script>return msg[&quot;@event&quot;].toString() === &quot;outmigrationIM&quot;;</script>
+            <operator>NONE</operator>
+          </rule>
+        </rules>
+      </filter>
+      <transportName>HTTP Sender</transportName>
+      <mode>DESTINATION</mode>
+      <enabled>true</enabled>
+      <version>2.2.2.6388</version>
     </connector>
     <connector>
       <name>Pregnancy Obs</name>
@@ -892,12 +1208,12 @@ bj4=</outboundTemplate>
         <property name="dispatcherMethod">post</property>
         <property name="dispatcherMultipart">0</property>
         <property name="dispatcherParameters">&lt;properties/&gt;</property>
-        <property name="dispatcherPassword">${OPENHDS_PASSWORD}</property>
+        <property name="dispatcherPassword">test</property>
         <property name="dispatcherReplyChannelId">sink</property>
         <property name="dispatcherSocketTimeout">30000</property>
         <property name="dispatcherUseAuthentication">1</property>
-        <property name="dispatcherUsername">${OPENHDS_USER}</property>
-        <property name="host">${OPENHDS_PATH}/api/rest/pregnancyobservations</property>
+        <property name="dispatcherUsername">admin</property>
+        <property name="host">http://localhost:8080/openhds/api/rest/pregnancyobservations</property>
         <property name="queuePollInterval">200</property>
         <property name="reconnectMillisecs">10000</property>
         <property name="rotateQueue">0</property>
@@ -1065,7 +1381,7 @@ CiAgPC92aXNpdD4KPC9wcmVnbmFuY3lvYnNlcnZhdGlvbj4=</outboundTemplate>
       <transportName>HTTP Sender</transportName>
       <mode>DESTINATION</mode>
       <enabled>true</enabled>
-      <version>2.2.1.5861</version>
+      <version>2.2.2.6388</version>
     </connector>
     <connector>
       <name>Internal Inmigrations</name>
@@ -1080,12 +1396,12 @@ CiAgPC92aXNpdD4KPC9wcmVnbmFuY3lvYnNlcnZhdGlvbj4=</outboundTemplate>
         <property name="dispatcherMethod">post</property>
         <property name="dispatcherMultipart">0</property>
         <property name="dispatcherParameters">&lt;properties/&gt;</property>
-        <property name="dispatcherPassword">${OPENHDS_PASSWORD}</property>
+        <property name="dispatcherPassword">test</property>
         <property name="dispatcherReplyChannelId">sink</property>
         <property name="dispatcherSocketTimeout">30000</property>
         <property name="dispatcherUseAuthentication">1</property>
-        <property name="dispatcherUsername">${OPENHDS_USER}</property>
-        <property name="host">${OPENHDS_PATH}/api/rest/inmigrations</property>
+        <property name="dispatcherUsername">admin</property>
+        <property name="host">http://localhost:8080/openhds/api/rest/inmigrations</property>
         <property name="queuePollInterval">200</property>
         <property name="reconnectMillisecs">10000</property>
         <property name="rotateQueue">0</property>
@@ -1303,7 +1619,7 @@ TUlHUkFUSU9OPC9taWdUeXBlPgo8L2lubWlncmF0aW9uPg==</outboundTemplate>
       <transportName>HTTP Sender</transportName>
       <mode>DESTINATION</mode>
       <enabled>true</enabled>
-      <version>2.2.1.5861</version>
+      <version>2.2.2.6388</version>
     </connector>
     <connector>
       <name>External Inmigrations</name>
@@ -1318,12 +1634,12 @@ TUlHUkFUSU9OPC9taWdUeXBlPgo8L2lubWlncmF0aW9uPg==</outboundTemplate>
         <property name="dispatcherMethod">post</property>
         <property name="dispatcherMultipart">0</property>
         <property name="dispatcherParameters">&lt;properties/&gt;</property>
-        <property name="dispatcherPassword">${OPENHDS_PASSWORD}</property>
+        <property name="dispatcherPassword">test</property>
         <property name="dispatcherReplyChannelId">sink</property>
         <property name="dispatcherSocketTimeout">30000</property>
         <property name="dispatcherUseAuthentication">1</property>
-        <property name="dispatcherUsername">${OPENHDS_USER}</property>
-        <property name="host">${OPENHDS_PATH}/api/rest/inmigrations</property>
+        <property name="dispatcherUsername">admin</property>
+        <property name="host">http://localhost:8080/openhds/api/rest/inmigrations</property>
         <property name="queuePollInterval">200</property>
         <property name="reconnectMillisecs">10000</property>
         <property name="rotateQueue">0</property>
@@ -1696,7 +2012,7 @@ VHlwZT4KPC9pbm1pZ3JhdGlvbj4=</outboundTemplate>
       <transportName>HTTP Sender</transportName>
       <mode>DESTINATION</mode>
       <enabled>true</enabled>
-      <version>2.2.1.5861</version>
+      <version>2.2.2.6388</version>
     </connector>
     <connector>
       <name>Pregnancy Outcome</name>
@@ -1711,12 +2027,12 @@ VHlwZT4KPC9pbm1pZ3JhdGlvbj4=</outboundTemplate>
         <property name="dispatcherMethod">post</property>
         <property name="dispatcherMultipart">0</property>
         <property name="dispatcherParameters">&lt;properties/&gt;</property>
-        <property name="dispatcherPassword">${OPENHDS_PASSWORD}</property>
+        <property name="dispatcherPassword">test</property>
         <property name="dispatcherReplyChannelId">sink</property>
         <property name="dispatcherSocketTimeout">30000</property>
         <property name="dispatcherUseAuthentication">1</property>
-        <property name="dispatcherUsername">${OPENHDS_USER}</property>
-        <property name="host">${OPENHDS_PATH}/api/rest/pregnancyoutcomes</property>
+        <property name="dispatcherUsername">admin</property>
+        <property name="host">http://localhost:8080/openhds/api/rest/pregnancyoutcomes</property>
         <property name="queuePollInterval">200</property>
         <property name="reconnectMillisecs">10000</property>
         <property name="rotateQueue">0</property>
@@ -1746,7 +2062,7 @@ for(var i = 0; i &lt; outcomes; i++) {
     outcomesXml[&apos;outcome&apos;][i][&apos;child&apos;][&apos;firstName&apos;] = msg[&apos;outcome&apos;][i][&apos;first_name&apos;].toString();
     outcomesXml[&apos;outcome&apos;][i][&apos;child&apos;][&apos;lastName&apos;] = msg[&apos;outcome&apos;][i][&apos;last_name&apos;].toString();
     outcomesXml[&apos;outcome&apos;][i][&apos;child&apos;][&apos;gender&apos;] = msg[&apos;outcome&apos;][i][&apos;gender&apos;].toString();
-    outcomesXml[&apos;outcome&apos;][i][&apos;child&apos;][&apos;partialDate&apos;] = msg[&apos;outcome&apos;][i][&apos;partial_date&apos;].toString();
+    outcomesXml[&apos;outcome&apos;][i][&apos;child&apos;][&apos;partialDate&apos;] = msg[&apos;partial_date&apos;].toString();
     outcomesXml[&apos;outcome&apos;][i][&apos;childMembership&apos;][&apos;socialGroup&apos;][&apos;extId&apos;] = msg[&apos;outcome&apos;][i][&apos;social_group_id&apos;].toString()
     outcomesXml[&apos;outcome&apos;][i][&apos;childMembership&apos;][&apos;bIsToA&apos;] = msg[&apos;outcome&apos;][i][&apos;relationship_to_group_head&apos;].toString();
   } else {
@@ -1778,7 +2094,7 @@ for(var i = 0; i &lt; outcomes; i++) {
     outcomesXml[&apos;outcome&apos;][i][&apos;child&apos;][&apos;firstName&apos;] = msg[&apos;outcome&apos;][i][&apos;first_name&apos;].toString();
     outcomesXml[&apos;outcome&apos;][i][&apos;child&apos;][&apos;lastName&apos;] = msg[&apos;outcome&apos;][i][&apos;last_name&apos;].toString();
     outcomesXml[&apos;outcome&apos;][i][&apos;child&apos;][&apos;gender&apos;] = msg[&apos;outcome&apos;][i][&apos;gender&apos;].toString();
-    outcomesXml[&apos;outcome&apos;][i][&apos;child&apos;][&apos;partialDate&apos;] = msg[&apos;outcome&apos;][i][&apos;partial_date&apos;].toString();
+    outcomesXml[&apos;outcome&apos;][i][&apos;child&apos;][&apos;partialDate&apos;] = msg[&apos;partial_date&apos;].toString();
     outcomesXml[&apos;outcome&apos;][i][&apos;childMembership&apos;][&apos;socialGroup&apos;][&apos;extId&apos;] = msg[&apos;outcome&apos;][i][&apos;social_group_id&apos;].toString()
     outcomesXml[&apos;outcome&apos;][i][&apos;childMembership&apos;][&apos;bIsToA&apos;] = msg[&apos;outcome&apos;][i][&apos;relationship_to_group_head&apos;].toString();
   } else {
@@ -1792,15 +2108,15 @@ tmp[&quot;outcomes&quot;] = outcomesXml;</string>
           </step>
         </steps>
         <inboundTemplate encoding="base64">PHByZWduYW5jeW91dGNvbWU+CiAgICA8X3VyaT48L191cmk+CiAgICA8dmlzaXRfaWQ+PC92aXNp
-dF9pZD4KICAgIDxtb3RoZXJfaWQ+PC9tb3RoZXJfaWQ+CiAgICA8ZmllbGRfd29ya2VyX2lkPjwv
-ZmllbGRfd29ya2VyX2lkPgogICAgPHJlY29yZGVkX2RhdGU+PC9yZWNvcmRlZF9kYXRlPgogICAg
-PGZhdGhlcl9pZD48L2ZhdGhlcl9pZD4KICAgIDxvdXRjb21lPgogICAgICAgIDxvdXRjb21lX3R5
-cGU+PC9vdXRjb21lX3R5cGU+CiAgICAgICAgPGZpcnN0X25hbWU+PC9maXJzdF9uYW1lPgogICAg
-ICAgIDxzb2NpYWxfZ3JvdXBfaWQ+PC9zb2NpYWxfZ3JvdXBfaWQ+CiAgICAgICAgPGdlbmRlcj48
-L2dlbmRlcj4KICAgICAgICA8cGFydGlhbF9kYXRlPjwvcGFydGlhbF9kYXRlPgogICAgICAgIDxy
-ZWxhdGlvbnNoaXBfdG9fZ3JvdXBfaGVhZD48L3JlbGF0aW9uc2hpcF90b19ncm91cF9oZWFkPgog
-ICAgICAgIDxjaGlsZF9pZD48L2NoaWxkX2lkPgogICAgICAgIDxsYXN0X25hbWU+PC9sYXN0X25h
-bWU+CiAgICA8L291dGNvbWU+CjwvcHJlZ25hbmN5b3V0Y29tZT4=</inboundTemplate>
+dF9pZD4KICAgIDxtb3RoZXJfaWQ+PC9tb3RoZXJfaWQ+CiAgICAgPHBhcnRpYWxfZGF0ZT48L3Bh
+cnRpYWxfZGF0ZT4KICAgIDxmaWVsZF93b3JrZXJfaWQ+PC9maWVsZF93b3JrZXJfaWQ+CiAgICA8
+cmVjb3JkZWRfZGF0ZT48L3JlY29yZGVkX2RhdGU+CiAgICA8ZmF0aGVyX2lkPjwvZmF0aGVyX2lk
+PgogICAgPG91dGNvbWU+CiAgICAgICAgPG91dGNvbWVfdHlwZT48L291dGNvbWVfdHlwZT4KICAg
+ICAgICA8Zmlyc3RfbmFtZT48L2ZpcnN0X25hbWU+CiAgICAgICAgPHNvY2lhbF9ncm91cF9pZD48
+L3NvY2lhbF9ncm91cF9pZD4KICAgICAgICA8Z2VuZGVyPjwvZ2VuZGVyPgogICAgICAgIDxyZWxh
+dGlvbnNoaXBfdG9fZ3JvdXBfaGVhZD48L3JlbGF0aW9uc2hpcF90b19ncm91cF9oZWFkPgogICAg
+ICAgIDxjaGlsZF9pZD48L2NoaWxkX2lkPgogICAgICAgIDxsYXN0X25hbWU+PC9sYXN0X25hbWU+
+CiAgICA8L291dGNvbWU+CjwvcHJlZ25hbmN5b3V0Y29tZT4=</inboundTemplate>
         <outboundTemplate encoding="base64">PHByZWduYW5jeW91dGNvbWU+CiAgICA8Y29sbGVjdGVkQnk+CiAgICAgICAgPGV4dElkPjwvZXh0
 SWQ+CiAgICA8L2NvbGxlY3RlZEJ5PgogICAgPHZpc2l0PgogICAgICAgIDxleHRJZD48L2V4dElk
 PgogICAgPC92aXNpdD4KICAgIDxvdXRjb21lRGF0ZT48L291dGNvbWVEYXRlPgogICAgPG1vdGhl
@@ -1844,7 +2160,7 @@ YW5jeW91dGNvbWU+</outboundTemplate>
       <transportName>HTTP Sender</transportName>
       <mode>DESTINATION</mode>
       <enabled>true</enabled>
-      <version>2.2.1.5861</version>
+      <version>2.2.2.6388</version>
     </connector>
   </destinationConnectors>
   <properties>
@@ -1852,7 +2168,7 @@ YW5jeW91dGNvbWU+</outboundTemplate>
     <property name="dont_store_filtered">true</property>
     <property name="encryptData">false</property>
     <property name="error_messages_only">false</property>
-    <property name="initialState">started</property>
+    <property name="initialState">stopped</property>
     <property name="max_message_age">-1</property>
     <property name="store_messages">true</property>
     <property name="synchronous">true</property>

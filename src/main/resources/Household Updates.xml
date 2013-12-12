@@ -1,16 +1,16 @@
 <channel>
   <id>9f36b846-ca7a-4a82-a3c1-b1dce6d41cd0</id>
-  <name>Household Updates</name>
+  <name>Household Updates-Urban</name>
   <description>This channel is responsible for handling registering new Households, Memberships and Relationships. &#xd;
 &#xd;
 It&apos;s important to point out that this is intentionally not included with update events. The reason is that household updates are not tied to a visit. This makes it difficult to determine when the right time is to try and insert them in the HDS. For example, if a new household is registered at a location, using a head of household of a newly in migrated individual, it would be wrong to try and send the household registration before the in migration.</description>
   <enabled>true</enabled>
-  <version>2.2.1.5861</version>
+  <version>2.2.2.6388</version>
   <lastModified>
-    <time>1352688153590</time>
-    <timezone>America/New_York</timezone>
+    <time>1379595380405</time>
+    <timezone>Africa/Dar_es_Salaam</timezone>
   </lastModified>
-  <revision>12</revision>
+  <revision>2</revision>
   <sourceConnector>
     <name>sourceConnector</name>
     <properties>
@@ -59,7 +59,7 @@ return forms;</property>
     <transportName>JavaScript Reader</transportName>
     <mode>SOURCE</mode>
     <enabled>true</enabled>
-    <version>2.2.1.5861</version>
+    <version>2.2.2.6388</version>
   </sourceConnector>
   <destinationConnectors>
     <connector>
@@ -80,7 +80,7 @@ return forms;</property>
         <property name="dispatcherSocketTimeout">30000</property>
         <property name="dispatcherUseAuthentication">1</property>
         <property name="dispatcherUsername">admin</property>
-        <property name="host">http://localhost:8080/openhds/api/rest/relationships</property>
+        <property name="host">http://localhost:8080/openhdsI/api/rest/relationships</property>
         <property name="queuePollInterval">200</property>
         <property name="reconnectMillisecs">10000</property>
         <property name="rotateQueue">0</property>
@@ -248,7 +248,7 @@ ICA8YUlzVG9CPjwvYUlzVG9CPgo8L3JlbGF0aW9uc2hpcD4=</outboundTemplate>
       <transportName>HTTP Sender</transportName>
       <mode>DESTINATION</mode>
       <enabled>true</enabled>
-      <version>2.2.1.5861</version>
+      <version>2.2.2.6388</version>
     </connector>
     <connector>
       <name>Households</name>
@@ -268,7 +268,7 @@ ICA8YUlzVG9CPjwvYUlzVG9CPgo8L3JlbGF0aW9uc2hpcD4=</outboundTemplate>
         <property name="dispatcherSocketTimeout">30000</property>
         <property name="dispatcherUseAuthentication">1</property>
         <property name="dispatcherUsername">admin</property>
-        <property name="host">http://localhost:8080/openhds/api/rest/socialgroups</property>
+        <property name="host">http://localhost:8080/openhdsI/api/rest/socialgroups</property>
         <property name="queuePollInterval">200</property>
         <property name="reconnectMillisecs">10000</property>
         <property name="rotateQueue">0</property>
@@ -435,7 +435,7 @@ b3VwSGVhZD4KICAgIDxncm91cFR5cGU+PC9ncm91cFR5cGU+Cjwvc29jaWFsZ3JvdXA+</outboundTe
       <transportName>HTTP Sender</transportName>
       <mode>DESTINATION</mode>
       <enabled>true</enabled>
-      <version>2.2.1.5861</version>
+      <version>2.2.2.6388</version>
     </connector>
     <connector>
       <name>Memberships</name>
@@ -455,7 +455,7 @@ b3VwSGVhZD4KICAgIDxncm91cFR5cGU+PC9ncm91cFR5cGU+Cjwvc29jaWFsZ3JvdXA+</outboundTe
         <property name="dispatcherSocketTimeout">30000</property>
         <property name="dispatcherUseAuthentication">1</property>
         <property name="dispatcherUsername">admin</property>
-        <property name="host">http://localhost:8080/openhds/api/rest/memberships</property>
+        <property name="host">http://localhost:8080/openhdsI/api/rest/memberships</property>
         <property name="queuePollInterval">200</property>
         <property name="reconnectMillisecs">10000</property>
         <property name="rotateQueue">0</property>
@@ -624,7 +624,7 @@ SXNUb0E+PC9iSXNUb0E+CjwvbWVtYmVyc2hpcD4=</outboundTemplate>
       <transportName>HTTP Sender</transportName>
       <mode>DESTINATION</mode>
       <enabled>true</enabled>
-      <version>2.2.1.5861</version>
+      <version>2.2.2.6388</version>
     </connector>
   </destinationConnectors>
   <properties>
@@ -632,7 +632,7 @@ SXNUb0E+PC9iSXNUb0E+CjwvbWVtYmVyc2hpcD4=</outboundTemplate>
     <property name="dont_store_filtered">false</property>
     <property name="encryptData">false</property>
     <property name="error_messages_only">false</property>
-    <property name="initialState">started</property>
+    <property name="initialState">stopped</property>
     <property name="max_message_age">-1</property>
     <property name="store_messages">true</property>
     <property name="synchronous">true</property>
