@@ -1,0 +1,64 @@
+<map>
+  <entry>
+    <string>Shutdown</string>
+    <string>// This script executes once when all channels shut down from a redeploy
+// You only have access to the globalMap here to persist data
+return;</string>
+  </entry>
+  <entry>
+    <string>Deploy</string>
+    <string>/** Database Information */
+
+globalMap.put(&quot;jdbcDriver&quot;, &quot;com.mysql.jdbc.Driver&quot;);
+
+// Database JDBC URL
+globalMap.put(&quot;odkJdbcDatabaseUrl&quot;, &quot;jdbc:mysql://localhost/odk&quot;);
+
+// Databaase User name
+globalMap.put(&quot;dbUser&quot;, &quot;&quot;);
+
+// Database Password
+globalMap.put(&quot;dbPass&quot;, &quot;&quot;);
+
+/** OpenHDS Information */
+
+
+globalMap.put(&quot;ODK_DATABASE_URL&quot;,&quot;jdbc:mysql://localhost/odk&quot;);
+globalMap.put(&quot;ODK_DATABASE_USER&quot;,&quot;&quot;);
+globalMap.put(&quot;ODK_DATABASE_PASSWORD&quot;,&quot;&quot;);
+
+// openhds information
+globalMap.put(&quot;OPENHDS_PATH&quot;,&quot;http://localhost:8080/openhdsMbita/api/rest&quot;);
+globalMap.put(&quot;OPENHDS_USER&quot;,&quot;admin&quot;);
+globalMap.put(&quot;OPENHDS_PASSWORD&quot;,&quot;garki123&quot;);
+globalMap.put(&quot;ERROR_PATH&quot;,&quot;/home/Desktop/Errors.csv&quot;);
+globalMap.put(&quot;OUTPUT_PATH&quot;,&quot;/home/Desktop/&quot;);
+
+// odk tables
+globalMap.put(&quot;DEATH_TABLE&quot;,&quot;DEATH_REGISTRATION_CORE&quot;);
+globalMap.put(&quot;IN_MIGRATION_TABLE&quot;,&quot;IN_MIGRATION_CORE&quot;);
+globalMap.put(&quot;LOCATION_TABLE&quot;,&quot;LOCATION_REGISTRATION_CORE&quot;);
+globalMap.put(&quot;MEMBERSHIP_TABLE&quot;,&quot;MEMBERSHIP_CORE&quot;);
+globalMap.put(&quot;OUT_MIGRATION_TABLE&quot;,&quot;OUT_MIGRATION_REGISTRATION_CORE&quot;);
+globalMap.put(&quot;PREGNANCY_OBS_TABLE&quot;,&quot;PREGNANCY_OBSERVATION_CORE&quot;);
+globalMap.put(&quot;PREGNANCY_OUTCOME_TABLE&quot;,&quot;PREGNANCY_OUTCOME_CORE&quot;);
+globalMap.put(&quot;OUTCOMES_TABLE&quot;,&quot;PREGNANCY_OUTCOME_OUTCOMES&quot;);
+globalMap.put(&quot;RELATIONSHIP_TABLE&quot;,&quot;RELATIONSHIP_CORE&quot;);
+globalMap.put(&quot;SOCIAL_GROUP_TABLE&quot;,&quot;SOCIAL_GROUP_REGISTRATION_CORE&quot;);
+globalMap.put(&quot;VISIT_TABLE&quot;,&quot;VISIT_REGISTRATION_CORE&quot;);
+
+return;</string>
+  </entry>
+  <entry>
+    <string>Preprocessor</string>
+    <string>// Modify the message variable below to pre process data
+// This script applies across all channels
+return message;</string>
+  </entry>
+  <entry>
+    <string>Postprocessor</string>
+    <string>// This script executes once after a message has been processed
+// This script applies across all channels
+return;</string>
+  </entry>
+</map>
