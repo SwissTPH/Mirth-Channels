@@ -12,27 +12,27 @@ return;</string>
 globalMap.put(&quot;jdbcDriver&quot;, &quot;com.mysql.jdbc.Driver&quot;);
 
 // Database JDBC URL
-globalMap.put(&quot;odkJdbcDatabaseUrl&quot;, &quot;jdbc:mysql://localhost/odk&quot;);
+globalMap.put(&quot;odkJdbcDatabaseUrl&quot;, &quot;jdbc:mysql://localhost/odk_prod&quot;);
 
-// Databaase User name
-globalMap.put(&quot;dbUser&quot;, &quot;&quot;);
+// Database User name
+globalMap.put(&quot;dbUser&quot;, &quot;data&quot;);
 
 // Database Password
-globalMap.put(&quot;dbPass&quot;, &quot;&quot;);
+globalMap.put(&quot;dbPass&quot;, &quot;data&quot;);
 
 /** OpenHDS Information */
 
 
-globalMap.put(&quot;ODK_DATABASE_URL&quot;,&quot;jdbc:mysql://localhost/odk&quot;);
+globalMap.put(&quot;ODK_DATABASE_URL&quot;,&quot;jdbc:mysql://localhost/odk_prod&quot;);
 globalMap.put(&quot;ODK_DATABASE_USER&quot;,&quot;&quot;);
 globalMap.put(&quot;ODK_DATABASE_PASSWORD&quot;,&quot;&quot;);
 
 // openhds information
-globalMap.put(&quot;OPENHDS_PATH&quot;,&quot;http://localhost:8080/openhdsMbita/api/rest&quot;);
+globalMap.put(&quot;OPENHDS_PATH&quot;,&quot;http://localhost:8080/openhds/api/rest&quot;);
 globalMap.put(&quot;OPENHDS_USER&quot;,&quot;admin&quot;);
-globalMap.put(&quot;OPENHDS_PASSWORD&quot;,&quot;garki123&quot;);
-globalMap.put(&quot;ERROR_PATH&quot;,&quot;/home/Desktop/Errors.csv&quot;);
-globalMap.put(&quot;OUTPUT_PATH&quot;,&quot;/home/Desktop/&quot;);
+globalMap.put(&quot;OPENHDS_PASSWORD&quot;,&quot;test&quot;);
+globalMap.put(&quot;ERROR_PATH&quot;,&quot;/home/data/Errors.csv&quot;);
+globalMap.put(&quot;OUTPUT_PATH&quot;,&quot;/home/data/&quot;);
 
 // odk tables
 globalMap.put(&quot;DEATH_TABLE&quot;,&quot;DEATH_REGISTRATION_CORE&quot;);
