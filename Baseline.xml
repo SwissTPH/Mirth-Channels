@@ -13,10 +13,10 @@ Visit &#xd;
 Any events...</description>
   <enabled>true</enabled>
   <lastModified>
-    <time>1404999595138</time>
+    <time>1410773897335</time>
     <timezone>Europe/Berlin</timezone>
   </lastModified>
-  <revision>2</revision>
+  <revision>3</revision>
   <sourceConnector version="3.0.3">
     <metaDataId>0</metaDataId>
     <name>sourceConnector</name>
@@ -62,7 +62,7 @@ while(visitResult.next()) {
   
   var visitId = visitXml[&quot;visit_id&quot;].toString();
 
-  forms.addAll(baseline(visitId, dbConn));
+  forms.addAll(addBaseline(visitId, dbConn));
   forms.addAll(addPregnancyObs(visitId, dbConn));
 }
 

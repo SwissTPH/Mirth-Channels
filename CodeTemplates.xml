@@ -94,6 +94,18 @@ dbConn.close();
     <scope>0</scope>
   </codeTemplate>
   <codeTemplate version="3.0.3">
+    <id>609da872-981f-472d-9fef-fe6d61f031c7</id>
+    <name>Retrieve Baseline Form</name>
+    <tooltip></tooltip>
+    <code>function addBaseline(visitId, dbConn) {
+  var results = dbConn.executeCachedQuery(&quot;SELECT _URI, INDIVIDUAL_INFO_DATE_OF_BIRTH, DATE_OF_MIGRATION, INDIVIDUAL_INFO_FIRST_NAME, INDIVIDUAL_INFO_MOTHER_ID, INDIVIDUAL_INFO_INDIVIDUAL_ID, VISIT_ID, INDIVIDUAL_INFO_GENDER, LOCATION_ID, FIELD_WORKER_ID, INDIVIDUAL_INFO_LAST_NAME, INDIVIDUAL_INFO_PARTIAL_DATE, INDIVIDUAL_INFO_FATHER_ID FROM &quot; + globalMap.get(&quot;BASELINE_TABLE&quot;) + &quot; WHERE VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND migration_type = &apos;BASELINE&apos; AND processed_by_mirth=0 order by INDIVIDUAL_INFO_DATE_OF_BIRTH ASC&quot;);
+  var baselineForms = resultsToForms(results, &quot;&lt;baseline event=&apos;baseline&apos; table-name=&apos;&quot; + globalMap.get(&quot;BASELINE_TABLE&quot;) + &quot;&apos;/&gt;&quot;);
+  return baselineForms;
+}</code>
+    <type>FUNCTION</type>
+    <scope>0</scope>
+  </codeTemplate>
+  <codeTemplate version="3.0.3">
     <id>63d7ca76-9a59-450e-87dc-e48fbcf87e42</id>
     <name>Retrieve Pregnancy Observation Forms</name>
     <tooltip>Retrieve Pregnancy Observations</tooltip>
