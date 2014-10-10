@@ -28,6 +28,29 @@
     <scope>0</scope>
   </codeTemplate>
   <codeTemplate version="3.0.3">
+    <id>2201f0fc-f3bd-4058-a83d-0df9359ee211</id>
+    <name>Retrieve Death of HoH</name>
+    <tooltip>Retrieve the Death of Head of Households</tooltip>
+    <code>function addHoHDeaths(visitId, dbConn) {
+	var deathToHoHForm = new java.util.ArrayList();
+	var results = dbConn.executeCachedQuery(&quot;SELECT _URI, VISIT_ID, FIELD_WORKER_ID, NEW_HOH_ID, INDIVIDUAL_ID, HOUSEHOLD_ID, PLACE_OF_DEATH, WHOM, DIAGNOSEDDEATH, OTHERPLACE_OF_DEATH, CAUSEOFDEATHDIAGNOSED, DATE, CAUSOFDEATHNOTDIAGNOSED FROM &quot; + globalMap.get(&quot;DEATH_TOHOH_TABLE&quot;) + &quot; WHERE VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND processed_by_mirth is null&quot;);
+	while(results.next()) {
+    	var deathHoh = resultSetToXml(results, &quot;&lt;deathHoH event=&apos;deathofhousehold&apos; table-name=&apos;&quot; + globalMap.get(&quot;DEATH_TOHOH_TABLE&quot;) + &quot;&apos; /&gt;&quot;);
+
+	    var relations = dbConn.executeCachedQuery(&quot;SELECT MEMBER_NAME, RELATIONSHIP_TO_GROUP_HEAD, EXT_ID, SOCIAL_GROUP_ID FROM &quot; + globalMap.get(&quot;DEATH_HOH_RELATIONS&quot;) + &quot; WHERE _PARENT_AURI = &apos;&quot; + deathHoh[&quot;_uri&quot;].toString() + &quot;&apos;&quot;);
+    	
+		while(relations.next()) {
+      		var relation = resultSetToXml(relations, &quot;&lt;relation /&gt;&quot;);
+		    deathHoh.appendChild(relation);
+    	}
+	    deathToHoHForm.add(deathHoh.toString());
+	}
+	return deathToHoHForm;
+}</code>
+    <type>FUNCTION</type>
+    <scope>0</scope>
+  </codeTemplate>
+  <codeTemplate version="3.0.3">
     <id>286839da-5111-4bf4-b0db-a3a451b620a9</id>
     <name>Retrieve OutMigration from IM</name>
     <tooltip></tooltip>

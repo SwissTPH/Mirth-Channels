@@ -1,6 +1,6 @@
 <channel version="3.0.3">
   <id>95bbf706-26dc-4af7-84ff-aed09a2607e8</id>
-  <nextMetaDataId>11</nextMetaDataId>
+  <nextMetaDataId>12</nextMetaDataId>
   <name>Update Events</name>
   <description>This channel will attempt to read the submissions from ODK in a dependency aware way. Though XForms has no notion of dependency, there is an inherit dependency betweens update forms. The dependenc looks like:&#xd;
 Update Events -&gt; Visit -&gt; Location&#xd;
@@ -13,10 +13,10 @@ Visit &#xd;
 Any events...</description>
   <enabled>true</enabled>
   <lastModified>
-    <time>1404889578951</time>
-    <timezone>Africa/Nairobi</timezone>
+    <time>1412928214329</time>
+    <timezone>Europe/Berlin</timezone>
   </lastModified>
-  <revision>39</revision>
+  <revision>1</revision>
   <sourceConnector version="3.0.3">
     <metaDataId>0</metaDataId>
     <name>sourceConnector</name>
@@ -69,6 +69,7 @@ while(visitResult.next()) {
   forms.addAll(addExternalInmigrations(visitId, dbConn));
   forms.addAll(addPregnancyOutcomes(visitId, dbConn));
   forms.addAll(addPregnancyObs(visitId, dbConn));
+  forms.addAll(addHoHDeaths(visitId, dbConn));
 }
 
 
@@ -867,6 +868,171 @@ ICA8L2NvbGxlY3RlZEJ5Pgo8L2RlYXRoPg==</outboundTemplate>
     </connector>
     <connector version="3.0.3">
       <metaDataId>4</metaDataId>
+      <name>Death of Head of Household</name>
+      <properties class="com.mirth.connect.connectors.http.HttpDispatcherProperties" version="3.0.3">
+        <queueConnectorProperties version="3.0.3">
+          <queueEnabled>false</queueEnabled>
+          <sendFirst>false</sendFirst>
+          <retryIntervalMillis>10000</retryIntervalMillis>
+          <regenerateTemplate>false</regenerateTemplate>
+          <retryCount>0</retryCount>
+          <rotate>false</rotate>
+          <threadCount>1</threadCount>
+        </queueConnectorProperties>
+        <host>${OPENHDS_PATH}/hoh</host>
+        <method>post</method>
+        <headers class="linked-hash-map"/>
+        <parameters class="linked-hash-map"/>
+        <includeHeadersInResponse>false</includeHeadersInResponse>
+        <multipart>false</multipart>
+        <useAuthentication>true</useAuthentication>
+        <authenticationType>Basic</authenticationType>
+        <username>${OPENHDS_USER}</username>
+        <password>${ODK_DATABASE_PASSWORD}</password>
+        <content>${message.transformedData}</content>
+        <contentType>application/xml</contentType>
+        <charset>UTF-8</charset>
+        <socketTimeout>30000</socketTimeout>
+      </properties>
+      <transformer version="3.0.3">
+        <steps>
+          <step>
+            <sequenceNumber>0</sequenceNumber>
+            <name>Death of Household transforms</name>
+            <script>tmp[&apos;collectedBy&apos;][&apos;extId&apos;] = msg[&apos;field_worker_id&apos;].toString().toUpperCase();
+tmp[&apos;visit&apos;][&apos;extId&apos;] = msg[&apos;visit_id&apos;].toString().toUpperCase();
+tmp[&apos;newHoh&apos;][&apos;extId&apos;] = msg[&apos;new_hoh_id&apos;].toString().toUpperCase();
+tmp[&apos;oldHoh&apos;][&apos;extId&apos;] = msg[&apos;individual_id&apos;].toString().toUpperCase();
+tmp[&apos;socialGroup&apos;][&apos;extId&apos;] = msg[&apos;household_id&apos;].toString().toUpperCase();
+
+//DEATH
+tmp[&apos;death&apos;][&apos;visitDeath&apos;][&apos;extId&apos;] = msg[&apos;visit_id&apos;].toString().toUpperCase();
+tmp[&apos;death&apos;][&apos;individual&apos;][&apos;extId&apos;] = msg[&apos;individual_id&apos;].toString().toUpperCase();
+tmp[&apos;death&apos;][&apos;deathPlace&apos;] = msg[&apos;place_of_death&apos;].toString();
+tmp[&apos;death&apos;][&apos;deathCause&apos;] = msg[&apos;causeofdeathdiagnosed&apos;].toString();
+tmp[&apos;death&apos;][&apos;deathDate&apos;] = msg[&apos;date&apos;].toString();
+tmp[&apos;death&apos;][&apos;collectedBy&apos;][&apos;extId&apos;] = msg[&apos;field_worker_id&apos;].toString().toUpperCase();
+
+var relationsXml = new XML(&quot;&lt;memberships /&gt;&quot;);
+var relations = msg[&apos;relation&apos;].length();
+for(var i = 0; i &lt; relations; i++){
+	relationsXml.appendChild(new XML(&quot;&lt;membership /&gt;&quot;));
+	relationsXml[&apos;membership&apos;][i][&apos;bIsToA&apos;] = msg[&apos;relation&apos;][i][&apos;relationship_to_group_head&apos;].toString();
+	relationsXml[&apos;membership&apos;][i][&apos;individual&apos;][&apos;extId&apos;] = msg[&apos;relation&apos;][i][&apos;ext_id&apos;].toString().toUpperCase();
+	relationsXml[&apos;membership&apos;][i][&apos;socialGroup&apos;][&apos;extId&apos;] = msg[&apos;relation&apos;][i][&apos;social_group_id&apos;].toString().toUpperCase();
+}
+
+tmp[&apos;memberships&apos;] = relationsXml;</script>
+            <type>JavaScript</type>
+            <data>
+              <entry>
+                <string>Script</string>
+                <string>tmp[&apos;collectedBy&apos;][&apos;extId&apos;] = msg[&apos;field_worker_id&apos;].toString().toUpperCase();
+tmp[&apos;visit&apos;][&apos;extId&apos;] = msg[&apos;visit_id&apos;].toString().toUpperCase();
+tmp[&apos;newHoh&apos;][&apos;extId&apos;] = msg[&apos;new_hoh_id&apos;].toString().toUpperCase();
+tmp[&apos;oldHoh&apos;][&apos;extId&apos;] = msg[&apos;individual_id&apos;].toString().toUpperCase();
+tmp[&apos;socialGroup&apos;][&apos;extId&apos;] = msg[&apos;household_id&apos;].toString().toUpperCase();
+
+//DEATH
+tmp[&apos;death&apos;][&apos;visitDeath&apos;][&apos;extId&apos;] = msg[&apos;visit_id&apos;].toString().toUpperCase();
+tmp[&apos;death&apos;][&apos;individual&apos;][&apos;extId&apos;] = msg[&apos;individual_id&apos;].toString().toUpperCase();
+tmp[&apos;death&apos;][&apos;deathPlace&apos;] = msg[&apos;place_of_death&apos;].toString();
+tmp[&apos;death&apos;][&apos;deathCause&apos;] = msg[&apos;causeofdeathdiagnosed&apos;].toString();
+tmp[&apos;death&apos;][&apos;deathDate&apos;] = msg[&apos;date&apos;].toString();
+tmp[&apos;death&apos;][&apos;collectedBy&apos;][&apos;extId&apos;] = msg[&apos;field_worker_id&apos;].toString().toUpperCase();
+
+var relationsXml = new XML(&quot;&lt;memberships /&gt;&quot;);
+var relations = msg[&apos;relation&apos;].length();
+for(var i = 0; i &lt; relations; i++){
+	relationsXml.appendChild(new XML(&quot;&lt;membership /&gt;&quot;));
+	relationsXml[&apos;membership&apos;][i][&apos;bIsToA&apos;] = msg[&apos;relation&apos;][i][&apos;relationship_to_group_head&apos;].toString();
+	relationsXml[&apos;membership&apos;][i][&apos;individual&apos;][&apos;extId&apos;] = msg[&apos;relation&apos;][i][&apos;ext_id&apos;].toString().toUpperCase();
+	relationsXml[&apos;membership&apos;][i][&apos;socialGroup&apos;][&apos;extId&apos;] = msg[&apos;relation&apos;][i][&apos;social_group_id&apos;].toString().toUpperCase();
+}
+
+tmp[&apos;memberships&apos;] = relationsXml;</string>
+              </entry>
+            </data>
+          </step>
+        </steps>
+        <inboundTemplate encoding="base64">PGRlYXRoSG9IPg0KICAgIDxfdXJpPjwvX3VyaT4NCiAgICA8dmlzaXRfaWQ+PC92aXNpdF9pZD4N
+CiAgICA8ZmllbGRfd29ya2VyX2lkPjwvZmllbGRfd29ya2VyX2lkPg0KICAgIDxuZXdfaG9oX2lk
+PjwvbmV3X2hvaF9pZD4NCiAgICA8aW5kaXZpZHVhbF9pZD48L2luZGl2aWR1YWxfaWQ+DQoJPGhv
+dXNlaG9sZF9pZD48L2hvdXNlaG9sZF9pZD4KCTxwbGFjZV9vZl9kZWF0aD48L3BsYWNlX29mX2Rl
+YXRoPgoJPHdob20+PC93aG9tPgoJPGRpYWdub3NlZGRlYXRoPjwvZGlhZ25vc2VkZGVhdGg+Cgk8
+b3RoZXJwbGFjZV9vZl9kZWF0aD48L290aGVycGxhY2Vfb2ZfZGVhdGg+Cgk8Y2F1c2VvZmRlYXRo
+ZGlhZ25vc2VkPjwvY2F1c2VvZmRlYXRoZGlhZ25vc2VkPgoJPGRhdGU+PC9kYXRlPgoJPGNhdXNl
+b2ZkZWF0aG5vdGRpYWdub3NlZD48L2NhdXNlb2ZkZWF0aG5vdGRpYWdub3NlZD4KICAgIDxyZWxh
+dGlvbj4NCiAgICAgICAgPG1lbWJlcl9uYW1lPjwvbWVtYmVyX25hbWU+DQogICAgICAgIDxyZWxh
+dGlvbnNoaXBfdG9fZ3JvdXBfaGVhZD48L3JlbGF0aW9uc2hpcF90b19ncm91cF9oZWFkPg0KICAg
+ICAgICA8ZXh0X2lkPjwvZXh0X2lkPg0KICAgICAgICA8c29jaWFsX2dyb3VwX2lkPjwvc29jaWFs
+X2dyb3VwX2lkPg0KICAgIDwvcmVsYXRpb24+DQo8L2RlYXRoSG9IPg==</inboundTemplate>
+        <outboundTemplate encoding="base64">PGRlYXRoX29mX2hoPg0KICAgIDxjb2xsZWN0ZWRCeT4KCQk8ZXh0SWQ+PC9leHRJZD4KCTwvY29s
+bGVjdGVkQnk+CiAgICA8dmlzaXQ+CgkJPGV4dElkPjwvZXh0SWQ+Cgk8L3Zpc2l0Pg0KICAgIDxu
+ZXdIb2g+CgkJPGV4dElkPjwvZXh0SWQ+Cgk8L25ld0hvaD4NCiAgICA8b2xkSG9oPgoJCTxleHRJ
+ZD48L2V4dElkPgoJPC9vbGRIb2g+DQoJPHNvY2lhbEdyb3VwPgoJCTxleHRJZD48L2V4dElkPgoJ
+PC9zb2NpYWxHcm91cD4KCTxkZWF0aD4KICAJCTx2aXNpdERlYXRoPgogICAJCQk8ZXh0SWQ+PC9l
+eHRJZD4KCQk8L3Zpc2l0RGVhdGg+CgkJPGluZGl2aWR1YWw+CgkgICAgCTxleHRJZD48L2V4dElk
+PgoJCTwvaW5kaXZpZHVhbD4KCQk8ZGVhdGhQbGFjZT48L2RlYXRoUGxhY2U+CgkJPGRlYXRoQ2F1
+c2U+PC9kZWF0aENhdXNlPgoJCTxkZWF0aERhdGU+PC9kZWF0aERhdGU+CgkJPGNvbGxlY3RlZEJ5
+PgogICAgCQk8ZXh0SWQ+PC9leHRJZD4KCQk8L2NvbGxlY3RlZEJ5PgoJPC9kZWF0aD4JCgk8bWVt
+YmVyc2hpcHM+CiAgICAJPG1lbWJlcnNoaXA+DQoJICAgICAgICA8YklzVG9BPjwvYklzVG9BPg0K
+ICAgIAkgICAgPGluZGl2aWR1YWw+CgkJCQk8ZXh0SWQ+PC9leHRJZD4KCQkJPC9pbmRpdmlkdWFs
+PgogICAgICAgIAk8c29jaWFsR3JvdXA+CgkJCQk8ZXh0SWQ+PC9leHRJZD4KCQkJPC9zb2NpYWxH
+cm91cD4NCgkgICAgPC9tZW1iZXJzaGlwPg0KCTwvbWVtYmVyc2hpcHM+CjwvZGVhdGhfb2ZfaGg+
+</outboundTemplate>
+        <inboundDataType>XML</inboundDataType>
+        <outboundDataType>XML</outboundDataType>
+        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+            <stripNamespaces>true</stripNamespaces>
+          </serializationProperties>
+        </inboundProperties>
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+            <stripNamespaces>true</stripNamespaces>
+          </serializationProperties>
+        </outboundProperties>
+      </transformer>
+      <responseTransformer version="3.0.3">
+        <steps/>
+        <inboundDataType>XML</inboundDataType>
+        <outboundDataType>XML</outboundDataType>
+        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+            <stripNamespaces>true</stripNamespaces>
+          </serializationProperties>
+        </inboundProperties>
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+            <stripNamespaces>true</stripNamespaces>
+          </serializationProperties>
+        </outboundProperties>
+      </responseTransformer>
+      <filter version="3.0.3">
+        <rules>
+          <rule>
+            <sequenceNumber>0</sequenceNumber>
+            <name>New Rule</name>
+            <data>
+              <entry>
+                <string>Script</string>
+                <string>return msg[&quot;@event&quot;].toString() === &quot;deathofhousehold&quot;;</string>
+              </entry>
+            </data>
+            <type>JavaScript</type>
+            <script>return msg[&quot;@event&quot;].toString() === &quot;deathofhousehold&quot;;</script>
+            <operator>NONE</operator>
+          </rule>
+        </rules>
+      </filter>
+      <transportName>HTTP Sender</transportName>
+      <mode>DESTINATION</mode>
+      <enabled>true</enabled>
+      <waitForPrevious>true</waitForPrevious>
+    </connector>
+    <connector version="3.0.3">
+      <metaDataId>5</metaDataId>
       <name>Out Migration</name>
       <properties class="com.mirth.connect.connectors.http.HttpDispatcherProperties" version="3.0.3">
         <queueConnectorProperties version="3.0.3">
@@ -1103,7 +1269,7 @@ bj4=</outboundTemplate>
       <waitForPrevious>true</waitForPrevious>
     </connector>
     <connector version="3.0.3">
-      <metaDataId>5</metaDataId>
+      <metaDataId>6</metaDataId>
       <name>Out Mig IM</name>
       <properties class="com.mirth.connect.connectors.http.HttpDispatcherProperties" version="3.0.3">
         <queueConnectorProperties version="3.0.3">
@@ -1339,7 +1505,7 @@ bj4=</outboundTemplate>
       <waitForPrevious>true</waitForPrevious>
     </connector>
     <connector version="3.0.3">
-      <metaDataId>6</metaDataId>
+      <metaDataId>7</metaDataId>
       <name>Pregnancy Obs</name>
       <properties class="com.mirth.connect.connectors.http.HttpDispatcherProperties" version="3.0.3">
         <queueConnectorProperties version="3.0.3">
@@ -1550,7 +1716,7 @@ CiAgPC92aXNpdD4KPC9wcmVnbmFuY3lvYnNlcnZhdGlvbj4=</outboundTemplate>
       <waitForPrevious>true</waitForPrevious>
     </connector>
     <connector version="3.0.3">
-      <metaDataId>7</metaDataId>
+      <metaDataId>8</metaDataId>
       <name>Internal Inmigrations</name>
       <properties class="com.mirth.connect.connectors.http.HttpDispatcherProperties" version="3.0.3">
         <queueConnectorProperties version="3.0.3">
@@ -1811,7 +1977,7 @@ TUlHUkFUSU9OPC9taWdUeXBlPgo8L2lubWlncmF0aW9uPg==</outboundTemplate>
       <waitForPrevious>true</waitForPrevious>
     </connector>
     <connector version="3.0.3">
-      <metaDataId>8</metaDataId>
+      <metaDataId>9</metaDataId>
       <name>External Inmigrations</name>
       <properties class="com.mirth.connect.connectors.http.HttpDispatcherProperties" version="3.0.3">
         <queueConnectorProperties version="3.0.3">
@@ -2251,7 +2417,7 @@ ZWREYXRlPgogICAgPG1pZ1R5cGU+PC9taWdUeXBlPgo8L2lubWlncmF0aW9uPg==</outboundTempla
       <waitForPrevious>true</waitForPrevious>
     </connector>
     <connector version="3.0.3">
-      <metaDataId>9</metaDataId>
+      <metaDataId>10</metaDataId>
       <name>Pregnancy Outcome</name>
       <properties class="com.mirth.connect.connectors.http.HttpDispatcherProperties" version="3.0.3">
         <queueConnectorProperties version="3.0.3">

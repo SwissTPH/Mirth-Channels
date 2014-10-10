@@ -6,6 +6,12 @@
 return;</string>
   </entry>
   <entry>
+    <string>Postprocessor</string>
+    <string>// This script executes once after a message has been processed
+// This script applies across all channels
+return;</string>
+  </entry>
+  <entry>
     <string>Deploy</string>
     <string>/** Database Information */
 
@@ -47,6 +53,8 @@ globalMap.put(&quot;PREGNANCY_OUTCOME_TABLE&quot;,&quot;PREGNANCY_OUTCOME_CORE&q
 globalMap.put(&quot;RELATIONSHIP_TABLE&quot;,&quot;RELATIONSHIP_CORE&quot;);
 globalMap.put(&quot;SOCIAL_GROUP_TABLE&quot;,&quot;SOCIAL_GROUP_REGISTRATION_CORE&quot;);
 globalMap.put(&quot;VISIT_TABLE&quot;,&quot;VISIT_REGISTRATION_CORE&quot;);
+globalMap.put(&quot;DEATH_TOHOH_TABLE&quot;,&quot;DEATHTOHOH_CORE&quot;);
+globalMap.put(&quot;DEATH_HOH_RELATIONS&quot;,&quot;DEATHTOHOH_MEMBERSHIPTONEWHOH&quot;);
 
 return;</string>
   </entry>
@@ -55,11 +63,5 @@ return;</string>
     <string>// Modify the message variable below to pre process data
 // This script applies across all channels
 return message;</string>
-  </entry>
-  <entry>
-    <string>Postprocessor</string>
-    <string>// This script executes once after a message has been processed
-// This script applies across all channels
-return;</string>
   </entry>
 </map>
