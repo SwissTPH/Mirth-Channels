@@ -1,5 +1,5 @@
 <channel version="3.0.3">
-  <id>11b25bf1-fcf7-4b42-ae63-32d25de3f390</id>
+  <id>8426afe8-79c4-4c92-a478-bdac9d98e585</id>
   <nextMetaDataId>9</nextMetaDataId>
   <name>MigrationChannel</name>
   <description>This channel will attempt to read the records from the HRS database in a dependency aware way. Though XForms has no notion of dependency, there is an inherit dependency betweens update forms. The dependenc looks like:&#xd;
@@ -11,10 +11,10 @@ Visit &#xd;
 Any events...</description>
   <enabled>true</enabled>
   <lastModified>
-    <time>1413006211355</time>
+    <time>1413367048641</time>
     <timezone>Europe/Berlin</timezone>
   </lastModified>
-  <revision>5</revision>
+  <revision>9</revision>
   <sourceConnector version="3.0.3">
     <metaDataId>0</metaDataId>
     <name>sourceConnector</name>
@@ -71,7 +71,8 @@ var membershipResult = dbConn.executeCachedQuery(&quot;SELECT id, str_to_date(DE
 forms.addAll(resultsToForms(membershipResult, &quot;&lt;membership event=&apos;membership&apos; table-name=&apos;membership&apos;/&gt;&quot;));
  
 
-//forms.addAll(addPregnancyObs(visitId, dbConn));
+var pregnobsresults = dbConn.executeCachedQuery(&quot;SELECT id, OBSERVEID,DATE_ADD(str_to_date(DATE,&apos;%d/%m/%Y&apos;), INTERVAL 9- CAST(PREG_MNTHS AS SIGNED) MONTH) EXPECTED_DELIVERY_DATE, FIELDWORKER,str_to_date(DATE,&apos;%d/%m/%Y&apos;) DATE, INDIVIDID FROM indivstatus WHERE processed_by_mirth =0&quot;);
+forms.addAll(resultsToForms(pregnobsresults, &quot;&lt;pregnancyobs event=&apos;pregnancyobs&apos; table-name=&apos;indivstatus&apos;/&gt;&quot;));
 
 
 
@@ -1892,7 +1893,7 @@ ZT48L2VuZFR5cGU+ICAgCiAgICA8YklzVG9BPjwvYklzVG9BPgo8L21lbWJlcnNoaXA+</outboundTe
           <rotate>false</rotate>
           <threadCount>1</threadCount>
         </queueConnectorProperties>
-        <host>${OPENHDS_PATH}/pregnancyobservations</host>
+        <host>${OPENHDS_PATH}/pregnancyobservationsmig</host>
         <method>post</method>
         <headers class="linked-hash-map"/>
         <parameters class="linked-hash-map"/>
@@ -1912,12 +1913,16 @@ ZT48L2VuZFR5cGU+ICAgCiAgICA8YklzVG9BPjwvYklzVG9BPgo8L21lbWJlcnNoaXA+</outboundTe
           <step>
             <sequenceNumber>0</sequenceNumber>
             <name>mother - extId (out)</name>
-            <script>tmp[&apos;mother&apos;][&apos;extId&apos;] = validate(msg[&apos;individual_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
+            <script>tmp[&apos;mother&apos;][&apos;extId&apos;] = validate(msg[&apos;individid&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
             <type>Message Builder</type>
             <data>
               <entry>
                 <string>Variable</string>
                 <string>tmp[&apos;mother&apos;][&apos;extId&apos;]</string>
+              </entry>
+              <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;individid&apos;].toString().toUpperCase()</string>
               </entry>
               <entry>
                 <string>DefaultValue</string>
@@ -1926,10 +1931,6 @@ ZT48L2VuZFR5cGU+ICAgCiAgICA8YklzVG9BPjwvYklzVG9BPgo8L21lbWJlcnNoaXA+</outboundTe
               <entry>
                 <string>RegularExpressions</string>
                 <list/>
-              </entry>
-              <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;individual_id&apos;].toString().toUpperCase()</string>
               </entry>
             </data>
           </step>
@@ -1944,6 +1945,10 @@ ZT48L2VuZFR5cGU+ICAgCiAgICA8YklzVG9BPjwvYklzVG9BPgo8L21lbWJlcnNoaXA+</outboundTe
                 <string>tmp[&apos;expectedDeliveryDate&apos;]</string>
               </entry>
               <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;expected_delivery_date&apos;].toString()</string>
+              </entry>
+              <entry>
                 <string>DefaultValue</string>
                 <string></string>
               </entry>
@@ -1951,16 +1956,12 @@ ZT48L2VuZFR5cGU+ICAgCiAgICA8YklzVG9BPjwvYklzVG9BPgo8L21lbWJlcnNoaXA+</outboundTe
                 <string>RegularExpressions</string>
                 <list/>
               </entry>
-              <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;expected_delivery_date&apos;].toString()</string>
-              </entry>
             </data>
           </step>
           <step>
             <sequenceNumber>2</sequenceNumber>
             <name>recordedDate (out)</name>
-            <script>tmp[&apos;recordedDate&apos;] = validate(msg[&apos;recorded_date&apos;].toString(), &apos;&apos;, new Array());</script>
+            <script>tmp[&apos;recordedDate&apos;] = validate(msg[&apos;date&apos;].toString(), &apos;&apos;, new Array());</script>
             <type>Message Builder</type>
             <data>
               <entry>
@@ -1968,6 +1969,10 @@ ZT48L2VuZFR5cGU+ICAgCiAgICA8YklzVG9BPjwvYklzVG9BPgo8L21lbWJlcnNoaXA+</outboundTe
                 <string>tmp[&apos;recordedDate&apos;]</string>
               </entry>
               <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;date&apos;].toString()</string>
+              </entry>
+              <entry>
                 <string>DefaultValue</string>
                 <string></string>
               </entry>
@@ -1975,16 +1980,12 @@ ZT48L2VuZFR5cGU+ICAgCiAgICA8YklzVG9BPjwvYklzVG9BPgo8L21lbWJlcnNoaXA+</outboundTe
                 <string>RegularExpressions</string>
                 <list/>
               </entry>
-              <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;recorded_date&apos;].toString()</string>
-              </entry>
             </data>
           </step>
           <step>
             <sequenceNumber>3</sequenceNumber>
             <name>collectedBy - extId (out)</name>
-            <script>tmp[&apos;collectedBy&apos;][&apos;extId&apos;] = validate(msg[&apos;field_worker_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
+            <script>tmp[&apos;collectedBy&apos;][&apos;extId&apos;] = validate(msg[&apos;fieldworker&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
             <type>Message Builder</type>
             <data>
               <entry>
@@ -1992,6 +1993,10 @@ ZT48L2VuZFR5cGU+ICAgCiAgICA8YklzVG9BPjwvYklzVG9BPgo8L21lbWJlcnNoaXA+</outboundTe
                 <string>tmp[&apos;collectedBy&apos;][&apos;extId&apos;]</string>
               </entry>
               <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;fieldworker&apos;].toString().toUpperCase()</string>
+              </entry>
+              <entry>
                 <string>DefaultValue</string>
                 <string></string>
               </entry>
@@ -1999,16 +2004,12 @@ ZT48L2VuZFR5cGU+ICAgCiAgICA8YklzVG9BPjwvYklzVG9BPgo8L21lbWJlcnNoaXA+</outboundTe
                 <string>RegularExpressions</string>
                 <list/>
               </entry>
-              <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;field_worker_id&apos;].toString().toUpperCase()</string>
-              </entry>
             </data>
           </step>
           <step>
             <sequenceNumber>4</sequenceNumber>
             <name>visit - extId (out)</name>
-            <script>tmp[&apos;visit&apos;][&apos;extId&apos;] = validate(msg[&apos;visit_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
+            <script>tmp[&apos;visit&apos;][&apos;extId&apos;] = validate(msg[&apos;observeid&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
             <type>Message Builder</type>
             <data>
               <entry>
@@ -2016,6 +2017,10 @@ ZT48L2VuZFR5cGU+ICAgCiAgICA8YklzVG9BPjwvYklzVG9BPgo8L21lbWJlcnNoaXA+</outboundTe
                 <string>tmp[&apos;visit&apos;][&apos;extId&apos;]</string>
               </entry>
               <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;observeid&apos;].toString().toUpperCase()</string>
+              </entry>
+              <entry>
                 <string>DefaultValue</string>
                 <string></string>
               </entry>
@@ -2023,18 +2028,13 @@ ZT48L2VuZFR5cGU+ICAgCiAgICA8YklzVG9BPjwvYklzVG9BPgo8L21lbWJlcnNoaXA+</outboundTe
                 <string>RegularExpressions</string>
                 <list/>
               </entry>
-              <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;visit_id&apos;].toString().toUpperCase()</string>
-              </entry>
             </data>
           </step>
         </steps>
-        <inboundTemplate encoding="base64">PHByZWduYW5jeW9icz4KICAgIDxfdXJpPjwvX3VyaT4KICAgIDx2aXNpdF9pZD48L3Zpc2l0X2lk
-PgogICAgPGV4cGVjdGVkX2RlbGl2ZXJ5X2RhdGU+PC9leHBlY3RlZF9kZWxpdmVyeV9kYXRlPgog
-ICAgPGZpZWxkX3dvcmtlcl9pZD48L2ZpZWxkX3dvcmtlcl9pZD4KICAgIDxyZWNvcmRlZF9kYXRl
-PjwvcmVjb3JkZWRfZGF0ZT4KICAgIDxpbmRpdmlkdWFsX2lkPjwvaW5kaXZpZHVhbF9pZD4KPC9w
-cmVnbmFuY3lvYnM+</inboundTemplate>
+        <inboundTemplate encoding="base64">PHByZWduYW5jeW9icz4KICAgIDxpZD48L2lkPgogICAgPG9ic2VydmVpZD48L29ic2VydmVpZD4K
+ICAgIDxleHBlY3RlZF9kZWxpdmVyeV9kYXRlPjwvZXhwZWN0ZWRfZGVsaXZlcnlfZGF0ZT4KICAg
+IDxmaWVsZHdvcmtlcj48L2ZpZWxkd29ya2VyPgogICAgPGRhdGU+PC9kYXRlPgogICAgPGluZGl2
+aWRpZD48L2luZGl2aWRpZD4KPC9wcmVnbmFuY3lvYnM+</inboundTemplate>
         <outboundTemplate encoding="base64">PHByZWduYW5jeW9ic2VydmF0aW9uPgogIDxtb3RoZXI+CiAgICA8ZXh0SWQ+PC9leHRJZD4KICA8
 L21vdGhlcj4KICA8ZXhwZWN0ZWREZWxpdmVyeURhdGU+PC9leHBlY3RlZERlbGl2ZXJ5RGF0ZT4K
 ICA8cmVjb3JkZWREYXRlPjwvcmVjb3JkZWREYXRlPgogIDxjb2xsZWN0ZWRCeT4KICAgIDxleHRJ
@@ -2087,7 +2087,7 @@ CiAgPC92aXNpdD4KPC9wcmVnbmFuY3lvYnNlcnZhdGlvbj4=</outboundTemplate>
       </filter>
       <transportName>HTTP Sender</transportName>
       <mode>DESTINATION</mode>
-      <enabled>false</enabled>
+      <enabled>true</enabled>
       <waitForPrevious>true</waitForPrevious>
     </connector>
   </destinationConnectors>
