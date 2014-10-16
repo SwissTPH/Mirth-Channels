@@ -1,6 +1,6 @@
 <channel version="3.0.3">
   <id>8426afe8-79c4-4c92-a478-bdac9d98e585</id>
-  <nextMetaDataId>9</nextMetaDataId>
+  <nextMetaDataId>10</nextMetaDataId>
   <name>MigrationChannel</name>
   <description>This channel will attempt to read the records from the HRS database in a dependency aware way. Though XForms has no notion of dependency, there is an inherit dependency betweens update forms. The dependenc looks like:&#xd;
 Individual -&gt; Visit -&gt; Location&#xd;
@@ -11,10 +11,10 @@ Visit &#xd;
 Any events...</description>
   <enabled>true</enabled>
   <lastModified>
-    <time>1413367048641</time>
+    <time>1413455443737</time>
     <timezone>Europe/Berlin</timezone>
   </lastModified>
-  <revision>9</revision>
+  <revision>30</revision>
   <sourceConnector version="3.0.3">
     <metaDataId>0</metaDataId>
     <name>sourceConnector</name>
@@ -73,6 +73,22 @@ forms.addAll(resultsToForms(membershipResult, &quot;&lt;membership event=&apos;m
 
 var pregnobsresults = dbConn.executeCachedQuery(&quot;SELECT id, OBSERVEID,DATE_ADD(str_to_date(DATE,&apos;%d/%m/%Y&apos;), INTERVAL 9- CAST(PREG_MNTHS AS SIGNED) MONTH) EXPECTED_DELIVERY_DATE, FIELDWORKER,str_to_date(DATE,&apos;%d/%m/%Y&apos;) DATE, INDIVIDID FROM indivstatus WHERE processed_by_mirth =0&quot;);
 forms.addAll(resultsToForms(pregnobsresults, &quot;&lt;pregnancyobs event=&apos;pregnancyobs&apos; table-name=&apos;indivstatus&apos;/&gt;&quot;));
+
+
+ var resultsOutcome = dbConn.executeCachedQuery(&quot;SELECT id, OBSERVEID, INDIVIDID, 1 PARTIAL_DATE,FIELDWORKER,str_to_date(DATE,&apos;%d/%m/%Y&apos;) DATE, FATHERID FROM pregnancyoutcome WHERE processed_by_mirth =0&quot;);
+  while(resultsOutcome.next()) {
+    var pregOut = resultSetToXml(resultsOutcome, &quot;&lt;pregnancyoutcome event=&apos;pregnancyoutcome&apos; table-name=&apos;pregnancyoutcome&apos; /&gt;&quot;);
+    // are there any outcomes for this pregnancy outcome?
+    var outcomes = dbConn.executeCachedQuery(&quot;SELECT FIRSTNAME, TYPE, SOCIALGPID , GENDER, 9 RELATIONSHIP_TO_GROUP_HEAD, a.INDIVIDID INDIVIDID, LASTNAME FROM birth a, individual b where a.INDIVIDID = b.INDIVIDID and OBSERVEID= &apos;&quot; + pregOut[&quot;observeid&quot;].toString() + &quot;&apos;&quot;);
+    while(outcomes.next()) {
+      var outcome = resultSetToXml(outcomes, &quot;&lt;outcome /&gt;&quot;);
+      pregOut.appendChild(outcome);
+    }
+
+    forms.add(pregOut.toString());
+  }
+
+
 
 
 
@@ -2081,6 +2097,180 @@ CiAgPC92aXNpdD4KPC9wcmVnbmFuY3lvYnNlcnZhdGlvbj4=</outboundTemplate>
             </data>
             <type>JavaScript</type>
             <script>return msg[&quot;@event&quot;].toString() === &quot;pregnancyobs&quot;;</script>
+            <operator>NONE</operator>
+          </rule>
+        </rules>
+      </filter>
+      <transportName>HTTP Sender</transportName>
+      <mode>DESTINATION</mode>
+      <enabled>true</enabled>
+      <waitForPrevious>true</waitForPrevious>
+    </connector>
+    <connector version="3.0.3">
+      <metaDataId>9</metaDataId>
+      <name>Pregnancy Outcome</name>
+      <properties class="com.mirth.connect.connectors.http.HttpDispatcherProperties" version="3.0.3">
+        <queueConnectorProperties version="3.0.3">
+          <queueEnabled>false</queueEnabled>
+          <sendFirst>false</sendFirst>
+          <retryIntervalMillis>10000</retryIntervalMillis>
+          <regenerateTemplate>false</regenerateTemplate>
+          <retryCount>0</retryCount>
+          <rotate>false</rotate>
+          <threadCount>1</threadCount>
+        </queueConnectorProperties>
+        <host>${OPENHDS_PATH}/pregnancyoutcomesimg</host>
+        <method>post</method>
+        <headers class="linked-hash-map"/>
+        <parameters class="linked-hash-map"/>
+        <includeHeadersInResponse>false</includeHeadersInResponse>
+        <multipart>false</multipart>
+        <useAuthentication>true</useAuthentication>
+        <authenticationType>Basic</authenticationType>
+        <username>${OPENHDS_USER}</username>
+        <password>${OPENHDS_PASSWORD}</password>
+        <content>${message.transformedData}</content>
+        <contentType>application/xml</contentType>
+        <charset>UTF-8</charset>
+        <socketTimeout>30000</socketTimeout>
+      </properties>
+      <transformer version="3.0.3">
+        <steps>
+          <step>
+            <sequenceNumber>0</sequenceNumber>
+            <name>Pregnancy Outcome Transform</name>
+            <script>// converts to OpenHDS pregnancy outcome XML
+// basic fields
+tmp[&apos;collectedBy&apos;][&apos;extId&apos;] = msg[&apos;fieldworker&apos;].toString().toUpperCase();
+tmp[&apos;visit&apos;][&apos;extId&apos;] = msg[&apos;observeid&apos;].toString().toUpperCase();
+tmp[&apos;outcomeDate&apos;] = msg[&apos;date&apos;].toString();
+tmp[&apos;mother&apos;][&apos;extId&apos;] = msg[&apos;individid&apos;].toString().toUpperCase();
+tmp[&apos;father&apos;][&apos;extId&apos;] = msg[&apos;fatherid&apos;].toString().toUpperCase();
+
+
+// outcomes
+var outcomesXml = new XML(&quot;&lt;outcomes /&gt;&quot;);
+var outcomes = msg[&apos;outcome&apos;].length();
+for(var i = 0; i &lt; outcomes; i++) {
+  outcomesXml.appendChild(new XML(&quot;&lt;outcome /&gt;&quot;));
+  if (msg[&apos;outcome&apos;][i][&apos;type&apos;].toString() == &quot;LBR&quot;) {
+    outcomesXml[&apos;outcome&apos;][i][&apos;type&apos;] = msg[&apos;outcome&apos;][i][&apos;type&apos;].toString();
+    outcomesXml[&apos;outcome&apos;][i][&apos;childextId&apos;] = msg[&apos;outcome&apos;][i][&apos;individid&apos;].toString();
+/*    outcomesXml[&apos;outcome&apos;][i][&apos;child&apos;][&apos;extId&apos;] = msg[&apos;outcome&apos;][&apos;individid&apos;].toString();
+    outcomesXml[&apos;outcome&apos;][i][&apos;child&apos;][&apos;firstName&apos;] = msg[&apos;outcome&apos;][i][&apos;firstname&apos;].toString();
+    outcomesXml[&apos;outcome&apos;][i][&apos;child&apos;][&apos;lastName&apos;] = msg[&apos;outcome&apos;][i][&apos;lastname&apos;].toString();
+    outcomesXml[&apos;outcome&apos;][i][&apos;child&apos;][&apos;gender&apos;] = msg[&apos;outcome&apos;][i][&apos;gender&apos;].toString();
+    outcomesXml[&apos;outcome&apos;][i][&apos;child&apos;][&apos;partialDate&apos;] = msg[&apos;partial_date&apos;].toString();
+    outcomesXml[&apos;outcome&apos;][i][&apos;childMembership&apos;][&apos;socialGroup&apos;][&apos;extId&apos;] = msg[&apos;outcome&apos;][i][&apos;socialgpid&apos;].toString()
+	outcomesXml[&apos;outcome&apos;][i][&apos;childMembership&apos;][&apos;bIsToA&apos;] = msg[&apos;outcome&apos;][i][&apos;relationship_to_group_head&apos;].toString();*/
+  } else {
+    outcomesXml[&apos;outcome&apos;][i][&apos;type&apos;] = msg[&apos;outcome&apos;][i][&apos;type&apos;].toString();
+  }
+}
+
+tmp[&quot;outcomes&quot;] = outcomesXml;</script>
+            <type>JavaScript</type>
+            <data>
+              <entry>
+                <string>Script</string>
+                <string>// converts to OpenHDS pregnancy outcome XML
+// basic fields
+tmp[&apos;collectedBy&apos;][&apos;extId&apos;] = msg[&apos;fieldworker&apos;].toString().toUpperCase();
+tmp[&apos;visit&apos;][&apos;extId&apos;] = msg[&apos;observeid&apos;].toString().toUpperCase();
+tmp[&apos;outcomeDate&apos;] = msg[&apos;date&apos;].toString();
+tmp[&apos;mother&apos;][&apos;extId&apos;] = msg[&apos;individid&apos;].toString().toUpperCase();
+tmp[&apos;father&apos;][&apos;extId&apos;] = msg[&apos;fatherid&apos;].toString().toUpperCase();
+
+
+// outcomes
+var outcomesXml = new XML(&quot;&lt;outcomes /&gt;&quot;);
+var outcomes = msg[&apos;outcome&apos;].length();
+for(var i = 0; i &lt; outcomes; i++) {
+  outcomesXml.appendChild(new XML(&quot;&lt;outcome /&gt;&quot;));
+  if (msg[&apos;outcome&apos;][i][&apos;type&apos;].toString() == &quot;LBR&quot;) {
+    outcomesXml[&apos;outcome&apos;][i][&apos;type&apos;] = msg[&apos;outcome&apos;][i][&apos;type&apos;].toString();
+    outcomesXml[&apos;outcome&apos;][i][&apos;childextId&apos;] = msg[&apos;outcome&apos;][i][&apos;individid&apos;].toString();
+/*    outcomesXml[&apos;outcome&apos;][i][&apos;child&apos;][&apos;extId&apos;] = msg[&apos;outcome&apos;][&apos;individid&apos;].toString();
+    outcomesXml[&apos;outcome&apos;][i][&apos;child&apos;][&apos;firstName&apos;] = msg[&apos;outcome&apos;][i][&apos;firstname&apos;].toString();
+    outcomesXml[&apos;outcome&apos;][i][&apos;child&apos;][&apos;lastName&apos;] = msg[&apos;outcome&apos;][i][&apos;lastname&apos;].toString();
+    outcomesXml[&apos;outcome&apos;][i][&apos;child&apos;][&apos;gender&apos;] = msg[&apos;outcome&apos;][i][&apos;gender&apos;].toString();
+    outcomesXml[&apos;outcome&apos;][i][&apos;child&apos;][&apos;partialDate&apos;] = msg[&apos;partial_date&apos;].toString();
+    outcomesXml[&apos;outcome&apos;][i][&apos;childMembership&apos;][&apos;socialGroup&apos;][&apos;extId&apos;] = msg[&apos;outcome&apos;][i][&apos;socialgpid&apos;].toString()
+	outcomesXml[&apos;outcome&apos;][i][&apos;childMembership&apos;][&apos;bIsToA&apos;] = msg[&apos;outcome&apos;][i][&apos;relationship_to_group_head&apos;].toString();*/
+  } else {
+    outcomesXml[&apos;outcome&apos;][i][&apos;type&apos;] = msg[&apos;outcome&apos;][i][&apos;type&apos;].toString();
+  }
+}
+
+tmp[&quot;outcomes&quot;] = outcomesXml;</string>
+              </entry>
+            </data>
+          </step>
+        </steps>
+        <inboundTemplate encoding="base64">PHByZWduYW5jeW91dGNvbWU+CiAgICA8aWQ+PC9pZD4KICAgIDxvYnNlcnZlaWQ+PC9vYnNlcnZl
+aWQ+CiAgICA8aW5kaXZpZGlkPjwvaW5kaXZpZGlkPgogICAgPGZpZWxkd29ya2VyPjwvZmllbGR3
+b3JrZXI+CiAgICA8ZGF0ZT48L2RhdGU+Cgk8cGFydGlhbF9kYXRlPjwvcGFydGlhbF9kYXRlPgog
+ICAgPGZhdGhlcmlkPjwvZmF0aGVyaWQ+CiAgICA8b3V0Y29tZT4KICAgICAgICA8dHlwZT48L3R5
+cGU+CiAgICAgICAgPGZpcnN0bmFtZT48L2ZpcnN0bmFtZT4KICAgICAgICA8c29jaWFsZ3BpZD48
+L3NvY2lhbGdwaWQ+CiAgICAgICAgPGdlbmRlcj48L2dlbmRlcj4KICAgICAgICA8cmVsYXRpb25z
+aGlwX3RvX2dyb3VwX2hlYWQ+PC9yZWxhdGlvbnNoaXBfdG9fZ3JvdXBfaGVhZD4KICAgICAgICA8
+aW5kaXZpZGlkPjwvaW5kaXZpZGlkPgogICAgICAgIDxsYXN0bmFtZT48L2xhc3RuYW1lPgogICAg
+PC9vdXRjb21lPgo8L3ByZWduYW5jeW91dGNvbWU+</inboundTemplate>
+        <outboundTemplate encoding="base64">PHByZWduYW5jeW91dGNvbWU+CiAgICA8Y29sbGVjdGVkQnk+CiAgICAgICAgPGV4dElkPjwvZXh0
+SWQ+CiAgICA8L2NvbGxlY3RlZEJ5PgogICAgPHZpc2l0PgogICAgICAgIDxleHRJZD48L2V4dElk
+PgogICAgPC92aXNpdD4KICAgIDxvdXRjb21lRGF0ZT48L291dGNvbWVEYXRlPgogICAgPG1vdGhl
+cj4KICAgICAgICA8ZXh0SWQ+PC9leHRJZD4KICAgIDwvbW90aGVyPgogICAgPGZhdGhlcj4KICAg
+ICAgICA8ZXh0SWQ+PC9leHRJZD4KICAgIDwvZmF0aGVyPgogICAgPG91dGNvbWVzPgogICAgICAg
+IDxvdXRjb21lPgogICAgICAgICAgICA8dHlwZT48L3R5cGU+CiAgIAkJCTxjaGlsZGV4dElkPjwv
+Y2hpbGRleHRJZD4KICAgICAgICAgICAgPGNoaWxkPgogICAgICAgICAgICAgICAgPGV4dElkPjwv
+ZXh0SWQ+CiAgICAgICAgICAgICAgICA8Zmlyc3ROYW1lPjwvZmlyc3ROYW1lPgogICAgICAgICAg
+ICAgICAgPGxhc3ROYW1lPjwvbGFzdE5hbWU+CiAgICAgICAgICAgICAgICA8Z2VuZGVyPjwvZ2Vu
+ZGVyPgogICAgICAgICAgICA8L2NoaWxkPgogICAgICAgICAgICA8Y2hpbGRNZW1iZXJzaGlwPgog
+ICAgICAgICAgICAgICAgPHNvY2lhbEdyb3VwPgogICAgICAgICAgICAgICAgICAgIDxleHRJZD48
+L2V4dElkPgogICAgICAgICAgICAgICAgPC9zb2NpYWxHcm91cD4KICAgICAgICAgICAgICAgIDxi
+SXNUb0E+PC9iSXNUb0E+CiAgICAgICAgICAgIDwvY2hpbGRNZW1iZXJzaGlwPgogICAgICAgIDwv
+b3V0Y29tZT4KICAgIDwvb3V0Y29tZXM+CjwvcHJlZ25hbmN5b3V0Y29tZT4=</outboundTemplate>
+        <inboundDataType>XML</inboundDataType>
+        <outboundDataType>XML</outboundDataType>
+        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+            <stripNamespaces>true</stripNamespaces>
+          </serializationProperties>
+        </inboundProperties>
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+            <stripNamespaces>true</stripNamespaces>
+          </serializationProperties>
+        </outboundProperties>
+      </transformer>
+      <responseTransformer version="3.0.3">
+        <steps/>
+        <inboundDataType>XML</inboundDataType>
+        <outboundDataType>XML</outboundDataType>
+        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+            <stripNamespaces>true</stripNamespaces>
+          </serializationProperties>
+        </inboundProperties>
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+            <stripNamespaces>true</stripNamespaces>
+          </serializationProperties>
+        </outboundProperties>
+      </responseTransformer>
+      <filter version="3.0.3">
+        <rules>
+          <rule>
+            <sequenceNumber>0</sequenceNumber>
+            <name>New Rule</name>
+            <data>
+              <entry>
+                <string>Script</string>
+                <string>return msg[&quot;@event&quot;].toString() === &quot;pregnancyoutcome&quot;;</string>
+              </entry>
+            </data>
+            <type>JavaScript</type>
+            <script>return msg[&quot;@event&quot;].toString() === &quot;pregnancyoutcome&quot;;</script>
             <operator>NONE</operator>
           </rule>
         </rules>
