@@ -1,16 +1,16 @@
 <channel version="3.0.3">
-  <id>2e864a10-571f-422e-ad04-80e3f4f4e4df</id>
+  <id>a2211a88-5d66-4ebf-843c-997e07287252</id>
   <nextMetaDataId>4</nextMetaDataId>
-  <name>Update Household</name>
+  <name>Baseline Household</name>
   <description>This channel is responsible for handling registering new Households, Memberships and Relationships. &#xd;
 &#xd;
 It&apos;s important to point out that this is intentionally not included with update events. The reason is that household updates are not tied to a visit. This makes it difficult to determine when the right time is to try and insert them in the HDS. For example, if a new household is registered at a location, using a head of household of a newly in migrated individual, it would be wrong to try and send the household registration before the in migration.</description>
   <enabled>true</enabled>
   <lastModified>
-    <time>1410528083621</time>
+    <time>1413550084266</time>
     <timezone>Europe/Berlin</timezone>
   </lastModified>
-  <revision>3</revision>
+  <revision>2</revision>
   <sourceConnector version="3.0.3">
     <metaDataId>0</metaDataId>
     <name>sourceConnector</name>
@@ -41,7 +41,8 @@ It&apos;s important to point out that this is intentionally not included with up
 var dbConn = DatabaseConnectionFactory.createDatabaseConnection(&apos;com.mysql.jdbc.Driver&apos;, globalMap.get(&quot;ODK_DATABASE_URL&quot;), globalMap.get(&quot;ODK_DATABASE_USER&quot;),globalMap.get(&quot;ODK_DATABASE_PASSWORD&quot;));
 
 // only attempt to process household updates if all visits have been processed
-visitResult = dbConn.executeCachedQuery(&quot;SELECT _URI FROM &quot; + globalMap.get(&quot;VISIT_TABLE&quot;) + &quot; WHERE processed_by_mirth=0&quot;);
+visitResult = dbConn.executeCachedQuery(&quot;SELECT _URI FROM &quot; + globalMap.get(&quot;BASELINE_TABLE&quot;) + &quot; WHERE processed_by_mirth=0&quot;);
+
 if (visitResult.next()) {
   dbConn.close();
   return forms;

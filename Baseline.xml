@@ -13,10 +13,10 @@ Visit &#xd;
 Any events...</description>
   <enabled>true</enabled>
   <lastModified>
-    <time>1410773897335</time>
+    <time>1413550956309</time>
     <timezone>Europe/Berlin</timezone>
   </lastModified>
-  <revision>3</revision>
+  <revision>6</revision>
   <sourceConnector version="3.0.3">
     <metaDataId>0</metaDataId>
     <name>sourceConnector</name>

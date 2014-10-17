@@ -13,7 +13,7 @@ Visit &#xd;
 Any events...</description>
   <enabled>true</enabled>
   <lastModified>
-    <time>1412928214329</time>
+    <time>1413551342957</time>
     <timezone>Europe/Berlin</timezone>
   </lastModified>
   <revision>1</revision>
@@ -22,10 +22,10 @@ Any events...</description>
     <name>sourceConnector</name>
     <properties class="com.mirth.connect.connectors.js.JavaScriptReceiverProperties" version="3.0.3">
       <pollConnectorProperties version="3.0.3">
-        <pollingType>time</pollingType>
-        <pollingHour>21</pollingHour>
-        <pollingMinute>30</pollingMinute>
-        <pollingFrequency>5000</pollingFrequency>
+        <pollingType>interval</pollingType>
+        <pollingHour>0</pollingHour>
+        <pollingMinute>0</pollingMinute>
+        <pollingFrequency>500</pollingFrequency>
       </pollConnectorProperties>
       <responseConnectorProperties version="3.0.3">
         <responseVariable>None</responseVariable>
