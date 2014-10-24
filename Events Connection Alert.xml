@@ -1,0 +1,33 @@
+<alertModel version="3.0.3">
+  <id>7b9db8fd-7489-4d90-b568-f465b560c9d2</id>
+  <name>Events Connection Alert</name>
+  <enabled>true</enabled>
+  <trigger class="defaultTrigger" version="3.0.3">
+    <alertChannels version="3.0.3">
+      <newChannelSource>false</newChannelSource>
+      <newChannelDestination>false</newChannelDestination>
+      <enabledChannels>
+        <string>95bbf706-26dc-4af7-84ff-aed09a2607e8</string>
+        <string>2e864a10-571f-422e-ad04-80e3f4f4e4df</string>
+      </enabledChannels>
+      <disabledChannels/>
+      <partialChannels/>
+    </alertChannels>
+    <errorEventTypes>
+      <errorEventType>DESTINATION_CONNECTOR</errorEventType>
+    </errorEventTypes>
+    <regex></regex>
+  </trigger>
+  <actionGroups>
+    <alertActionGroup version="3.0.3">
+      <actions>
+        <alertAction version="3.0.3">
+          <protocol>CHANNEL</protocol>
+          <recipient>61bd42fe-a04d-4d28-b24a-b2432182ccbd</recipient>
+        </alertAction>
+      </actions>
+      <template>${channelError},${transformed},${requestError}</template>
+    </alertActionGroup>
+  </actionGroups>
+  <properties/>
+</alertModel>
