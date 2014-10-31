@@ -11,10 +11,10 @@ Visit &#xd;
 Any events...</description>
   <enabled>true</enabled>
   <lastModified>
-    <time>1414066195318</time>
+    <time>1414749142906</time>
     <timezone>Europe/Berlin</timezone>
   </lastModified>
-  <revision>29</revision>
+  <revision>43</revision>
   <sourceConnector version="3.0.3">
     <metaDataId>0</metaDataId>
     <name>sourceConnector</name>
@@ -44,7 +44,7 @@ Any events...</description>
 
 var dbConn = DatabaseConnectionFactory.createDatabaseConnection(&apos;com.mysql.jdbc.Driver&apos;, globalMap.get(&quot;HRS_DATABASE_URL&quot;), globalMap.get(&quot;HRS_DATABASE_USER&quot;), globalMap.get(&quot;HRS_DATABASE_PASSWORD&quot;));
 
-var round = dbConn.executeCachedQuery(&quot;select id, ROUND_NUM, str_to_date(START_DATE,&apos;%d/%m/%Y&apos;) START_DATE, str_to_date(END_DATE,&apos;%d/%m/%Y&apos;) END_DATE, REMARKS  FROM round where processed_by_mirth=0&quot;);
+var round = dbConn.executeCachedQuery(&quot;select id, ROUND_NUM, str_to_date(START_DATE,&apos;%Y-%m-%d&apos;) START_DATE, str_to_date(END_DATE,&apos;%Y-%m-%d&apos;) END_DATE, REMARKS  FROM round where processed_by_mirth=0&quot;);
   
 forms.addAll(resultsToForms(round, &quot;&lt;round event=&apos;round&apos; table-name=&apos;round&apos;/&gt;&quot;));
 
@@ -53,32 +53,67 @@ var location = dbConn.executeCachedQuery(&quot;SELECT id, subvillageId , LOCATIO
   
 forms.addAll(resultsToForms(location, &quot;&lt;location event=&apos;location&apos; table-name=&apos;location&apos;/&gt;&quot;));
 
-var visitResult = dbConn.executeCachedQuery(&quot;SELECT id, str_to_date(DATE,&apos;%d/%m/%Y&apos;) DATE, OBSERVEID, LOCATIONID, FIELDWORKER, ROUND FROM observation WHERE processed_by_mirth=0;&quot;);
+checkLocation = dbConn.executeCachedQuery(&quot;SELECT id FROM location WHERE processed_by_mirth =0&quot;);
+if (checkLocation.next()) {
+  dbConn.close();
+  return forms;
+}
+
+var visitResult = dbConn.executeCachedQuery(&quot;SELECT id, str_to_date(DATE,&apos;%Y-%m-%d&apos;) DATE, OBSERVEID, LOCATIONID, FIELDWORKER, ROUND FROM observation WHERE processed_by_mirth=0;&quot;);
 forms.addAll(resultsToForms(visitResult, &quot;&lt;visit event=&apos;visit&apos; table-name=&apos;observation&apos;/&gt;&quot;));
 
-
-
-var individualresults = dbConn.executeCachedQuery(&quot;SELECT id, str_to_date(BIRTH_DATE,&apos;%d/%m/%Y&apos;) BIRTH_DATE, FIRSTNAME,MIDDLENAME, MOTHERID, INDIVIDID,  GENDER, FIELDWORKER, LASTNAME, approximate, FATHERID FROM individual WHERE processed_by_mirth=0 order by BIRTH_DATE ASC;&quot;);
+checkVisit = dbConn.executeCachedQuery(&quot;SELECT id FROM observation WHERE processed_by_mirth =0&quot;);
+if (checkVisit.next()) {
+  dbConn.close();
+  return forms;
+}
+var individualresults = dbConn.executeCachedQuery(&quot;SELECT id, str_to_date(BIRTH_DATE,&apos;%Y-%m-%d&apos;) BIRTH_DATE, FIRSTNAME,MIDDLENAME, MOTHERID, INDIVIDID,  GENDER, FIELDWORKER, LASTNAME, approximate, FATHERID FROM individual WHERE processed_by_mirth=0 order by BIRTH_DATE ASC;&quot;);
 forms.addAll(resultsToForms(individualresults, &quot;&lt;individual event=&apos;individual&apos; table-name=&apos;individual&apos;/&gt;&quot;));
 
+checkIndividual = dbConn.executeCachedQuery(&quot;SELECT id FROM individual WHERE processed_by_mirth =0&quot;);
+if (checkIndividual.next()) {
+  dbConn.close();
+  return forms;
+}
 
-var householdResult = dbConn.executeCachedQuery(&quot;select id, str_to_date(DE_DATE,&apos;%d/%m/%Y&apos;) DE_DATE , SOCIALGPID , FIELDWORKER , NAME, TYPE , HEADID  FROM socialgroup WHERE processed_by_mirth=0;&quot;);
+var householdResult = dbConn.executeCachedQuery(&quot;select id, str_to_date(DE_DATE,&apos;%Y-%m-%d&apos;) DE_DATE , SOCIALGPID , FIELDWORKER , NAME, TYPE , HEADID  FROM socialgroup WHERE processed_by_mirth=0;&quot;);
 forms.addAll(resultsToForms(householdResult, &quot;&lt;household event=&apos;household&apos; table-name=&apos;socialgroup&apos;/&gt;&quot;));
 
-var relationshipResult = dbConn.executeCachedQuery(&quot;SELECT id, str_to_date(DE_DATE,&apos;%d/%m/%Y&apos;) DE_DATE, str_to_date(SDATE,&apos;%d/%m/%Y&apos;) SDATE, INDIVIDID2, FIELDWORKER, INDIVIDID, TYPE FROM relationship WHERE processed_by_mirth =0&quot;);
+checkHousehold = dbConn.executeCachedQuery(&quot;SELECT id FROM socialgroup WHERE processed_by_mirth =0&quot;);
+if (checkHousehold.next()) {
+  dbConn.close();
+  return forms;
+}
+var relationshipResult = dbConn.executeCachedQuery(&quot;SELECT id, str_to_date(DE_DATE,&apos;%Y-%m-%d&apos;) DE_DATE, str_to_date(SDATE,&apos;%Y-%m-%d&apos;) SDATE, INDIVIDID2, FIELDWORKER, INDIVIDID, TYPE FROM relationship WHERE processed_by_mirth =0&quot;);
 forms.addAll(resultsToForms(relationshipResult, &quot;&lt;relationship event=&apos;relationship&apos; table-name=&apos;relationship&apos;/&gt;&quot;));
 
-var membershipResult = dbConn.executeCachedQuery(&quot;SELECT id, str_to_date(DE_DATE,&apos;%d/%m/%Y&apos;) DE_DATE, str_to_date(SDATE,&apos;%d/%m/%Y&apos;) SDATE, FIELDWORKER, SOCIALGPID, RLTN_HEAD, INDIVIDID,SEVENTTYPE,EEVENTTYPE,str_to_date(EDATE,&apos;%d/%m/%Y&apos;) EDATE FROM membership WHERE processed_by_mirth =0 order by SDATE asc;&quot;);
+checkRelationship = dbConn.executeCachedQuery(&quot;SELECT id FROM relationship WHERE processed_by_mirth =0&quot;);
+if (checkRelationship.next()) {
+  dbConn.close();
+  return forms;
+}
+var membershipResult = dbConn.executeCachedQuery(&quot;SELECT id, str_to_date(DE_DATE,&apos;%Y-%m-%d&apos;) DE_DATE, str_to_date(SDATE,&apos;%Y-%m-%d&apos;) SDATE, FIELDWORKER, SOCIALGPID, RLTN_HEAD, INDIVIDID,SEVENTTYPE,EEVENTTYPE,str_to_date(EDATE,&apos;%Y-%m-%d&apos;) EDATE FROM membership WHERE processed_by_mirth =0 order by SDATE asc;&quot;);
 forms.addAll(resultsToForms(membershipResult, &quot;&lt;membership event=&apos;membership&apos; table-name=&apos;membership&apos;/&gt;&quot;));
  
+checkMembership = dbConn.executeCachedQuery(&quot;SELECT id FROM membership WHERE processed_by_mirth =0&quot;);
+if (checkMembership.next()) {
+  dbConn.close();
+  return forms;
+}
 
-var pregnobsresults = dbConn.executeCachedQuery(&quot;SELECT id, OBSERVEID,DATE_ADD(str_to_date(DATE,&apos;%d/%m/%Y&apos;), INTERVAL 9- CAST(PREG_MNTHS AS SIGNED) MONTH) EXPECTED_DELIVERY_DATE, FIELDWORKER,str_to_date(DATE,&apos;%d/%m/%Y&apos;) DATE, INDIVIDID FROM indivstatus WHERE processed_by_mirth =0&quot;);
-forms.addAll(resultsToForms(pregnobsresults, &quot;&lt;pregnancyobs event=&apos;pregnancyobs&apos; table-name=&apos;indivstatus&apos;/&gt;&quot;));
+var pregnobsresults = dbConn.executeCachedQuery(&quot;SELECT id, OBSERVEID,DATE_ADD(str_to_date(DATE,&apos;%Y-%m-%d&apos;), INTERVAL 9- CAST(PREG_MONTH AS SIGNED) MONTH) EXPECTED_DELIVERY_DATE, FIELDWORKER,str_to_date(DATE,&apos;%Y-%m-%d&apos;) DATE, INDIVIDID FROM indvstatus WHERE processed_by_mirth =0&quot;);
+forms.addAll(resultsToForms(pregnobsresults, &quot;&lt;pregnancyobs event=&apos;pregnancyobs&apos; table-name=&apos;indvstatus&apos;/&gt;&quot;));
+
+checkPregnObs = dbConn.executeCachedQuery(&quot;SELECT id FROM indvstatus WHERE processed_by_mirth =0&quot;);
+if (checkPregnObs.next()) {
+  dbConn.close();
+  return forms;
+}
 
 
- var resultsOutcome = dbConn.executeCachedQuery(&quot;SELECT id, OBSERVEID, INDIVIDID, 1 PARTIAL_DATE,FIELDWORKER,str_to_date(DATE,&apos;%d/%m/%Y&apos;) DATE, FATHERID FROM pregnancyoutcome WHERE processed_by_mirth =0&quot;);
+ var resultsOutcome = dbConn.executeCachedQuery(&quot;SELECT id, OBSERVEID, INDIVIDID, 1 PARTIAL_DATE,FIELDWORKER,str_to_date(DATE,&apos;%Y-%m-%d&apos;) DATE, FATHERID FROM pregoutcome WHERE processed_by_mirth =0&quot;);
   while(resultsOutcome.next()) {
-    var pregOut = resultSetToXml(resultsOutcome, &quot;&lt;pregnancyoutcome event=&apos;pregnancyoutcome&apos; table-name=&apos;pregnancyoutcome&apos; /&gt;&quot;);
+    var pregOut = resultSetToXml(resultsOutcome, &quot;&lt;pregnancyoutcome event=&apos;pregnancyoutcome&apos; table-name=&apos;pregoutcome&apos; /&gt;&quot;);
     // are there any outcomes for this pregnancy outcome?
     var outcomes = dbConn.executeCachedQuery(&quot;SELECT FIRSTNAME, TYPE, SOCIALGPID , GENDER, 9 RELATIONSHIP_TO_GROUP_HEAD, a.INDIVIDID INDIVIDID, LASTNAME FROM birth a, individual b where a.INDIVIDID = b.INDIVIDID and OBSERVEID= &apos;&quot; + pregOut[&quot;observeid&quot;].toString() + &quot;&apos;&quot;);
     while(outcomes.next()) {
@@ -89,19 +124,42 @@ forms.addAll(resultsToForms(pregnobsresults, &quot;&lt;pregnancyobs event=&apos;
     forms.add(pregOut.toString());
   }
 
-var residencyResult = dbConn.executeCachedQuery(&quot;SELECT id, str_to_date(DE_DATE,&apos;%d/%m/%Y&apos;) DE_DATE, str_to_date(SDATE,&apos;%d/%m/%Y&apos;) SDATE, FIELDWORKER, LOCATIONID,  INDIVIDID,SEVENTTYPE,EEVENTTYPE,str_to_date(EDATE,&apos;%d/%m/%Y&apos;) EDATE FROM residency WHERE processed_by_mirth =0 order by SDATE asc;&quot;);
+checkPregnOut = dbConn.executeCachedQuery(&quot;SELECT id FROM pregoutcome WHERE processed_by_mirth =0&quot;);
+if (checkPregnOut.next()) {
+  dbConn.close();
+  return forms;
+}
+
+
+var residencyResult = dbConn.executeCachedQuery(&quot;SELECT id, str_to_date(DE_DATE,&apos;%Y-%m-%d&apos;) DE_DATE, str_to_date(SDATE,&apos;%Y-%m-%d&apos;) SDATE, FIELDWORKER, LOCATIONID,  INDIVIDID,SEVENTTYPE,EEVENTTYPE,str_to_date(EDATE,&apos;%Y-%m-%d&apos;) EDATE FROM residency WHERE processed_by_mirth =0 order by SDATE asc;&quot;);
 forms.addAll(resultsToForms(residencyResult, &quot;&lt;residency event=&apos;residency&apos; table-name=&apos;residency&apos;/&gt;&quot;));
  
+checkResidency = dbConn.executeCachedQuery(&quot;SELECT id FROM residency WHERE processed_by_mirth =0&quot;);
+if (checkResidency.next()) {
+  dbConn.close();
+  return forms;
+}
 
-var deathresults = dbConn.executeCachedQuery(&quot;SELECT id, OBSERVEID, REASON, FIELDWORKER, str_to_date(DATE,&apos;%d/%m/%Y&apos;) DATE, PLACE, INDIVIDID FROM death where processed_by_mirth =0&quot;);
+var deathresults = dbConn.executeCachedQuery(&quot;SELECT id, OBSERVEID, REASON, FIELDWORKER, str_to_date(DATE,&apos;%Y-%m-%d&apos;) DATE, PLACE, INDIVIDID FROM death where processed_by_mirth =0&quot;);
 forms.addAll(resultsToForms(deathresults, &quot;&lt;death event=&apos;death&apos; table-name=&apos;death&apos;/&gt;&quot;));
 
-var omgresults = dbConn.executeCachedQuery(&quot;SELECT id, OBSERVEID, REGION_NAM, FIELDWORKER, str_to_date(DATE,&apos;%d/%m/%Y&apos;) DATE, REASON, INDIVIDID FROM outmigration WHERE processed_by_mirth =0&quot;);
+checkDeath = dbConn.executeCachedQuery(&quot;SELECT id FROM death WHERE processed_by_mirth =0&quot;);
+if (checkDeath.next()) {
+  dbConn.close();
+  return forms;
+}
+var omgresults = dbConn.executeCachedQuery(&quot;SELECT id, OBSERVEID, REGION_NAM, FIELDWORKER, str_to_date(DATE,&apos;%Y-%m-%d&apos;) DATE, REASON, INDIVIDID FROM outmigration WHERE processed_by_mirth =0&quot;);
 forms.addAll(resultsToForms(omgresults, &quot;&lt;outmigration event=&apos;outmigration&apos; table-name=&apos;outmigration&apos; /&gt;&quot;));
 
-var imgresults = dbConn.executeCachedQuery(&quot;SELECT id, REASON, str_to_date(DATE,&apos;%d/%m/%Y&apos;) DATE, INDIVIDID, REGION_NAM MOVED_FROM , OBSERVEID, INTERNAL, LOCATIONID, FIELDWORKER FROM inmigration where processed_by_mirth=0&quot;);
+checkOmg = dbConn.executeCachedQuery(&quot;SELECT id FROM outmigration WHERE processed_by_mirth =0&quot;);
+if (checkOmg.next()) {
+  dbConn.close();
+  return forms;
+}
+
+var imgresults = dbConn.executeCachedQuery(&quot;SELECT id, REASON, str_to_date(DATE,&apos;%Y-%m-%d&apos;) DATE, INDIVIDID, REGION_NAM MOVED_FROM , OBSERVEID, INTERNAL, LOCATIONID, FIELDWORKER FROM inmigration where processed_by_mirth=0&quot;);
 forms.addAll(resultsToForms(imgresults, &quot;&lt;inmigration event=&apos;inmigration&apos; table-name=&apos;inmigration&apos;/&gt;&quot;));
- 
+
 dbConn.close();
 
 return forms;</script>
