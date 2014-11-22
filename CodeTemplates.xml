@@ -1,5 +1,5 @@
 <list>
-  <codeTemplate version="3.0.3">
+  <codeTemplate version="3.1.0">
     <id>00523e00-7a86-40fc-b07a-dd85cb372261</id>
     <name>Result Set to Forms List</name>
     <tooltip>Transforms a ResultSet to a List of XML forms representing as strings</tooltip>
@@ -15,7 +15,7 @@
     <type>FUNCTION</type>
     <scope>0</scope>
   </codeTemplate>
-  <codeTemplate version="3.0.3">
+  <codeTemplate version="3.1.0">
     <id>0e093113-2971-4efa-bdbc-6b6b7350a1a3</id>
     <name>Retrieve Out Migration Forms</name>
     <tooltip>Reads Out Migrations from the database</tooltip>
@@ -27,7 +27,7 @@
     <type>FUNCTION</type>
     <scope>0</scope>
   </codeTemplate>
-  <codeTemplate version="3.0.3">
+  <codeTemplate version="3.1.0">
     <id>2201f0fc-f3bd-4058-a83d-0df9359ee211</id>
     <name>Retrieve Death of HoH</name>
     <tooltip>Retrieve the Death of Head of Households</tooltip>
@@ -50,7 +50,7 @@
     <type>FUNCTION</type>
     <scope>0</scope>
   </codeTemplate>
-  <codeTemplate version="3.0.3">
+  <codeTemplate version="3.1.0">
     <id>286839da-5111-4bf4-b0db-a3a451b620a9</id>
     <name>Retrieve OutMigration from IM</name>
     <tooltip></tooltip>
@@ -64,7 +64,7 @@ var forms = resultsToForms(results, &quot;&lt;outmigration event=&apos;outmigrat
     <type>FUNCTION</type>
     <scope>0</scope>
   </codeTemplate>
-  <codeTemplate version="3.0.3">
+  <codeTemplate version="3.1.0">
     <id>4e1616a1-7ed4-4f52-b32a-e1ea48b2eaa2</id>
     <name>Retrieve Pregnancy Outcome Forms</name>
     <tooltip>Retrieve Pregnancy Outcome Forms</tooltip>
@@ -94,7 +94,7 @@ function addPregnancyOutcomes(visitId, dbConn) {
     <type>FUNCTION</type>
     <scope>0</scope>
   </codeTemplate>
-  <codeTemplate version="3.0.3">
+  <codeTemplate version="3.1.0">
     <id>5b7999dc-5f95-4f03-82d9-84cc8fc8b6a1</id>
     <name>ResetProcessedErrored</name>
     <tooltip></tooltip>
@@ -116,7 +116,7 @@ dbConn.close();
     <type>FUNCTION</type>
     <scope>0</scope>
   </codeTemplate>
-  <codeTemplate version="3.0.3">
+  <codeTemplate version="3.1.0">
     <id>609da872-981f-472d-9fef-fe6d61f031c7</id>
     <name>Retrieve Baseline Form</name>
     <tooltip></tooltip>
@@ -128,7 +128,7 @@ dbConn.close();
     <type>FUNCTION</type>
     <scope>0</scope>
   </codeTemplate>
-  <codeTemplate version="3.0.3">
+  <codeTemplate version="3.1.0">
     <id>63d7ca76-9a59-450e-87dc-e48fbcf87e42</id>
     <name>Retrieve Pregnancy Observation Forms</name>
     <tooltip>Retrieve Pregnancy Observations</tooltip>
@@ -140,7 +140,7 @@ dbConn.close();
     <type>FUNCTION</type>
     <scope>0</scope>
   </codeTemplate>
-  <codeTemplate version="3.0.3">
+  <codeTemplate version="3.1.0">
     <id>6758f0cc-1618-4c7a-b3fe-3d1ae4b40246</id>
     <name>Result Set to XML</name>
     <tooltip>Converts a java.sql.ResultSet to an XML representation. The XML will have elements named after the column names, and the values of those XML elements will be the column values</tooltip>
@@ -165,7 +165,7 @@ function resultSetToXml(rs, xmlElement) {
     <type>FUNCTION</type>
     <scope>0</scope>
   </codeTemplate>
-  <codeTemplate version="3.0.3">
+  <codeTemplate version="3.1.0">
     <id>6e3b6567-ac0e-477f-91dc-d99979b47004</id>
     <name>Retrieve External In Migration Forms</name>
     <tooltip>Retreive External In Migration Forms</tooltip>
@@ -177,7 +177,24 @@ function resultSetToXml(rs, xmlElement) {
     <type>FUNCTION</type>
     <scope>0</scope>
   </codeTemplate>
-  <codeTemplate version="3.0.3">
+  <codeTemplate version="3.1.0">
+    <id>a6998047-e6e2-4dd6-bc24-0a0edc20b8bb</id>
+    <name>Mark Data Migration Record as processed</name>
+    <tooltip></tooltip>
+    <code>function markRecordAsProcessedMigration(rawData, status) {
+  var originalXml = new XML(rawData);
+  // retrieve the table to update
+  var tableName = originalXml[&quot;@table-name&quot;].toString();
+  var id = originalXml[&quot;id&quot;].toString();
+
+ var dbConn = DatabaseConnectionFactory.createDatabaseConnection(&apos;com.mysql.jdbc.Driver&apos;, globalMap.get(&quot;HRS_DATABASE_URL&quot;), globalMap.get(&quot;HRS_DATABASE_USER&quot;), globalMap.get(&quot;HRS_DATABASE_PASSWORD&quot;));
+  var result = dbConn.executeUpdate(&quot;UPDATE &quot; + tableName + &quot; SET processed_by_mirth = &quot; + status + &quot; WHERE id = &apos;&quot; + id + &quot;&apos;&quot;);
+  dbConn.close();
+}</code>
+    <type>FUNCTION</type>
+    <scope>0</scope>
+  </codeTemplate>
+  <codeTemplate version="3.1.0">
     <id>b3441bd0-63cd-4bd4-96d1-bf98d21a4cdd</id>
     <name>Mark Record as processed</name>
     <tooltip></tooltip>
@@ -201,7 +218,7 @@ if (tableName == globalMap.get(&quot;VISIT_TABLE&quot;) ) {
     <type>FUNCTION</type>
     <scope>0</scope>
   </codeTemplate>
-  <codeTemplate version="3.0.3">
+  <codeTemplate version="3.1.0">
     <id>c9ab01f4-38e6-471d-a294-c615cf2f63c7</id>
     <name>Retrieve Internal In Migration Forms</name>
     <tooltip>Retrieve Internal In Migration Forms</tooltip>
@@ -213,7 +230,7 @@ if (tableName == globalMap.get(&quot;VISIT_TABLE&quot;) ) {
     <type>FUNCTION</type>
     <scope>0</scope>
   </codeTemplate>
-  <codeTemplate version="3.0.3">
+  <codeTemplate version="3.1.0">
     <id>f13b33f5-99ae-45c3-9d6e-b5cfad640b39</id>
     <name>Retrieve Death Forms</name>
     <tooltip>Retrieve Death Forms</tooltip>
