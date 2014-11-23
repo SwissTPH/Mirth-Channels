@@ -104,12 +104,12 @@ function resetProcessedErrored() {
 
 var dbConn = DatabaseConnectionFactory.createDatabaseConnection(&apos;com.mysql.jdbc.Driver&apos;, globalMap.get(&quot;ODK_DATABASE_URL&quot;), globalMap.get(&quot;ODK_DATABASE_USER&quot;), globalMap.get(&quot;ODK_DATABASE_PASSWORD&quot;));
   
-dbConn.executeUpdate(&quot;update VISIT_REGISTRATION_CORE set PROCESSED_BY_MIRTH=false where  VISIT_ID IN (select distinct VISIT_ID from PREGNANCY_OBSERVATION_CORE where PROCESSED_BY_MIRTH =2)&quot;);
-dbConn.executeUpdate(&quot;update VISIT_REGISTRATION_CORE set PROCESSED_BY_MIRTH=false where  VISIT_ID IN (select distinct VISIT_ID from PREGNANCY_OUTCOME_CORE where PROCESSED_BY_MIRTH =2)&quot;);
-dbConn.executeUpdate(&quot;update VISIT_REGISTRATION_CORE set PROCESSED_BY_MIRTH=false where  VISIT_ID IN (select distinct VISIT_ID from IN_MIGRATION_CORE where PROCESSED_BY_MIRTH =2)&quot;);
-dbConn.executeUpdate(&quot;update VISIT_REGISTRATION_CORE set PROCESSED_BY_MIRTH=false where  VISIT_ID IN (select distinct VISIT_ID from DEATH_REGISTRATION_CORE where PROCESSED_BY_MIRTH =2)&quot;);
-dbConn.executeUpdate(&quot;update VISIT_REGISTRATION_CORE set PROCESSED_BY_MIRTH=false where  VISIT_ID IN (select distinct VISIT_ID from OUT_MIGRATION_REGISTRATION_CORE where PROCESSED_BY_MIRTH =2)&quot;);
-dbConn.executeUpdate(&quot;update VISIT_REGISTRATION_CORE set PROCESSED_BY_MIRTH=false where  LOCATION_ID IN (select LOCATION_ID from LOCATION_REGISTRATION_CORE where PROCESSED_BY_MIRTH =2)&quot;);  
+dbConn.executeUpdate(&quot;update VISIT_REGISTRATION_CORE set PROCESSED_BY_MIRTH=false where  VISIT_ID IN (select distinct VISIT_ID from PREGNANCY_OBSERVATION_CORE where PROCESSED_BY_MIRTH =0)&quot;);
+dbConn.executeUpdate(&quot;update VISIT_REGISTRATION_CORE set PROCESSED_BY_MIRTH=false where  VISIT_ID IN (select distinct VISIT_ID from PREGNANCY_OUTCOME_CORE where PROCESSED_BY_MIRTH =0)&quot;);
+dbConn.executeUpdate(&quot;update VISIT_REGISTRATION_CORE set PROCESSED_BY_MIRTH=false where  VISIT_ID IN (select distinct VISIT_ID from IN_MIGRATION_CORE where PROCESSED_BY_MIRTH =0)&quot;);
+dbConn.executeUpdate(&quot;update VISIT_REGISTRATION_CORE set PROCESSED_BY_MIRTH=false where  VISIT_ID IN (select distinct VISIT_ID from DEATH_REGISTRATION_CORE where PROCESSED_BY_MIRTH =0)&quot;);
+dbConn.executeUpdate(&quot;update VISIT_REGISTRATION_CORE set PROCESSED_BY_MIRTH=false where  VISIT_ID IN (select distinct VISIT_ID from OUT_MIGRATION_REGISTRATION_CORE where PROCESSED_BY_MIRTH =0)&quot;);
+dbConn.executeUpdate(&quot;update VISIT_REGISTRATION_CORE set PROCESSED_BY_MIRTH=false where  LOCATION_ID IN (select LOCATION_ID from LOCATION_REGISTRATION_CORE where PROCESSED_BY_MIRTH =0)&quot;);  
 dbConn.close();  
 
 }</code>
