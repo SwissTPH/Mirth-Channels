@@ -1,14 +1,8 @@
 <map>
   <entry>
-    <string>Shutdown</string>
+    <string>Undeploy</string>
     <string>// This script executes once when all channels shut down from a redeploy
 // You only have access to the globalMap here to persist data
-return;</string>
-  </entry>
-  <entry>
-    <string>Postprocessor</string>
-    <string>// This script executes once after a message has been processed
-// This script applies across all channels
 return;</string>
   </entry>
   <entry>
@@ -32,6 +26,11 @@ globalMap.put(&quot;dbPass&quot;, &quot;data&quot;);
 globalMap.put(&quot;ODK_DATABASE_URL&quot;,&quot;jdbc:mysql://localhost/odk_prod&quot;);
 globalMap.put(&quot;ODK_DATABASE_USER&quot;,&quot;data&quot;);
 globalMap.put(&quot;ODK_DATABASE_PASSWORD&quot;,&quot;data&quot;);
+
+
+globalMap.put(&quot;HRS_DATABASE_URL&quot;,&quot;jdbc:mysql://localhost/hrs_mysql_db&quot;);
+globalMap.put(&quot;HRS_DATABASE_USER&quot;,&quot;data&quot;);
+globalMap.put(&quot;HRS_DATABASE_PASSWORD&quot;,&quot;data&quot;);
 
 // openhds information
 globalMap.put(&quot;OPENHDS_PATH&quot;,&quot;http://localhost:8080/openhds/api/rest&quot;);
@@ -63,5 +62,11 @@ return;</string>
     <string>// Modify the message variable below to pre process data
 // This script applies across all channels
 return message;</string>
+  </entry>
+  <entry>
+    <string>Postprocessor</string>
+    <string>// This script executes once after a message has been processed
+// This script applies across all channels
+return;</string>
   </entry>
 </map>
