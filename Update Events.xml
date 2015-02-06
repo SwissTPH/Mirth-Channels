@@ -1,4 +1,4 @@
-<channel version="3.0.3">
+<channel version="3.1.1">
   <id>95bbf706-26dc-4af7-84ff-aed09a2607e8</id>
   <nextMetaDataId>12</nextMetaDataId>
   <name>Update Events</name>
@@ -13,39 +13,31 @@ Visit &#xd;
 Any events...</description>
   <enabled>true</enabled>
   <lastModified>
-    <time>1413551342957</time>
+    <time>1423218611774</time>
     <timezone>Europe/Berlin</timezone>
   </lastModified>
-  <revision>1</revision>
-  <sourceConnector version="3.0.3">
+  <revision>4</revision>
+  <sourceConnector version="3.1.1">
     <metaDataId>0</metaDataId>
     <name>sourceConnector</name>
-    <properties class="com.mirth.connect.connectors.js.JavaScriptReceiverProperties" version="3.0.3">
-      <pollConnectorProperties version="3.0.3">
+    <properties class="com.mirth.connect.connectors.js.JavaScriptReceiverProperties" version="3.1.1">
+      <pluginProperties/>
+      <pollConnectorProperties version="3.1.1">
         <pollingType>interval</pollingType>
         <pollingHour>0</pollingHour>
         <pollingMinute>0</pollingMinute>
         <pollingFrequency>500</pollingFrequency>
       </pollConnectorProperties>
-      <responseConnectorProperties version="3.0.3">
+      <sourceConnectorProperties version="3.1.1">
         <responseVariable>None</responseVariable>
-        <defaultQueueOnResponses>
-          <string>None</string>
-          <string>Auto-generate (Before processing)</string>
-        </defaultQueueOnResponses>
-        <defaultQueueOffResponses>
-          <string>None</string>
-          <string>Auto-generate (Before processing)</string>
-          <string>Auto-generate (After source transformer)</string>
-          <string>Auto-generate (Destinations completed)</string>
-          <string>Postprocessor</string>
-        </defaultQueueOffResponses>
         <respondAfterProcessing>true</respondAfterProcessing>
-      </responseConnectorProperties>
+        <processBatch>false</processBatch>
+        <firstResponse>false</firstResponse>
+      </sourceConnectorProperties>
       <script>var forms = new java.util.ArrayList()
 
 var dbConn = DatabaseConnectionFactory.createDatabaseConnection(&apos;com.mysql.jdbc.Driver&apos;, globalMap.get(&quot;ODK_DATABASE_URL&quot;), globalMap.get(&quot;ODK_DATABASE_USER&quot;), globalMap.get(&quot;ODK_DATABASE_PASSWORD&quot;));
-var visitResult = dbConn.executeCachedQuery(&quot;SELECT DISTINCT VISIT_DATE, VISIT_ID, LOCATION_ID, FIELD_WORKER_ID, ROUND_NUMBER FROM &quot; + globalMap.get(&quot;VISIT_TABLE&quot;) + &quot; WHERE processed_by_mirth=0 order by START ASC&quot;);
+var visitResult = dbConn.executeCachedQuery(&quot;SELECT DISTINCT VISIT_DATE, VISIT_ID, LOCATION_ID, FIELD_WORKER_ID, ROUND_NUMBER FROM &quot; + globalMap.get(&quot;VISIT_TABLE&quot;) + &quot; WHERE processed_by_mirth=0 OR processed_by_mirth IS NULL order by START ASC&quot;);
 
 while(visitResult.next()) {
   var visitXml = resultSetToXml(visitResult, &quot;&lt;visit event=&apos;visit&apos; table-name=&apos;&quot; + globalMap.get(&quot;VISIT_TABLE&quot;) + &quot;&apos;/&gt;&quot;);
@@ -77,7 +69,7 @@ dbConn.close();
 // You may access this result below with $(&apos;column_name&apos;)
 return forms;</script>
     </properties>
-    <transformer version="3.0.3">
+    <transformer version="3.1.1">
       <steps/>
       <inboundTemplate encoding="base64">PGxvY2F0aW9uIGV2ZW50PSJsb2NhdGlvbiIgdGFibGUtbmFtZT0ibG9jYXRpb25fcmVnaXN0cmF0
 aW9uX2NvcmUiPgogICAgPF91cmk+PC9fdXJpPgogICAgPGhpZXJhcmNoeV9pZD48L2hpZXJhcmNo
@@ -89,18 +81,32 @@ PgogICAgPGxhdGl0dWRlPjwvbGF0aXR1ZGU+CjwvbG9jYXRpb24+</inboundTemplate>
       <outboundTemplate encoding="base64"></outboundTemplate>
       <inboundDataType>XML</inboundDataType>
       <outboundDataType>XML</outboundDataType>
-      <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-        <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+      <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+        <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
           <stripNamespaces>true</stripNamespaces>
         </serializationProperties>
+        <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+          <splitType>Element_Name</splitType>
+          <elementName></elementName>
+          <level>1</level>
+          <query></query>
+          <batchScript></batchScript>
+        </batchProperties>
       </inboundProperties>
-      <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-        <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+      <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+        <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
           <stripNamespaces>true</stripNamespaces>
         </serializationProperties>
+        <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+          <splitType>Element_Name</splitType>
+          <elementName></elementName>
+          <level>1</level>
+          <query></query>
+          <batchScript></batchScript>
+        </batchProperties>
       </outboundProperties>
     </transformer>
-    <filter version="3.0.3">
+    <filter version="3.1.1">
       <rules/>
     </filter>
     <transportName>JavaScript Reader</transportName>
@@ -109,11 +115,12 @@ PgogICAgPGxhdGl0dWRlPjwvbGF0aXR1ZGU+CjwvbG9jYXRpb24+</inboundTemplate>
     <waitForPrevious>true</waitForPrevious>
   </sourceConnector>
   <destinationConnectors>
-    <connector version="3.0.3">
+    <connector version="3.1.1">
       <metaDataId>1</metaDataId>
       <name>Location </name>
-      <properties class="com.mirth.connect.connectors.http.HttpDispatcherProperties" version="3.0.3">
-        <queueConnectorProperties version="3.0.3">
+      <properties class="com.mirth.connect.connectors.http.HttpDispatcherProperties" version="3.1.1">
+        <pluginProperties/>
+        <destinationConnectorProperties version="3.1.1">
           <queueEnabled>false</queueEnabled>
           <sendFirst>false</sendFirst>
           <retryIntervalMillis>10000</retryIntervalMillis>
@@ -121,23 +128,33 @@ PgogICAgPGxhdGl0dWRlPjwvbGF0aXR1ZGU+CjwvbG9jYXRpb24+</inboundTemplate>
           <retryCount>0</retryCount>
           <rotate>false</rotate>
           <threadCount>1</threadCount>
-        </queueConnectorProperties>
+          <validateResponse>false</validateResponse>
+        </destinationConnectorProperties>
         <host>${OPENHDS_PATH}/locations</host>
+        <useProxyServer>false</useProxyServer>
+        <proxyAddress></proxyAddress>
+        <proxyPort></proxyPort>
         <method>post</method>
         <headers class="linked-hash-map"/>
         <parameters class="linked-hash-map"/>
-        <includeHeadersInResponse>false</includeHeadersInResponse>
+        <responseXmlBody>false</responseXmlBody>
+        <responseParseMultipart>true</responseParseMultipart>
+        <responseIncludeMetadata>false</responseIncludeMetadata>
+        <responseBinaryMimeTypes></responseBinaryMimeTypes>
+        <responseBinaryMimeTypesRegex>false</responseBinaryMimeTypesRegex>
         <multipart>false</multipart>
         <useAuthentication>true</useAuthentication>
         <authenticationType>Basic</authenticationType>
+        <usePreemptiveAuthentication>true</usePreemptiveAuthentication>
         <username>${OPENHDS_USER}</username>
         <password>${OPENHDS_PASSWORD}</password>
         <content>${message.transformedData}</content>
         <contentType>application/xml</contentType>
+        <dataTypeBinary>false</dataTypeBinary>
         <charset>UTF-8</charset>
         <socketTimeout>30000</socketTimeout>
       </properties>
-      <transformer version="3.0.3">
+      <transformer version="3.1.1">
         <steps>
           <step>
             <sequenceNumber>0</sequenceNumber>
@@ -373,33 +390,61 @@ Z2l0dWRlPjwvbG9uZ2l0dWRlPgogICAgPGxhdGl0dWRlPjwvbGF0aXR1ZGU+CjwvbG9jYXRpb24+
 </outboundTemplate>
         <inboundDataType>XML</inboundDataType>
         <outboundDataType>XML</outboundDataType>
-        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </inboundProperties>
-        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </outboundProperties>
       </transformer>
-      <responseTransformer version="3.0.3">
+      <responseTransformer version="3.1.1">
         <steps/>
         <inboundDataType>XML</inboundDataType>
         <outboundDataType>XML</outboundDataType>
-        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </inboundProperties>
-        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </outboundProperties>
       </responseTransformer>
-      <filter version="3.0.3">
+      <filter version="3.1.1">
         <rules>
           <rule>
             <sequenceNumber>0</sequenceNumber>
@@ -421,11 +466,12 @@ Z2l0dWRlPjwvbG9uZ2l0dWRlPgogICAgPGxhdGl0dWRlPjwvbGF0aXR1ZGU+CjwvbG9jYXRpb24+
       <enabled>true</enabled>
       <waitForPrevious>true</waitForPrevious>
     </connector>
-    <connector version="3.0.3">
+    <connector version="3.1.1">
       <metaDataId>2</metaDataId>
       <name>Visit</name>
-      <properties class="com.mirth.connect.connectors.http.HttpDispatcherProperties" version="3.0.3">
-        <queueConnectorProperties version="3.0.3">
+      <properties class="com.mirth.connect.connectors.http.HttpDispatcherProperties" version="3.1.1">
+        <pluginProperties/>
+        <destinationConnectorProperties version="3.1.1">
           <queueEnabled>false</queueEnabled>
           <sendFirst>false</sendFirst>
           <retryIntervalMillis>10000</retryIntervalMillis>
@@ -433,23 +479,33 @@ Z2l0dWRlPjwvbG9uZ2l0dWRlPgogICAgPGxhdGl0dWRlPjwvbGF0aXR1ZGU+CjwvbG9jYXRpb24+
           <retryCount>0</retryCount>
           <rotate>false</rotate>
           <threadCount>1</threadCount>
-        </queueConnectorProperties>
+          <validateResponse>false</validateResponse>
+        </destinationConnectorProperties>
         <host>${OPENHDS_PATH}/visits</host>
+        <useProxyServer>false</useProxyServer>
+        <proxyAddress></proxyAddress>
+        <proxyPort></proxyPort>
         <method>post</method>
         <headers class="linked-hash-map"/>
         <parameters class="linked-hash-map"/>
-        <includeHeadersInResponse>false</includeHeadersInResponse>
+        <responseXmlBody>false</responseXmlBody>
+        <responseParseMultipart>true</responseParseMultipart>
+        <responseIncludeMetadata>false</responseIncludeMetadata>
+        <responseBinaryMimeTypes></responseBinaryMimeTypes>
+        <responseBinaryMimeTypesRegex>false</responseBinaryMimeTypesRegex>
         <multipart>false</multipart>
         <useAuthentication>true</useAuthentication>
         <authenticationType>Basic</authenticationType>
+        <usePreemptiveAuthentication>true</usePreemptiveAuthentication>
         <username>${OPENHDS_USER}</username>
         <password>${OPENHDS_PASSWORD}</password>
         <content>${message.transformedData}</content>
         <contentType>application/xml</contentType>
+        <dataTypeBinary>false</dataTypeBinary>
         <charset>UTF-8</charset>
         <socketTimeout>30000</socketTimeout>
       </properties>
-      <transformer version="3.0.3">
+      <transformer version="3.1.1">
         <steps>
           <step>
             <sequenceNumber>0</sequenceNumber>
@@ -583,33 +639,61 @@ c2l0RGF0ZT48L3Zpc2l0RGF0ZT4KICA8dmlzaXRMb2NhdGlvbj4KICAgIDxleHRJZD48L2V4dElk
 PgogIDwvdmlzaXRMb2NhdGlvbj4KPC92aXNpdD4=</outboundTemplate>
         <inboundDataType>XML</inboundDataType>
         <outboundDataType>XML</outboundDataType>
-        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </inboundProperties>
-        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </outboundProperties>
       </transformer>
-      <responseTransformer version="3.0.3">
+      <responseTransformer version="3.1.1">
         <steps/>
         <inboundDataType>XML</inboundDataType>
         <outboundDataType>XML</outboundDataType>
-        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </inboundProperties>
-        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </outboundProperties>
       </responseTransformer>
-      <filter version="3.0.3">
+      <filter version="3.1.1">
         <rules>
           <rule>
             <sequenceNumber>0</sequenceNumber>
@@ -631,11 +715,12 @@ PgogIDwvdmlzaXRMb2NhdGlvbj4KPC92aXNpdD4=</outboundTemplate>
       <enabled>true</enabled>
       <waitForPrevious>true</waitForPrevious>
     </connector>
-    <connector version="3.0.3">
+    <connector version="3.1.1">
       <metaDataId>3</metaDataId>
       <name>Death</name>
-      <properties class="com.mirth.connect.connectors.http.HttpDispatcherProperties" version="3.0.3">
-        <queueConnectorProperties version="3.0.3">
+      <properties class="com.mirth.connect.connectors.http.HttpDispatcherProperties" version="3.1.1">
+        <pluginProperties/>
+        <destinationConnectorProperties version="3.1.1">
           <queueEnabled>false</queueEnabled>
           <sendFirst>false</sendFirst>
           <retryIntervalMillis>10000</retryIntervalMillis>
@@ -643,23 +728,33 @@ PgogIDwvdmlzaXRMb2NhdGlvbj4KPC92aXNpdD4=</outboundTemplate>
           <retryCount>0</retryCount>
           <rotate>false</rotate>
           <threadCount>1</threadCount>
-        </queueConnectorProperties>
+          <validateResponse>false</validateResponse>
+        </destinationConnectorProperties>
         <host>${OPENHDS_PATH}/deaths</host>
+        <useProxyServer>false</useProxyServer>
+        <proxyAddress></proxyAddress>
+        <proxyPort></proxyPort>
         <method>post</method>
         <headers class="linked-hash-map"/>
         <parameters class="linked-hash-map"/>
-        <includeHeadersInResponse>false</includeHeadersInResponse>
+        <responseXmlBody>false</responseXmlBody>
+        <responseParseMultipart>true</responseParseMultipart>
+        <responseIncludeMetadata>false</responseIncludeMetadata>
+        <responseBinaryMimeTypes></responseBinaryMimeTypes>
+        <responseBinaryMimeTypesRegex>false</responseBinaryMimeTypesRegex>
         <multipart>false</multipart>
         <useAuthentication>true</useAuthentication>
         <authenticationType>Basic</authenticationType>
+        <usePreemptiveAuthentication>true</usePreemptiveAuthentication>
         <username>${OPENHDS_USER}</username>
         <password>${OPENHDS_PASSWORD}</password>
         <content>${message.transformedData}</content>
         <contentType>application/xml</contentType>
+        <dataTypeBinary>false</dataTypeBinary>
         <charset>UTF-8</charset>
         <socketTimeout>30000</socketTimeout>
       </properties>
-      <transformer version="3.0.3">
+      <transformer version="3.1.1">
         <steps>
           <step>
             <sequenceNumber>0</sequenceNumber>
@@ -818,33 +913,61 @@ YXRoRGF0ZT48L2RlYXRoRGF0ZT4KICA8Y29sbGVjdGVkQnk+CiAgICA8ZXh0SWQ+PC9leHRJZD4K
 ICA8L2NvbGxlY3RlZEJ5Pgo8L2RlYXRoPg==</outboundTemplate>
         <inboundDataType>XML</inboundDataType>
         <outboundDataType>XML</outboundDataType>
-        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </inboundProperties>
-        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </outboundProperties>
       </transformer>
-      <responseTransformer version="3.0.3">
+      <responseTransformer version="3.1.1">
         <steps/>
         <inboundDataType>XML</inboundDataType>
         <outboundDataType>XML</outboundDataType>
-        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </inboundProperties>
-        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </outboundProperties>
       </responseTransformer>
-      <filter version="3.0.3">
+      <filter version="3.1.1">
         <rules>
           <rule>
             <sequenceNumber>0</sequenceNumber>
@@ -866,11 +989,12 @@ ICA8L2NvbGxlY3RlZEJ5Pgo8L2RlYXRoPg==</outboundTemplate>
       <enabled>true</enabled>
       <waitForPrevious>true</waitForPrevious>
     </connector>
-    <connector version="3.0.3">
+    <connector version="3.1.1">
       <metaDataId>4</metaDataId>
       <name>Death of Head of Household</name>
-      <properties class="com.mirth.connect.connectors.http.HttpDispatcherProperties" version="3.0.3">
-        <queueConnectorProperties version="3.0.3">
+      <properties class="com.mirth.connect.connectors.http.HttpDispatcherProperties" version="3.1.1">
+        <pluginProperties/>
+        <destinationConnectorProperties version="3.1.1">
           <queueEnabled>false</queueEnabled>
           <sendFirst>false</sendFirst>
           <retryIntervalMillis>10000</retryIntervalMillis>
@@ -878,23 +1002,33 @@ ICA8L2NvbGxlY3RlZEJ5Pgo8L2RlYXRoPg==</outboundTemplate>
           <retryCount>0</retryCount>
           <rotate>false</rotate>
           <threadCount>1</threadCount>
-        </queueConnectorProperties>
+          <validateResponse>false</validateResponse>
+        </destinationConnectorProperties>
         <host>${OPENHDS_PATH}/hoh</host>
+        <useProxyServer>false</useProxyServer>
+        <proxyAddress></proxyAddress>
+        <proxyPort></proxyPort>
         <method>post</method>
         <headers class="linked-hash-map"/>
         <parameters class="linked-hash-map"/>
-        <includeHeadersInResponse>false</includeHeadersInResponse>
+        <responseXmlBody>false</responseXmlBody>
+        <responseParseMultipart>true</responseParseMultipart>
+        <responseIncludeMetadata>false</responseIncludeMetadata>
+        <responseBinaryMimeTypes></responseBinaryMimeTypes>
+        <responseBinaryMimeTypesRegex>false</responseBinaryMimeTypesRegex>
         <multipart>false</multipart>
         <useAuthentication>true</useAuthentication>
         <authenticationType>Basic</authenticationType>
+        <usePreemptiveAuthentication>true</usePreemptiveAuthentication>
         <username>${OPENHDS_USER}</username>
-        <password>${ODK_DATABASE_PASSWORD}</password>
+        <password>${OPENHDS_PASSWORD}</password>
         <content>${message.transformedData}</content>
         <contentType>application/xml</contentType>
+        <dataTypeBinary>false</dataTypeBinary>
         <charset>UTF-8</charset>
         <socketTimeout>30000</socketTimeout>
       </properties>
-      <transformer version="3.0.3">
+      <transformer version="3.1.1">
         <steps>
           <step>
             <sequenceNumber>0</sequenceNumber>
@@ -909,7 +1043,7 @@ tmp[&apos;socialGroup&apos;][&apos;extId&apos;] = msg[&apos;household_id&apos;].
 tmp[&apos;death&apos;][&apos;visitDeath&apos;][&apos;extId&apos;] = msg[&apos;visit_id&apos;].toString().toUpperCase();
 tmp[&apos;death&apos;][&apos;individual&apos;][&apos;extId&apos;] = msg[&apos;individual_id&apos;].toString().toUpperCase();
 tmp[&apos;death&apos;][&apos;deathPlace&apos;] = msg[&apos;place_of_death&apos;].toString();
-tmp[&apos;death&apos;][&apos;deathCause&apos;] = msg[&apos;causeofdeathdiagnosed&apos;].toString();
+tmp[&apos;death&apos;][&apos;deathCause&apos;] = msg[&apos;cause_of_death&apos;].toString();
 tmp[&apos;death&apos;][&apos;deathDate&apos;] = msg[&apos;date&apos;].toString();
 tmp[&apos;death&apos;][&apos;collectedBy&apos;][&apos;extId&apos;] = msg[&apos;field_worker_id&apos;].toString().toUpperCase();
 
@@ -937,7 +1071,7 @@ tmp[&apos;socialGroup&apos;][&apos;extId&apos;] = msg[&apos;household_id&apos;].
 tmp[&apos;death&apos;][&apos;visitDeath&apos;][&apos;extId&apos;] = msg[&apos;visit_id&apos;].toString().toUpperCase();
 tmp[&apos;death&apos;][&apos;individual&apos;][&apos;extId&apos;] = msg[&apos;individual_id&apos;].toString().toUpperCase();
 tmp[&apos;death&apos;][&apos;deathPlace&apos;] = msg[&apos;place_of_death&apos;].toString();
-tmp[&apos;death&apos;][&apos;deathCause&apos;] = msg[&apos;causeofdeathdiagnosed&apos;].toString();
+tmp[&apos;death&apos;][&apos;deathCause&apos;] = msg[&apos;cause_of_death&apos;].toString();
 tmp[&apos;death&apos;][&apos;deathDate&apos;] = msg[&apos;date&apos;].toString();
 tmp[&apos;death&apos;][&apos;collectedBy&apos;][&apos;extId&apos;] = msg[&apos;field_worker_id&apos;].toString().toUpperCase();
 
@@ -962,11 +1096,11 @@ dXNlaG9sZF9pZD48L2hvdXNlaG9sZF9pZD4KCTxwbGFjZV9vZl9kZWF0aD48L3BsYWNlX29mX2Rl
 YXRoPgoJPHdob20+PC93aG9tPgoJPGRpYWdub3NlZGRlYXRoPjwvZGlhZ25vc2VkZGVhdGg+Cgk8
 b3RoZXJwbGFjZV9vZl9kZWF0aD48L290aGVycGxhY2Vfb2ZfZGVhdGg+Cgk8Y2F1c2VvZmRlYXRo
 ZGlhZ25vc2VkPjwvY2F1c2VvZmRlYXRoZGlhZ25vc2VkPgoJPGRhdGU+PC9kYXRlPgoJPGNhdXNl
-b2ZkZWF0aG5vdGRpYWdub3NlZD48L2NhdXNlb2ZkZWF0aG5vdGRpYWdub3NlZD4KICAgIDxyZWxh
-dGlvbj4NCiAgICAgICAgPG1lbWJlcl9uYW1lPjwvbWVtYmVyX25hbWU+DQogICAgICAgIDxyZWxh
-dGlvbnNoaXBfdG9fZ3JvdXBfaGVhZD48L3JlbGF0aW9uc2hpcF90b19ncm91cF9oZWFkPg0KICAg
-ICAgICA8ZXh0X2lkPjwvZXh0X2lkPg0KICAgICAgICA8c29jaWFsX2dyb3VwX2lkPjwvc29jaWFs
-X2dyb3VwX2lkPg0KICAgIDwvcmVsYXRpb24+DQo8L2RlYXRoSG9IPg==</inboundTemplate>
+X29mX2RlYXRoPjwvY2F1c2Vfb2ZfZGVhdGg+CiAgICA8cmVsYXRpb24+DQogICAgICAgIDxtZW1i
+ZXJfbmFtZT48L21lbWJlcl9uYW1lPg0KICAgICAgICA8cmVsYXRpb25zaGlwX3RvX2dyb3VwX2hl
+YWQ+PC9yZWxhdGlvbnNoaXBfdG9fZ3JvdXBfaGVhZD4NCiAgICAgICAgPGV4dF9pZD48L2V4dF9p
+ZD4NCiAgICAgICAgPHNvY2lhbF9ncm91cF9pZD48L3NvY2lhbF9ncm91cF9pZD4NCiAgICA8L3Jl
+bGF0aW9uPg0KPC9kZWF0aEhvSD4=</inboundTemplate>
         <outboundTemplate encoding="base64">PGRlYXRoX29mX2hoPg0KICAgIDxjb2xsZWN0ZWRCeT4KCQk8ZXh0SWQ+PC9leHRJZD4KCTwvY29s
 bGVjdGVkQnk+CiAgICA8dmlzaXQ+CgkJPGV4dElkPjwvZXh0SWQ+Cgk8L3Zpc2l0Pg0KICAgIDxu
 ZXdIb2g+CgkJPGV4dElkPjwvZXh0SWQ+Cgk8L25ld0hvaD4NCiAgICA8b2xkSG9oPgoJCTxleHRJ
@@ -983,33 +1117,61 @@ cm91cD4NCgkgICAgPC9tZW1iZXJzaGlwPg0KCTwvbWVtYmVyc2hpcHM+CjwvZGVhdGhfb2ZfaGg+
 </outboundTemplate>
         <inboundDataType>XML</inboundDataType>
         <outboundDataType>XML</outboundDataType>
-        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </inboundProperties>
-        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </outboundProperties>
       </transformer>
-      <responseTransformer version="3.0.3">
+      <responseTransformer version="3.1.1">
         <steps/>
         <inboundDataType>XML</inboundDataType>
         <outboundDataType>XML</outboundDataType>
-        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </inboundProperties>
-        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </outboundProperties>
       </responseTransformer>
-      <filter version="3.0.3">
+      <filter version="3.1.1">
         <rules>
           <rule>
             <sequenceNumber>0</sequenceNumber>
@@ -1031,11 +1193,12 @@ cm91cD4NCgkgICAgPC9tZW1iZXJzaGlwPg0KCTwvbWVtYmVyc2hpcHM+CjwvZGVhdGhfb2ZfaGg+
       <enabled>true</enabled>
       <waitForPrevious>true</waitForPrevious>
     </connector>
-    <connector version="3.0.3">
+    <connector version="3.1.1">
       <metaDataId>5</metaDataId>
       <name>Out Migration</name>
-      <properties class="com.mirth.connect.connectors.http.HttpDispatcherProperties" version="3.0.3">
-        <queueConnectorProperties version="3.0.3">
+      <properties class="com.mirth.connect.connectors.http.HttpDispatcherProperties" version="3.1.1">
+        <pluginProperties/>
+        <destinationConnectorProperties version="3.1.1">
           <queueEnabled>false</queueEnabled>
           <sendFirst>false</sendFirst>
           <retryIntervalMillis>10000</retryIntervalMillis>
@@ -1043,23 +1206,33 @@ cm91cD4NCgkgICAgPC9tZW1iZXJzaGlwPg0KCTwvbWVtYmVyc2hpcHM+CjwvZGVhdGhfb2ZfaGg+
           <retryCount>0</retryCount>
           <rotate>false</rotate>
           <threadCount>1</threadCount>
-        </queueConnectorProperties>
+          <validateResponse>false</validateResponse>
+        </destinationConnectorProperties>
         <host>${OPENHDS_PATH}/outmigrations</host>
+        <useProxyServer>false</useProxyServer>
+        <proxyAddress></proxyAddress>
+        <proxyPort></proxyPort>
         <method>post</method>
         <headers class="linked-hash-map"/>
         <parameters class="linked-hash-map"/>
-        <includeHeadersInResponse>false</includeHeadersInResponse>
+        <responseXmlBody>false</responseXmlBody>
+        <responseParseMultipart>true</responseParseMultipart>
+        <responseIncludeMetadata>false</responseIncludeMetadata>
+        <responseBinaryMimeTypes></responseBinaryMimeTypes>
+        <responseBinaryMimeTypesRegex>false</responseBinaryMimeTypesRegex>
         <multipart>false</multipart>
         <useAuthentication>true</useAuthentication>
         <authenticationType>Basic</authenticationType>
+        <usePreemptiveAuthentication>true</usePreemptiveAuthentication>
         <username>${OPENHDS_USER}</username>
         <password>${OPENHDS_PASSWORD}</password>
         <content>${message.transformedData}</content>
         <contentType>application/xml</contentType>
+        <dataTypeBinary>false</dataTypeBinary>
         <charset>UTF-8</charset>
         <socketTimeout>30000</socketTimeout>
       </properties>
-      <transformer version="3.0.3">
+      <transformer version="3.1.1">
         <steps>
           <step>
             <sequenceNumber>0</sequenceNumber>
@@ -1220,33 +1393,61 @@ IDwvdmlzaXQ+CiAgICA8cmVjb3JkZWREYXRlPjwvcmVjb3JkZWREYXRlPgo8L291dG1pZ3JhdGlv
 bj4=</outboundTemplate>
         <inboundDataType>XML</inboundDataType>
         <outboundDataType>XML</outboundDataType>
-        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </inboundProperties>
-        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </outboundProperties>
       </transformer>
-      <responseTransformer version="3.0.3">
+      <responseTransformer version="3.1.1">
         <steps/>
         <inboundDataType>XML</inboundDataType>
         <outboundDataType>XML</outboundDataType>
-        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </inboundProperties>
-        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </outboundProperties>
       </responseTransformer>
-      <filter version="3.0.3">
+      <filter version="3.1.1">
         <rules>
           <rule>
             <sequenceNumber>0</sequenceNumber>
@@ -1268,11 +1469,12 @@ bj4=</outboundTemplate>
       <enabled>true</enabled>
       <waitForPrevious>true</waitForPrevious>
     </connector>
-    <connector version="3.0.3">
+    <connector version="3.1.1">
       <metaDataId>6</metaDataId>
       <name>Out Mig IM</name>
-      <properties class="com.mirth.connect.connectors.http.HttpDispatcherProperties" version="3.0.3">
-        <queueConnectorProperties version="3.0.3">
+      <properties class="com.mirth.connect.connectors.http.HttpDispatcherProperties" version="3.1.1">
+        <pluginProperties/>
+        <destinationConnectorProperties version="3.1.1">
           <queueEnabled>false</queueEnabled>
           <sendFirst>false</sendFirst>
           <retryIntervalMillis>10000</retryIntervalMillis>
@@ -1280,23 +1482,33 @@ bj4=</outboundTemplate>
           <retryCount>0</retryCount>
           <rotate>false</rotate>
           <threadCount>1</threadCount>
-        </queueConnectorProperties>
+          <validateResponse>false</validateResponse>
+        </destinationConnectorProperties>
         <host>${OPENHDS_PATH}/outmigrations</host>
+        <useProxyServer>false</useProxyServer>
+        <proxyAddress></proxyAddress>
+        <proxyPort></proxyPort>
         <method>post</method>
         <headers class="linked-hash-map"/>
         <parameters class="linked-hash-map"/>
-        <includeHeadersInResponse>false</includeHeadersInResponse>
+        <responseXmlBody>false</responseXmlBody>
+        <responseParseMultipart>true</responseParseMultipart>
+        <responseIncludeMetadata>false</responseIncludeMetadata>
+        <responseBinaryMimeTypes></responseBinaryMimeTypes>
+        <responseBinaryMimeTypesRegex>false</responseBinaryMimeTypesRegex>
         <multipart>false</multipart>
         <useAuthentication>true</useAuthentication>
         <authenticationType>Basic</authenticationType>
+        <usePreemptiveAuthentication>true</usePreemptiveAuthentication>
         <username>${OPENHDS_USER}</username>
         <password>${OPENHDS_PASSWORD}</password>
         <content>${message.transformedData}</content>
         <contentType>application/xml</contentType>
+        <dataTypeBinary>false</dataTypeBinary>
         <charset>UTF-8</charset>
         <socketTimeout>30000</socketTimeout>
       </properties>
-      <transformer version="3.0.3">
+      <transformer version="3.1.1">
         <steps>
           <step>
             <sequenceNumber>0</sequenceNumber>
@@ -1456,33 +1668,61 @@ IDwvdmlzaXQ+CiAgICA8cmVjb3JkZWREYXRlPjwvcmVjb3JkZWREYXRlPgo8L291dG1pZ3JhdGlv
 bj4=</outboundTemplate>
         <inboundDataType>XML</inboundDataType>
         <outboundDataType>XML</outboundDataType>
-        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </inboundProperties>
-        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </outboundProperties>
       </transformer>
-      <responseTransformer version="3.0.3">
+      <responseTransformer version="3.1.1">
         <steps/>
         <inboundDataType>XML</inboundDataType>
         <outboundDataType>XML</outboundDataType>
-        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </inboundProperties>
-        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </outboundProperties>
       </responseTransformer>
-      <filter version="3.0.3">
+      <filter version="3.1.1">
         <rules>
           <rule>
             <sequenceNumber>0</sequenceNumber>
@@ -1504,11 +1744,12 @@ bj4=</outboundTemplate>
       <enabled>true</enabled>
       <waitForPrevious>true</waitForPrevious>
     </connector>
-    <connector version="3.0.3">
+    <connector version="3.1.1">
       <metaDataId>7</metaDataId>
       <name>Pregnancy Obs</name>
-      <properties class="com.mirth.connect.connectors.http.HttpDispatcherProperties" version="3.0.3">
-        <queueConnectorProperties version="3.0.3">
+      <properties class="com.mirth.connect.connectors.http.HttpDispatcherProperties" version="3.1.1">
+        <pluginProperties/>
+        <destinationConnectorProperties version="3.1.1">
           <queueEnabled>false</queueEnabled>
           <sendFirst>false</sendFirst>
           <retryIntervalMillis>10000</retryIntervalMillis>
@@ -1516,23 +1757,33 @@ bj4=</outboundTemplate>
           <retryCount>0</retryCount>
           <rotate>false</rotate>
           <threadCount>1</threadCount>
-        </queueConnectorProperties>
+          <validateResponse>false</validateResponse>
+        </destinationConnectorProperties>
         <host>${OPENHDS_PATH}/pregnancyobservations</host>
+        <useProxyServer>false</useProxyServer>
+        <proxyAddress></proxyAddress>
+        <proxyPort></proxyPort>
         <method>post</method>
         <headers class="linked-hash-map"/>
         <parameters class="linked-hash-map"/>
-        <includeHeadersInResponse>false</includeHeadersInResponse>
+        <responseXmlBody>false</responseXmlBody>
+        <responseParseMultipart>true</responseParseMultipart>
+        <responseIncludeMetadata>false</responseIncludeMetadata>
+        <responseBinaryMimeTypes></responseBinaryMimeTypes>
+        <responseBinaryMimeTypesRegex>false</responseBinaryMimeTypesRegex>
         <multipart>false</multipart>
         <useAuthentication>true</useAuthentication>
         <authenticationType>Basic</authenticationType>
+        <usePreemptiveAuthentication>true</usePreemptiveAuthentication>
         <username>${OPENHDS_USER}</username>
         <password>${OPENHDS_PASSWORD}</password>
         <content>${message.transformedData}</content>
         <contentType>application/xml</contentType>
+        <dataTypeBinary>false</dataTypeBinary>
         <charset>UTF-8</charset>
         <socketTimeout>30000</socketTimeout>
       </properties>
-      <transformer version="3.0.3">
+      <transformer version="3.1.1">
         <steps>
           <step>
             <sequenceNumber>0</sequenceNumber>
@@ -1667,33 +1918,61 @@ ZD48L2V4dElkPgogIDwvY29sbGVjdGVkQnk+CiAgPHZpc2l0PgogICAgPGV4dElkPjwvZXh0SWQ+
 CiAgPC92aXNpdD4KPC9wcmVnbmFuY3lvYnNlcnZhdGlvbj4=</outboundTemplate>
         <inboundDataType>XML</inboundDataType>
         <outboundDataType>XML</outboundDataType>
-        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </inboundProperties>
-        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </outboundProperties>
       </transformer>
-      <responseTransformer version="3.0.3">
+      <responseTransformer version="3.1.1">
         <steps/>
         <inboundDataType>XML</inboundDataType>
         <outboundDataType>XML</outboundDataType>
-        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </inboundProperties>
-        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </outboundProperties>
       </responseTransformer>
-      <filter version="3.0.3">
+      <filter version="3.1.1">
         <rules>
           <rule>
             <sequenceNumber>0</sequenceNumber>
@@ -1715,11 +1994,12 @@ CiAgPC92aXNpdD4KPC9wcmVnbmFuY3lvYnNlcnZhdGlvbj4=</outboundTemplate>
       <enabled>true</enabled>
       <waitForPrevious>true</waitForPrevious>
     </connector>
-    <connector version="3.0.3">
+    <connector version="3.1.1">
       <metaDataId>8</metaDataId>
       <name>Internal Inmigrations</name>
-      <properties class="com.mirth.connect.connectors.http.HttpDispatcherProperties" version="3.0.3">
-        <queueConnectorProperties version="3.0.3">
+      <properties class="com.mirth.connect.connectors.http.HttpDispatcherProperties" version="3.1.1">
+        <pluginProperties/>
+        <destinationConnectorProperties version="3.1.1">
           <queueEnabled>false</queueEnabled>
           <sendFirst>false</sendFirst>
           <retryIntervalMillis>3000</retryIntervalMillis>
@@ -1727,23 +2007,33 @@ CiAgPC92aXNpdD4KPC9wcmVnbmFuY3lvYnNlcnZhdGlvbj4=</outboundTemplate>
           <retryCount>0</retryCount>
           <rotate>false</rotate>
           <threadCount>1</threadCount>
-        </queueConnectorProperties>
+          <validateResponse>false</validateResponse>
+        </destinationConnectorProperties>
         <host>${OPENHDS_PATH}/inmigrations</host>
+        <useProxyServer>false</useProxyServer>
+        <proxyAddress></proxyAddress>
+        <proxyPort></proxyPort>
         <method>post</method>
         <headers class="linked-hash-map"/>
         <parameters class="linked-hash-map"/>
-        <includeHeadersInResponse>false</includeHeadersInResponse>
+        <responseXmlBody>false</responseXmlBody>
+        <responseParseMultipart>true</responseParseMultipart>
+        <responseIncludeMetadata>false</responseIncludeMetadata>
+        <responseBinaryMimeTypes></responseBinaryMimeTypes>
+        <responseBinaryMimeTypesRegex>false</responseBinaryMimeTypesRegex>
         <multipart>false</multipart>
         <useAuthentication>true</useAuthentication>
         <authenticationType>Basic</authenticationType>
+        <usePreemptiveAuthentication>true</usePreemptiveAuthentication>
         <username>${OPENHDS_USER}</username>
         <password>${OPENHDS_PASSWORD}</password>
         <content>${message.transformedData}</content>
         <contentType>application/xml</contentType>
+        <dataTypeBinary>false</dataTypeBinary>
         <charset>UTF-8</charset>
         <socketTimeout>30000</socketTimeout>
       </properties>
-      <transformer version="3.0.3">
+      <transformer version="3.1.1">
         <steps>
           <step>
             <sequenceNumber>0</sequenceNumber>
@@ -1928,33 +2218,61 @@ ICAgPHJlY29yZGVkRGF0ZT48L3JlY29yZGVkRGF0ZT4KICAgIDxtaWdUeXBlPklOVEVSTkFMX0lO
 TUlHUkFUSU9OPC9taWdUeXBlPgo8L2lubWlncmF0aW9uPg==</outboundTemplate>
         <inboundDataType>XML</inboundDataType>
         <outboundDataType>XML</outboundDataType>
-        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </inboundProperties>
-        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </outboundProperties>
       </transformer>
-      <responseTransformer version="3.0.3">
+      <responseTransformer version="3.1.1">
         <steps/>
         <inboundDataType>XML</inboundDataType>
         <outboundDataType>XML</outboundDataType>
-        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </inboundProperties>
-        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </outboundProperties>
       </responseTransformer>
-      <filter version="3.0.3">
+      <filter version="3.1.1">
         <rules>
           <rule>
             <sequenceNumber>0</sequenceNumber>
@@ -1976,11 +2294,12 @@ TUlHUkFUSU9OPC9taWdUeXBlPgo8L2lubWlncmF0aW9uPg==</outboundTemplate>
       <enabled>true</enabled>
       <waitForPrevious>true</waitForPrevious>
     </connector>
-    <connector version="3.0.3">
+    <connector version="3.1.1">
       <metaDataId>9</metaDataId>
       <name>External Inmigrations</name>
-      <properties class="com.mirth.connect.connectors.http.HttpDispatcherProperties" version="3.0.3">
-        <queueConnectorProperties version="3.0.3">
+      <properties class="com.mirth.connect.connectors.http.HttpDispatcherProperties" version="3.1.1">
+        <pluginProperties/>
+        <destinationConnectorProperties version="3.1.1">
           <queueEnabled>false</queueEnabled>
           <sendFirst>false</sendFirst>
           <retryIntervalMillis>3000</retryIntervalMillis>
@@ -1988,23 +2307,33 @@ TUlHUkFUSU9OPC9taWdUeXBlPgo8L2lubWlncmF0aW9uPg==</outboundTemplate>
           <retryCount>0</retryCount>
           <rotate>false</rotate>
           <threadCount>1</threadCount>
-        </queueConnectorProperties>
+          <validateResponse>false</validateResponse>
+        </destinationConnectorProperties>
         <host>${OPENHDS_PATH}/inmigrations</host>
+        <useProxyServer>false</useProxyServer>
+        <proxyAddress></proxyAddress>
+        <proxyPort></proxyPort>
         <method>post</method>
         <headers class="linked-hash-map"/>
         <parameters class="linked-hash-map"/>
-        <includeHeadersInResponse>false</includeHeadersInResponse>
+        <responseXmlBody>false</responseXmlBody>
+        <responseParseMultipart>true</responseParseMultipart>
+        <responseIncludeMetadata>false</responseIncludeMetadata>
+        <responseBinaryMimeTypes></responseBinaryMimeTypes>
+        <responseBinaryMimeTypesRegex>false</responseBinaryMimeTypesRegex>
         <multipart>false</multipart>
         <useAuthentication>true</useAuthentication>
         <authenticationType>Basic</authenticationType>
+        <usePreemptiveAuthentication>true</usePreemptiveAuthentication>
         <username>${OPENHDS_USER}</username>
         <password>${OPENHDS_PASSWORD}</password>
         <content>${message.transformedData}</content>
         <contentType>application/xml</contentType>
+        <dataTypeBinary>false</dataTypeBinary>
         <charset>UTF-8</charset>
         <socketTimeout>30000</socketTimeout>
       </properties>
-      <transformer version="3.0.3">
+      <transformer version="3.1.1">
         <steps>
           <step>
             <sequenceNumber>0</sequenceNumber>
@@ -2368,33 +2697,61 @@ L29yaWdpbj4KICAgIDxyZWFzb24+PC9yZWFzb24+CiAgICA8cmVjb3JkZWREYXRlPjwvcmVjb3Jk
 ZWREYXRlPgogICAgPG1pZ1R5cGU+PC9taWdUeXBlPgo8L2lubWlncmF0aW9uPg==</outboundTemplate>
         <inboundDataType>XML</inboundDataType>
         <outboundDataType>XML</outboundDataType>
-        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </inboundProperties>
-        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </outboundProperties>
       </transformer>
-      <responseTransformer version="3.0.3">
+      <responseTransformer version="3.1.1">
         <steps/>
         <inboundDataType>XML</inboundDataType>
         <outboundDataType>XML</outboundDataType>
-        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </inboundProperties>
-        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </outboundProperties>
       </responseTransformer>
-      <filter version="3.0.3">
+      <filter version="3.1.1">
         <rules>
           <rule>
             <sequenceNumber>0</sequenceNumber>
@@ -2416,11 +2773,12 @@ ZWREYXRlPgogICAgPG1pZ1R5cGU+PC9taWdUeXBlPgo8L2lubWlncmF0aW9uPg==</outboundTempla
       <enabled>true</enabled>
       <waitForPrevious>true</waitForPrevious>
     </connector>
-    <connector version="3.0.3">
+    <connector version="3.1.1">
       <metaDataId>10</metaDataId>
       <name>Pregnancy Outcome</name>
-      <properties class="com.mirth.connect.connectors.http.HttpDispatcherProperties" version="3.0.3">
-        <queueConnectorProperties version="3.0.3">
+      <properties class="com.mirth.connect.connectors.http.HttpDispatcherProperties" version="3.1.1">
+        <pluginProperties/>
+        <destinationConnectorProperties version="3.1.1">
           <queueEnabled>false</queueEnabled>
           <sendFirst>false</sendFirst>
           <retryIntervalMillis>3000</retryIntervalMillis>
@@ -2428,23 +2786,33 @@ ZWREYXRlPgogICAgPG1pZ1R5cGU+PC9taWdUeXBlPgo8L2lubWlncmF0aW9uPg==</outboundTempla
           <retryCount>0</retryCount>
           <rotate>false</rotate>
           <threadCount>1</threadCount>
-        </queueConnectorProperties>
+          <validateResponse>false</validateResponse>
+        </destinationConnectorProperties>
         <host>${OPENHDS_PATH}/pregnancyoutcomes</host>
+        <useProxyServer>false</useProxyServer>
+        <proxyAddress></proxyAddress>
+        <proxyPort></proxyPort>
         <method>post</method>
         <headers class="linked-hash-map"/>
         <parameters class="linked-hash-map"/>
-        <includeHeadersInResponse>false</includeHeadersInResponse>
+        <responseXmlBody>false</responseXmlBody>
+        <responseParseMultipart>true</responseParseMultipart>
+        <responseIncludeMetadata>false</responseIncludeMetadata>
+        <responseBinaryMimeTypes></responseBinaryMimeTypes>
+        <responseBinaryMimeTypesRegex>false</responseBinaryMimeTypesRegex>
         <multipart>false</multipart>
         <useAuthentication>true</useAuthentication>
         <authenticationType>Basic</authenticationType>
+        <usePreemptiveAuthentication>true</usePreemptiveAuthentication>
         <username>${OPENHDS_USER}</username>
         <password>${OPENHDS_PASSWORD}</password>
         <content>${message.transformedData}</content>
         <contentType>application/xml</contentType>
+        <dataTypeBinary>false</dataTypeBinary>
         <charset>UTF-8</charset>
         <socketTimeout>30000</socketTimeout>
       </properties>
-      <transformer version="3.0.3">
+      <transformer version="3.1.1">
         <steps>
           <step>
             <sequenceNumber>0</sequenceNumber>
@@ -2539,33 +2907,61 @@ aWxkTWVtYmVyc2hpcD4KICAgICAgICA8L291dGNvbWU+CiAgICA8L291dGNvbWVzPgo8L3ByZWdu
 YW5jeW91dGNvbWU+</outboundTemplate>
         <inboundDataType>XML</inboundDataType>
         <outboundDataType>XML</outboundDataType>
-        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </inboundProperties>
-        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </outboundProperties>
       </transformer>
-      <responseTransformer version="3.0.3">
+      <responseTransformer version="3.1.1">
         <steps/>
         <inboundDataType>XML</inboundDataType>
         <outboundDataType>XML</outboundDataType>
-        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </inboundProperties>
-        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </outboundProperties>
       </responseTransformer>
-      <filter version="3.0.3">
+      <filter version="3.1.1">
         <rules>
           <rule>
             <sequenceNumber>0</sequenceNumber>
@@ -2618,10 +3014,10 @@ return;
   <deployScript>// This script executes once when the channel is deployed
 // You only have access to the globalMap and globalChannelMap here to persist data
 return;</deployScript>
-  <shutdownScript>// This script executes once when the channel is undeployed
+  <undeployScript>// This script executes once when the channel is undeployed
 // You only have access to the globalMap and globalChannelMap here to persist data
-return;</shutdownScript>
-  <properties version="3.0.3">
+return;</undeployScript>
+  <properties version="3.1.1">
     <clearGlobalChannelMap>true</clearGlobalChannelMap>
     <messageStorageMode>PRODUCTION</messageStorageMode>
     <encryptData>false</encryptData>
