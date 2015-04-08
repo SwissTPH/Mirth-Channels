@@ -79,7 +79,7 @@ function addPregnancyOutcomes(visitId, dbConn) {
   while(results.next()) {
     var pregOut = resultSetToXml(results, &quot;&lt;pregnancyoutcome event=&apos;pregnancyoutcome&apos; table-name=&apos;&quot; + globalMap.get(&quot;PREGNANCY_OUTCOME_TABLE&quot;) + &quot;&apos; /&gt;&quot;);
     // are there any outcomes for this pregnancy outcome?
-    var outcomes = dbConn.executeCachedQuery(&quot;SELECT OUTCOME_TYPE, FIRST_NAME, SOCIAL_GROUP_ID, GENDER, RELATIONSHIP_TO_GROUP_HEAD, CHILD_ID, LAST_NAME FROM &quot; + globalMap.get(&quot;OUTCOMES_TABLE&quot;) + &quot; WHERE _PARENT_AURI = &apos;&quot; + pregOut[&quot;_uri&quot;].toString() + &quot;&apos;&quot;);
+    var outcomes = dbConn.executeCachedQuery(&quot;SELECT OUTCOME_TYPE, FIRST_NAME, SOCIAL_GROUP_ID, GENDER, RELATIONSHIP_TO_GROUP_HEAD, CHILD_ID, LAST_NAME, MIDDLE_NAME  FROM &quot; + globalMap.get(&quot;OUTCOMES_TABLE&quot;) + &quot; WHERE _PARENT_AURI = &apos;&quot; + pregOut[&quot;_uri&quot;].toString() + &quot;&apos;&quot;);
     while(outcomes.next()) {
       var outcome = resultSetToXml(outcomes, &quot;&lt;outcome /&gt;&quot;);
       pregOut.appendChild(outcome);
@@ -121,7 +121,7 @@ dbConn.close();
     <name>Retrieve Baseline Form</name>
     <tooltip></tooltip>
     <code>function addBaseline(visitId, dbConn) {
-  var results = dbConn.executeCachedQuery(&quot;SELECT _URI, INDIVIDUAL_INFO_DATE_OF_BIRTH, DATE_OF_MIGRATION, INDIVIDUAL_INFO_FIRST_NAME, INDIVIDUAL_INFO_MOTHER_ID, INDIVIDUAL_INFO_INDIVIDUAL_ID, VISIT_ID, INDIVIDUAL_INFO_GENDER, LOCATION_ID, FIELD_WORKER_ID, INDIVIDUAL_INFO_LAST_NAME, INDIVIDUAL_INFO_PARTIAL_DATE, INDIVIDUAL_INFO_FATHER_ID FROM &quot; + globalMap.get(&quot;BASELINE_TABLE&quot;) + &quot; WHERE VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND migration_type = &apos;BASELINE&apos; AND processed_by_mirth=0 order by INDIVIDUAL_INFO_DATE_OF_BIRTH ASC&quot;);
+  var results = dbConn.executeCachedQuery(&quot;SELECT _URI, INDIVIDUAL_INFO_DATE_OF_BIRTH, DATE_OF_MIGRATION, INDIVIDUAL_INFO_FIRST_NAME, INDIVIDUAL_INFO_MOTHER_ID, INDIVIDUAL_INFO_INDIVIDUAL_ID, VISIT_ID, INDIVIDUAL_INFO_GENDER, LOCATION_ID, FIELD_WORKER_ID, INDIVIDUAL_INFO_LAST_NAME, INDIVIDUAL_INFO_PARTIAL_DATE, INDIVIDUAL_INFO_FATHER_ID, INDIVIDUAL_INFO_MIDDLENAME FROM &quot; + globalMap.get(&quot;BASELINE_TABLE&quot;) + &quot; WHERE VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND migration_type = &apos;BASELINE&apos; AND processed_by_mirth=0 order by INDIVIDUAL_INFO_DATE_OF_BIRTH ASC&quot;);
   var baselineForms = resultsToForms(results, &quot;&lt;baseline event=&apos;baseline&apos; table-name=&apos;&quot; + globalMap.get(&quot;BASELINE_TABLE&quot;) + &quot;&apos;/&gt;&quot;);
   return baselineForms;
 }</code>
@@ -170,7 +170,7 @@ function resultSetToXml(rs, xmlElement) {
     <name>Retrieve External In Migration Forms</name>
     <tooltip>Retreive External In Migration Forms</tooltip>
     <code>function addExternalInmigrations(visitId, dbConn) {
-  var results = dbConn.executeCachedQuery(&quot;SELECT _URI, REASON, INDIVIDUAL_INFO_DATE_OF_BIRTH, DATE_OF_MIGRATION, INDIVIDUAL_INFO_FIRST_NAME, INDIVIDUAL_INFO_MOTHER_ID, INDIVIDUAL_INFO_INDIVIDUAL_ID, MOVEDFROM, VISIT_ID, INDIVIDUAL_INFO_GENDER, LOCATION_ID, FIELD_WORKER_ID, INDIVIDUAL_INFO_LAST_NAME, INDIVIDUAL_INFO_PARTIAL_DATE, INDIVIDUAL_INFO_FATHER_ID FROM &quot; + globalMap.get(&quot;IN_MIGRATION_TABLE&quot;) + &quot; WHERE VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND migration_type = &apos;EXTERNAL_INMIGRATION&apos; AND processed_by_mirth=0 order by INDIVIDUAL_INFO_DATE_OF_BIRTH ASC&quot;);
+  var results = dbConn.executeCachedQuery(&quot;SELECT _URI, REASON, INDIVIDUAL_INFO_DATE_OF_BIRTH, DATE_OF_MIGRATION, INDIVIDUAL_INFO_FIRST_NAME, INDIVIDUAL_INFO_MOTHER_ID, INDIVIDUAL_INFO_INDIVIDUAL_ID, MOVEDFROM, VISIT_ID, INDIVIDUAL_INFO_GENDER, LOCATION_ID, FIELD_WORKER_ID, INDIVIDUAL_INFO_LAST_NAME, INDIVIDUAL_INFO_PARTIAL_DATE, INDIVIDUAL_INFO_FATHER_ID, INDIVIDUAL_INFO_MIDDLENAME FROM &quot; + globalMap.get(&quot;IN_MIGRATION_TABLE&quot;) + &quot; WHERE VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND migration_type = &apos;EXTERNAL_INMIGRATION&apos; AND processed_by_mirth=0 order by INDIVIDUAL_INFO_DATE_OF_BIRTH ASC&quot;);
   var inMigrationForms = resultsToForms(results, &quot;&lt;inmigration event=&apos;external-inmigration&apos; table-name=&apos;&quot; + globalMap.get(&quot;IN_MIGRATION_TABLE&quot;) + &quot;&apos;/&gt;&quot;);
   return inMigrationForms;
 }</code>

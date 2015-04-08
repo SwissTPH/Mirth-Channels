@@ -1,7 +1,7 @@
 <channel version="3.1.1">
-  <id>95bbf706-26dc-4af7-84ff-aed09a2607e8</id>
+  <id>21355026-a87e-4e1d-9586-cdf6d0075b9b</id>
   <nextMetaDataId>12</nextMetaDataId>
-  <name>Update Events</name>
+  <name>Update Events last</name>
   <description>This channel will attempt to read the submissions from ODK in a dependency aware way. Though XForms has no notion of dependency, there is an inherit dependency betweens update forms. The dependenc looks like:&#xd;
 Update Events -&gt; Visit -&gt; Location&#xd;
 where all update events depend on a visit, and a visit might potentially depend on a location therefore, forms are processed in this order:&#xd;
@@ -13,10 +13,10 @@ Visit &#xd;
 Any events...</description>
   <enabled>true</enabled>
   <lastModified>
-    <time>1423218611774</time>
+    <time>1428225396420</time>
     <timezone>Europe/Berlin</timezone>
   </lastModified>
-  <revision>4</revision>
+  <revision>5</revision>
   <sourceConnector version="3.1.1">
     <metaDataId>0</metaDataId>
     <name>sourceConnector</name>
@@ -37,7 +37,15 @@ Any events...</description>
       <script>var forms = new java.util.ArrayList()
 
 var dbConn = DatabaseConnectionFactory.createDatabaseConnection(&apos;com.mysql.jdbc.Driver&apos;, globalMap.get(&quot;ODK_DATABASE_URL&quot;), globalMap.get(&quot;ODK_DATABASE_USER&quot;), globalMap.get(&quot;ODK_DATABASE_PASSWORD&quot;));
-var visitResult = dbConn.executeCachedQuery(&quot;SELECT DISTINCT VISIT_DATE, VISIT_ID, LOCATION_ID, FIELD_WORKER_ID, ROUND_NUMBER FROM &quot; + globalMap.get(&quot;VISIT_TABLE&quot;) + &quot; WHERE processed_by_mirth=0 OR processed_by_mirth IS NULL order by START ASC&quot;);
+
+var checkUpdate = dbConn.executeCachedQuery(&quot;SELECT FLG_SCENARIO FROM &quot; + globalMap.get(&quot;SCENARIO_TABLE&quot;) + &quot; WHERE FLG_SCENARIO=1&quot;);
+
+if (!checkUpdate.next()) {
+  dbConn.close();
+  return forms;
+}
+
+var visitResult = dbConn.executeCachedQuery(&quot;SELECT DISTINCT VISIT_DATE, VISIT_ID, LOCATION_ID, FIELD_WORKER_ID, ROUND_NUMBER FROM &quot; + globalMap.get(&quot;VISIT_TABLE&quot;) + &quot; WHERE processed_by_mirth=0 order by START ASC&quot;);
 
 while(visitResult.next()) {
   var visitXml = resultSetToXml(visitResult, &quot;&lt;visit event=&apos;visit&apos; table-name=&apos;&quot; + globalMap.get(&quot;VISIT_TABLE&quot;) + &quot;&apos;/&gt;&quot;);
@@ -1021,7 +1029,7 @@ ICA8L2NvbGxlY3RlZEJ5Pgo8L2RlYXRoPg==</outboundTemplate>
         <authenticationType>Basic</authenticationType>
         <usePreemptiveAuthentication>true</usePreemptiveAuthentication>
         <username>${OPENHDS_USER}</username>
-        <password>${OPENHDS_PASSWORD}</password>
+        <password>${ODK_DATABASE_PASSWORD}</password>
         <content>${message.transformedData}</content>
         <contentType>application/xml</contentType>
         <dataTypeBinary>false</dataTypeBinary>
@@ -1043,7 +1051,7 @@ tmp[&apos;socialGroup&apos;][&apos;extId&apos;] = msg[&apos;household_id&apos;].
 tmp[&apos;death&apos;][&apos;visitDeath&apos;][&apos;extId&apos;] = msg[&apos;visit_id&apos;].toString().toUpperCase();
 tmp[&apos;death&apos;][&apos;individual&apos;][&apos;extId&apos;] = msg[&apos;individual_id&apos;].toString().toUpperCase();
 tmp[&apos;death&apos;][&apos;deathPlace&apos;] = msg[&apos;place_of_death&apos;].toString();
-tmp[&apos;death&apos;][&apos;deathCause&apos;] = msg[&apos;cause_of_death&apos;].toString();
+tmp[&apos;death&apos;][&apos;deathCause&apos;] = msg[&apos;causeofdeathdiagnosed&apos;].toString();
 tmp[&apos;death&apos;][&apos;deathDate&apos;] = msg[&apos;date&apos;].toString();
 tmp[&apos;death&apos;][&apos;collectedBy&apos;][&apos;extId&apos;] = msg[&apos;field_worker_id&apos;].toString().toUpperCase();
 
@@ -1071,7 +1079,7 @@ tmp[&apos;socialGroup&apos;][&apos;extId&apos;] = msg[&apos;household_id&apos;].
 tmp[&apos;death&apos;][&apos;visitDeath&apos;][&apos;extId&apos;] = msg[&apos;visit_id&apos;].toString().toUpperCase();
 tmp[&apos;death&apos;][&apos;individual&apos;][&apos;extId&apos;] = msg[&apos;individual_id&apos;].toString().toUpperCase();
 tmp[&apos;death&apos;][&apos;deathPlace&apos;] = msg[&apos;place_of_death&apos;].toString();
-tmp[&apos;death&apos;][&apos;deathCause&apos;] = msg[&apos;cause_of_death&apos;].toString();
+tmp[&apos;death&apos;][&apos;deathCause&apos;] = msg[&apos;causeofdeathdiagnosed&apos;].toString();
 tmp[&apos;death&apos;][&apos;deathDate&apos;] = msg[&apos;date&apos;].toString();
 tmp[&apos;death&apos;][&apos;collectedBy&apos;][&apos;extId&apos;] = msg[&apos;field_worker_id&apos;].toString().toUpperCase();
 
@@ -1096,11 +1104,11 @@ dXNlaG9sZF9pZD48L2hvdXNlaG9sZF9pZD4KCTxwbGFjZV9vZl9kZWF0aD48L3BsYWNlX29mX2Rl
 YXRoPgoJPHdob20+PC93aG9tPgoJPGRpYWdub3NlZGRlYXRoPjwvZGlhZ25vc2VkZGVhdGg+Cgk8
 b3RoZXJwbGFjZV9vZl9kZWF0aD48L290aGVycGxhY2Vfb2ZfZGVhdGg+Cgk8Y2F1c2VvZmRlYXRo
 ZGlhZ25vc2VkPjwvY2F1c2VvZmRlYXRoZGlhZ25vc2VkPgoJPGRhdGU+PC9kYXRlPgoJPGNhdXNl
-X29mX2RlYXRoPjwvY2F1c2Vfb2ZfZGVhdGg+CiAgICA8cmVsYXRpb24+DQogICAgICAgIDxtZW1i
-ZXJfbmFtZT48L21lbWJlcl9uYW1lPg0KICAgICAgICA8cmVsYXRpb25zaGlwX3RvX2dyb3VwX2hl
-YWQ+PC9yZWxhdGlvbnNoaXBfdG9fZ3JvdXBfaGVhZD4NCiAgICAgICAgPGV4dF9pZD48L2V4dF9p
-ZD4NCiAgICAgICAgPHNvY2lhbF9ncm91cF9pZD48L3NvY2lhbF9ncm91cF9pZD4NCiAgICA8L3Jl
-bGF0aW9uPg0KPC9kZWF0aEhvSD4=</inboundTemplate>
+b2ZkZWF0aG5vdGRpYWdub3NlZD48L2NhdXNlb2ZkZWF0aG5vdGRpYWdub3NlZD4KICAgIDxyZWxh
+dGlvbj4NCiAgICAgICAgPG1lbWJlcl9uYW1lPjwvbWVtYmVyX25hbWU+DQogICAgICAgIDxyZWxh
+dGlvbnNoaXBfdG9fZ3JvdXBfaGVhZD48L3JlbGF0aW9uc2hpcF90b19ncm91cF9oZWFkPg0KICAg
+ICAgICA8ZXh0X2lkPjwvZXh0X2lkPg0KICAgICAgICA8c29jaWFsX2dyb3VwX2lkPjwvc29jaWFs
+X2dyb3VwX2lkPg0KICAgIDwvcmVsYXRpb24+DQo8L2RlYXRoSG9IPg==</inboundTemplate>
         <outboundTemplate encoding="base64">PGRlYXRoX29mX2hoPg0KICAgIDxjb2xsZWN0ZWRCeT4KCQk8ZXh0SWQ+PC9leHRJZD4KCTwvY29s
 bGVjdGVkQnk+CiAgICA8dmlzaXQ+CgkJPGV4dElkPjwvZXh0SWQ+Cgk8L3Zpc2l0Pg0KICAgIDxu
 ZXdIb2g+CgkJPGV4dElkPjwvZXh0SWQ+Cgk8L25ld0hvaD4NCiAgICA8b2xkSG9oPgoJCTxleHRJ
@@ -2671,30 +2679,57 @@ TUlHUkFUSU9OPC9taWdUeXBlPgo8L2lubWlncmF0aW9uPg==</outboundTemplate>
               </entry>
             </data>
           </step>
+          <step>
+            <sequenceNumber>14</sequenceNumber>
+            <name>individual - middleName (out) &lt;-- individual_info_middlename (in)</name>
+            <script>tmp[&apos;individual&apos;][&apos;middleName&apos;] = validate(msg[&apos;individual_info_middlename&apos;].toString(), &apos;&apos;, new Array());</script>
+            <type>Message Builder</type>
+            <data>
+              <entry>
+                <string>Variable</string>
+                <string>tmp[&apos;individual&apos;][&apos;middleName&apos;]</string>
+              </entry>
+              <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;individual_info_middlename&apos;].toString()</string>
+              </entry>
+              <entry>
+                <string>DefaultValue</string>
+                <string></string>
+              </entry>
+              <entry>
+                <string>RegularExpressions</string>
+                <list/>
+              </entry>
+            </data>
+          </step>
         </steps>
         <inboundTemplate encoding="base64">PGlubWlncmF0aW9uPgogICAgPF91cmk+PC9fdXJpPgogICAgPHJlYXNvbj48L3JlYXNvbj4KICAg
 IDxpbmRpdmlkdWFsX2luZm9fZGF0ZV9vZl9iaXJ0aD48L2luZGl2aWR1YWxfaW5mb19kYXRlX29m
 X2JpcnRoPgogICAgPGRhdGVfb2ZfbWlncmF0aW9uPjwvZGF0ZV9vZl9taWdyYXRpb24+CiAgICA8
-aW5kaXZpZHVhbF9pbmZvX2ZpcnN0X25hbWU+PC9pbmRpdmlkdWFsX2luZm9fZmlyc3RfbmFtZT4K
-ICAgIDxpbmRpdmlkdWFsX2luZm9fbW90aGVyX2lkPjwvaW5kaXZpZHVhbF9pbmZvX21vdGhlcl9p
-ZD4KICAgIDxpbmRpdmlkdWFsX2luZm9faW5kaXZpZHVhbF9pZD48L2luZGl2aWR1YWxfaW5mb19p
-bmRpdmlkdWFsX2lkPgogICAgPG1vdmVkZnJvbT48L21vdmVkZnJvbT4KICAgIDx2aXNpdF9pZD48
-L3Zpc2l0X2lkPgogICAgPGluZGl2aWR1YWxfaW5mb19nZW5kZXI+PC9pbmRpdmlkdWFsX2luZm9f
-Z2VuZGVyPgogICAgPGxvY2F0aW9uX2lkPjwvbG9jYXRpb25faWQ+CiAgICA8ZmllbGRfd29ya2Vy
-X2lkPjwvZmllbGRfd29ya2VyX2lkPgogICAgPGluZGl2aWR1YWxfaW5mb19sYXN0X25hbWU+PC9p
-bmRpdmlkdWFsX2luZm9fbGFzdF9uYW1lPgogICAgPGluZGl2aWR1YWxfaW5mb19wYXJ0aWFsX2Rh
-dGU+PC9pbmRpdmlkdWFsX2luZm9fcGFydGlhbF9kYXRlPgogICAgPGluZGl2aWR1YWxfaW5mb19m
-YXRoZXJfaWQ+PC9pbmRpdmlkdWFsX2luZm9fZmF0aGVyX2lkPgo8L2lubWlncmF0aW9uPgo=</inboundTemplate>
+aW5kaXZpZHVhbF9pbmZvX21pZGRsZW5hbWU+PC9pbmRpdmlkdWFsX2luZm9fbWlkZGxlbmFtZT4K
+ICAgIDxpbmRpdmlkdWFsX2luZm9fZmlyc3RfbmFtZT48L2luZGl2aWR1YWxfaW5mb19maXJzdF9u
+YW1lPgogICAgPGluZGl2aWR1YWxfaW5mb19tb3RoZXJfaWQ+PC9pbmRpdmlkdWFsX2luZm9fbW90
+aGVyX2lkPgogICAgPGluZGl2aWR1YWxfaW5mb19pbmRpdmlkdWFsX2lkPjwvaW5kaXZpZHVhbF9p
+bmZvX2luZGl2aWR1YWxfaWQ+CiAgICA8bW92ZWRmcm9tPjwvbW92ZWRmcm9tPgogICAgPHZpc2l0
+X2lkPjwvdmlzaXRfaWQ+CiAgICA8aW5kaXZpZHVhbF9pbmZvX2dlbmRlcj48L2luZGl2aWR1YWxf
+aW5mb19nZW5kZXI+CiAgICA8bG9jYXRpb25faWQ+PC9sb2NhdGlvbl9pZD4KICAgIDxmaWVsZF93
+b3JrZXJfaWQ+PC9maWVsZF93b3JrZXJfaWQ+CiAgICA8aW5kaXZpZHVhbF9pbmZvX2xhc3RfbmFt
+ZT48L2luZGl2aWR1YWxfaW5mb19sYXN0X25hbWU+CiAgICA8aW5kaXZpZHVhbF9pbmZvX3BhcnRp
+YWxfZGF0ZT48L2luZGl2aWR1YWxfaW5mb19wYXJ0aWFsX2RhdGU+CiAgICA8aW5kaXZpZHVhbF9p
+bmZvX2ZhdGhlcl9pZD48L2luZGl2aWR1YWxfaW5mb19mYXRoZXJfaWQ+CjwvaW5taWdyYXRpb24+
+Cg==</inboundTemplate>
         <outboundTemplate encoding="base64">PGlubWlncmF0aW9uPgogICAgPGNvbGxlY3RlZEJ5PgogICAgICAgIDxleHRJZD48L2V4dElkPgog
 ICAgPC9jb2xsZWN0ZWRCeT4KICAgIDx2aXNpdD4KICAgICAgICA8ZXh0SWQ+PC9leHRJZD4KICAg
 IDwvdmlzaXQ+CiAgICA8aW5kaXZpZHVhbD4KICAgICAgICA8ZXh0SWQ+PC9leHRJZD4KICAgICAg
 ICA8Zmlyc3ROYW1lPjwvZmlyc3ROYW1lPgogICAgICAgIDxsYXN0TmFtZT48L2xhc3ROYW1lPgog
-ICAgICAgIDxnZW5kZXI+PC9nZW5kZXI+CiAgICAgICAgPGRvYj48L2RvYj4KCQk8ZG9iQXNwZWN0
-PjwvZG9iQXNwZWN0PgogICAgICAgIDxtb3RoZXI+CiAgICAgICAgICAgIDxleHRJZD48L2V4dElk
-PgogICAgICAgIDwvbW90aGVyPgogICAgICAgIDxmYXRoZXI+CiAgICAgICAgICAgIDxleHRJZD48
-L2V4dElkPgogICAgICAgIDwvZmF0aGVyPgogICAgPC9pbmRpdmlkdWFsPgogICAgPG9yaWdpbj48
-L29yaWdpbj4KICAgIDxyZWFzb24+PC9yZWFzb24+CiAgICA8cmVjb3JkZWREYXRlPjwvcmVjb3Jk
-ZWREYXRlPgogICAgPG1pZ1R5cGU+PC9taWdUeXBlPgo8L2lubWlncmF0aW9uPg==</outboundTemplate>
+ICAgICAgIDxtaWRkbGVOYW1lPjwvbWlkZGxlTmFtZT4KICAgICAgICA8Z2VuZGVyPjwvZ2VuZGVy
+PgogICAgICAgIDxkb2I+PC9kb2I+CgkJPGRvYkFzcGVjdD48L2RvYkFzcGVjdD4KICAgICAgICA8
+bW90aGVyPgogICAgICAgICAgICA8ZXh0SWQ+PC9leHRJZD4KICAgICAgICA8L21vdGhlcj4KICAg
+ICAgICA8ZmF0aGVyPgogICAgICAgICAgICA8ZXh0SWQ+PC9leHRJZD4KICAgICAgICA8L2ZhdGhl
+cj4KICAgIDwvaW5kaXZpZHVhbD4KICAgIDxvcmlnaW4+PC9vcmlnaW4+CiAgICA8cmVhc29uPjwv
+cmVhc29uPgogICAgPHJlY29yZGVkRGF0ZT48L3JlY29yZGVkRGF0ZT4KICAgIDxtaWdUeXBlPjwv
+bWlnVHlwZT4KPC9pbm1pZ3JhdGlvbj4=</outboundTemplate>
         <inboundDataType>XML</inboundDataType>
         <outboundDataType>XML</outboundDataType>
         <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
@@ -2835,6 +2870,7 @@ for(var i = 0; i &lt; outcomes; i++) {
     outcomesXml[&apos;outcome&apos;][i][&apos;child&apos;][&apos;extId&apos;] = msg[&apos;outcome&apos;][i][&apos;child_id&apos;].toString();
     outcomesXml[&apos;outcome&apos;][i][&apos;child&apos;][&apos;firstName&apos;] = msg[&apos;outcome&apos;][i][&apos;first_name&apos;].toString();
     outcomesXml[&apos;outcome&apos;][i][&apos;child&apos;][&apos;lastName&apos;] = msg[&apos;outcome&apos;][i][&apos;last_name&apos;].toString();
+    outcomesXml[&apos;outcome&apos;][i][&apos;child&apos;][&apos;middleName&apos;] = msg[&apos;outcome&apos;][i][&apos;middle_name&apos;].toString();
     outcomesXml[&apos;outcome&apos;][i][&apos;child&apos;][&apos;gender&apos;] = msg[&apos;outcome&apos;][i][&apos;gender&apos;].toString();
     outcomesXml[&apos;outcome&apos;][i][&apos;child&apos;][&apos;partialDate&apos;] = msg[&apos;partial_date&apos;].toString();
     outcomesXml[&apos;outcome&apos;][i][&apos;childMembership&apos;][&apos;socialGroup&apos;][&apos;extId&apos;] = msg[&apos;outcome&apos;][i][&apos;social_group_id&apos;].toString()
@@ -2867,6 +2903,7 @@ for(var i = 0; i &lt; outcomes; i++) {
     outcomesXml[&apos;outcome&apos;][i][&apos;child&apos;][&apos;extId&apos;] = msg[&apos;outcome&apos;][i][&apos;child_id&apos;].toString();
     outcomesXml[&apos;outcome&apos;][i][&apos;child&apos;][&apos;firstName&apos;] = msg[&apos;outcome&apos;][i][&apos;first_name&apos;].toString();
     outcomesXml[&apos;outcome&apos;][i][&apos;child&apos;][&apos;lastName&apos;] = msg[&apos;outcome&apos;][i][&apos;last_name&apos;].toString();
+    outcomesXml[&apos;outcome&apos;][i][&apos;child&apos;][&apos;middleName&apos;] = msg[&apos;outcome&apos;][i][&apos;middle_name&apos;].toString();
     outcomesXml[&apos;outcome&apos;][i][&apos;child&apos;][&apos;gender&apos;] = msg[&apos;outcome&apos;][i][&apos;gender&apos;].toString();
     outcomesXml[&apos;outcome&apos;][i][&apos;child&apos;][&apos;partialDate&apos;] = msg[&apos;partial_date&apos;].toString();
     outcomesXml[&apos;outcome&apos;][i][&apos;childMembership&apos;][&apos;socialGroup&apos;][&apos;extId&apos;] = msg[&apos;outcome&apos;][i][&apos;social_group_id&apos;].toString()
@@ -2890,7 +2927,8 @@ ICAgICA8Zmlyc3RfbmFtZT48L2ZpcnN0X25hbWU+CiAgICAgICAgPHNvY2lhbF9ncm91cF9pZD48
 L3NvY2lhbF9ncm91cF9pZD4KICAgICAgICA8Z2VuZGVyPjwvZ2VuZGVyPgogICAgICAgIDxyZWxh
 dGlvbnNoaXBfdG9fZ3JvdXBfaGVhZD48L3JlbGF0aW9uc2hpcF90b19ncm91cF9oZWFkPgogICAg
 ICAgIDxjaGlsZF9pZD48L2NoaWxkX2lkPgogICAgICAgIDxsYXN0X25hbWU+PC9sYXN0X25hbWU+
-CiAgICA8L291dGNvbWU+CjwvcHJlZ25hbmN5b3V0Y29tZT4=</inboundTemplate>
+CiAgICAgICAgPG1pZGRsZV9uYW1lPjwvbWlkZGxlX25hbWU+CiAgICA8L291dGNvbWU+CjwvcHJl
+Z25hbmN5b3V0Y29tZT4=</inboundTemplate>
         <outboundTemplate encoding="base64">PHByZWduYW5jeW91dGNvbWU+CiAgICA8Y29sbGVjdGVkQnk+CiAgICAgICAgPGV4dElkPjwvZXh0
 SWQ+CiAgICA8L2NvbGxlY3RlZEJ5PgogICAgPHZpc2l0PgogICAgICAgIDxleHRJZD48L2V4dElk
 PgogICAgPC92aXNpdD4KICAgIDxvdXRjb21lRGF0ZT48L291dGNvbWVEYXRlPgogICAgPG1vdGhl
@@ -2899,12 +2937,12 @@ ICAgICA8ZXh0SWQ+PC9leHRJZD4KICAgIDwvZmF0aGVyPgogICAgPG91dGNvbWVzPgogICAgICAg
 IDxvdXRjb21lPgogICAgICAgICAgICA8dHlwZT48L3R5cGU+CiAgICAgICAgICAgIDxjaGlsZD4K
 ICAgICAgICAgICAgICAgIDxleHRJZD48L2V4dElkPgogICAgICAgICAgICAgICAgPGZpcnN0TmFt
 ZT48L2ZpcnN0TmFtZT4KICAgICAgICAgICAgICAgIDxsYXN0TmFtZT48L2xhc3ROYW1lPgogICAg
-ICAgICAgICAgICAgPGdlbmRlcj48L2dlbmRlcj4KICAgICAgICAgICAgPC9jaGlsZD4KICAgICAg
-ICAgICAgPGNoaWxkTWVtYmVyc2hpcD4KICAgICAgICAgICAgICAgIDxzb2NpYWxHcm91cD4KICAg
-ICAgICAgICAgICAgICAgICA8ZXh0SWQ+PC9leHRJZD4KICAgICAgICAgICAgICAgIDwvc29jaWFs
-R3JvdXA+CiAgICAgICAgICAgICAgICA8YklzVG9BPjwvYklzVG9BPgogICAgICAgICAgICA8L2No
-aWxkTWVtYmVyc2hpcD4KICAgICAgICA8L291dGNvbWU+CiAgICA8L291dGNvbWVzPgo8L3ByZWdu
-YW5jeW91dGNvbWU+</outboundTemplate>
+ICAgICAgICAgICAgPG1pZGRsZU5hbWU+PC9taWRkbGVOYW1lPgogICAgICAgICAgICAgICAgPGdl
+bmRlcj48L2dlbmRlcj4KICAgICAgICAgICAgPC9jaGlsZD4KICAgICAgICAgICAgPGNoaWxkTWVt
+YmVyc2hpcD4KICAgICAgICAgICAgICAgIDxzb2NpYWxHcm91cD4KICAgICAgICAgICAgICAgICAg
+ICA8ZXh0SWQ+PC9leHRJZD4KICAgICAgICAgICAgICAgIDwvc29jaWFsR3JvdXA+CiAgICAgICAg
+ICAgICAgICA8YklzVG9BPjwvYklzVG9BPgogICAgICAgICAgICA8L2NoaWxkTWVtYmVyc2hpcD4K
+ICAgICAgICA8L291dGNvbWU+CiAgICA8L291dGNvbWVzPgo8L3ByZWduYW5jeW91dGNvbWU+</outboundTemplate>
         <inboundDataType>XML</inboundDataType>
         <outboundDataType>XML</outboundDataType>
         <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
