@@ -13,10 +13,10 @@ Visit &#xd;
 Any events...</description>
   <enabled>true</enabled>
   <lastModified>
-    <time>1423218611774</time>
+    <time>1431424299337</time>
     <timezone>Europe/Berlin</timezone>
   </lastModified>
-  <revision>4</revision>
+  <revision>23</revision>
   <sourceConnector version="3.1.1">
     <metaDataId>0</metaDataId>
     <name>sourceConnector</name>
@@ -37,13 +37,13 @@ Any events...</description>
       <script>var forms = new java.util.ArrayList()
 
 var dbConn = DatabaseConnectionFactory.createDatabaseConnection(&apos;com.mysql.jdbc.Driver&apos;, globalMap.get(&quot;ODK_DATABASE_URL&quot;), globalMap.get(&quot;ODK_DATABASE_USER&quot;), globalMap.get(&quot;ODK_DATABASE_PASSWORD&quot;));
-var visitResult = dbConn.executeCachedQuery(&quot;SELECT DISTINCT VISIT_DATE, VISIT_ID, LOCATION_ID, FIELD_WORKER_ID, ROUND_NUMBER FROM &quot; + globalMap.get(&quot;VISIT_TABLE&quot;) + &quot; WHERE processed_by_mirth=0 OR processed_by_mirth IS NULL order by START ASC&quot;);
+var visitResult = dbConn.executeCachedQuery(&quot;SELECT DISTINCT VISIT_DATE, OPENHDS_VISIT_ID, OPENHDS_LOCATION_ID, OPENHDS_FIELD_WORKER_ID, OPENHDS_ROUND_NUMBER FROM &quot; + globalMap.get(&quot;VISIT_TABLE&quot;) + &quot; WHERE processed_by_mirth=0 OR processed_by_mirth IS NULL order by START ASC&quot;);
 
 while(visitResult.next()) {
   var visitXml = resultSetToXml(visitResult, &quot;&lt;visit event=&apos;visit&apos; table-name=&apos;&quot; + globalMap.get(&quot;VISIT_TABLE&quot;) + &quot;&apos;/&gt;&quot;);
   // does this visit depend on a newly created location ?
   // a visit will not be processed correctly if the location it refers to does not yet exist
-  var location = dbConn.executeCachedQuery(&quot;SELECT _URI, HIERARCHY_ID, LOCATION_ID, FIELD_WORKER_ID, LOCATION_TYPE, LOCATION_NAME, GEOPOINT_ACC ACCURACY, GEOPOINT_ALT ALTITUDE, GEOPOINT_LNG LONGITUDE, GEOPOINT_LAT LATITUDE FROM &quot; + globalMap.get(&quot;LOCATION_TABLE&quot;) + &quot; WHERE LOCATION_ID = &apos;&quot; + visitXml[&apos;location_id&apos;].toString() + &quot;&apos; AND processed_by_mirth =0&quot;);
+  var location = dbConn.executeCachedQuery(&quot;SELECT _URI, OPENHDS_HIERARCHY_ID, OPENHDS_LOCATION_ID, OPENHDS_FIELD_WORKER_ID, LOCATION_TYPE, LOCATION_NAME, GEOPOINT_ACC ACCURACY, GEOPOINT_ALT ALTITUDE, GEOPOINT_LNG LONGITUDE, GEOPOINT_LAT LATITUDE FROM &quot; + globalMap.get(&quot;LOCATION_TABLE&quot;) + &quot; WHERE OPENHDS_LOCATION_ID = &apos;&quot; + visitXml[&apos;openhds_location_id&apos;].toString() + &quot;&apos; AND processed_by_mirth =0&quot;);
   
   if (location.next()) {
     var loc = resultSetToXml(location, &quot;&lt;location event=&apos;location&apos; table-name=&apos;&quot; + globalMap.get(&quot;LOCATION_TABLE&quot;) + &quot;&apos;/&gt;&quot;);
@@ -52,15 +52,15 @@ while(visitResult.next()) {
 
   forms.add(visitXml.toString());
   
-  var visitId = visitXml[&quot;visit_id&quot;].toString();
+  var visitId = visitXml[&quot;openhds_visit_id&quot;].toString();
 
-  forms.addAll(addDeaths(visitId, dbConn));
   forms.addAll(addOutMigrations(visitId, dbConn));
   forms.addAll(addOutMigrationsIM(visitId, dbConn));
   forms.addAll(addInternalInmigrations(visitId, dbConn));
   forms.addAll(addExternalInmigrations(visitId, dbConn));
   forms.addAll(addPregnancyOutcomes(visitId, dbConn));
   forms.addAll(addPregnancyObs(visitId, dbConn));
+  forms.addAll(addDeaths(visitId, dbConn));
   forms.addAll(addHoHDeaths(visitId, dbConn));
 }
 
@@ -159,7 +159,7 @@ PgogICAgPGxhdGl0dWRlPjwvbGF0aXR1ZGU+CjwvbG9jYXRpb24+</inboundTemplate>
           <step>
             <sequenceNumber>0</sequenceNumber>
             <name>collectedBy - extId (out)</name>
-            <script>tmp[&apos;collectedBy&apos;][&apos;extId&apos;] = validate(msg[&apos;field_worker_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
+            <script>tmp[&apos;collectedBy&apos;][&apos;extId&apos;] = validate(msg[&apos;openhds_field_worker_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
             <type>Message Builder</type>
             <data>
               <entry>
@@ -168,7 +168,7 @@ PgogICAgPGxhdGl0dWRlPjwvbGF0aXR1ZGU+CjwvbG9jYXRpb24+</inboundTemplate>
               </entry>
               <entry>
                 <string>Mapping</string>
-                <string>msg[&apos;field_worker_id&apos;].toString().toUpperCase()</string>
+                <string>msg[&apos;openhds_field_worker_id&apos;].toString().toUpperCase()</string>
               </entry>
               <entry>
                 <string>DefaultValue</string>
@@ -183,7 +183,7 @@ PgogICAgPGxhdGl0dWRlPjwvbGF0aXR1ZGU+CjwvbG9jYXRpb24+</inboundTemplate>
           <step>
             <sequenceNumber>1</sequenceNumber>
             <name>locationLevel - extId (out)</name>
-            <script>tmp[&apos;locationLevel&apos;][&apos;extId&apos;] = validate(msg[&apos;hierarchy_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
+            <script>tmp[&apos;locationLevel&apos;][&apos;extId&apos;] = validate(msg[&apos;openhds_hierarchy_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
             <type>Message Builder</type>
             <data>
               <entry>
@@ -192,7 +192,7 @@ PgogICAgPGxhdGl0dWRlPjwvbGF0aXR1ZGU+CjwvbG9jYXRpb24+</inboundTemplate>
               </entry>
               <entry>
                 <string>Mapping</string>
-                <string>msg[&apos;hierarchy_id&apos;].toString().toUpperCase()</string>
+                <string>msg[&apos;openhds_hierarchy_id&apos;].toString().toUpperCase()</string>
               </entry>
               <entry>
                 <string>DefaultValue</string>
@@ -255,7 +255,7 @@ PgogICAgPGxhdGl0dWRlPjwvbGF0aXR1ZGU+CjwvbG9jYXRpb24+</inboundTemplate>
           <step>
             <sequenceNumber>4</sequenceNumber>
             <name>extId (out)</name>
-            <script>tmp[&apos;extId&apos;] = validate(msg[&apos;location_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
+            <script>tmp[&apos;extId&apos;] = validate(msg[&apos;openhds_location_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
             <type>Message Builder</type>
             <data>
               <entry>
@@ -264,7 +264,7 @@ PgogICAgPGxhdGl0dWRlPjwvbGF0aXR1ZGU+CjwvbG9jYXRpb24+</inboundTemplate>
               </entry>
               <entry>
                 <string>Mapping</string>
-                <string>msg[&apos;location_id&apos;].toString().toUpperCase()</string>
+                <string>msg[&apos;openhds_location_id&apos;].toString().toUpperCase()</string>
               </entry>
               <entry>
                 <string>DefaultValue</string>
@@ -374,13 +374,14 @@ PgogICAgPGxhdGl0dWRlPjwvbGF0aXR1ZGU+CjwvbG9jYXRpb24+</inboundTemplate>
           </step>
         </steps>
         <inboundTemplate encoding="base64">PGxvY2F0aW9uIGV2ZW50PSJsb2NhdGlvbiIgdGFibGUtbmFtZT0ibG9jYXRpb25fcmVnaXN0cmF0
-aW9uX2NvcmUiPgogICAgPF91cmk+PC9fdXJpPgogICAgPGhpZXJhcmNoeV9pZD48L2hpZXJhcmNo
-eV9pZD4KICAgIDxsb2NhdGlvbl9pZD48L2xvY2F0aW9uX2lkPgogICAgPGZpZWxkX3dvcmtlcl9p
-ZD48L2ZpZWxkX3dvcmtlcl9pZD4KICAgIDxsb2NhdGlvbl90eXBlPjwvbG9jYXRpb25fdHlwZT4K
-ICAgIDxsb2NhdGlvbl9uYW1lPjwvbG9jYXRpb25fbmFtZT4KICAgIDxnZW9wb2ludF9hY2M+PC9n
-ZW9wb2ludF9hY2M+CiAgICA8Z2VvcG9pbnRfYWx0PjwvZ2VvcG9pbnRfYWx0PgogICAgPGdlb3Bv
-aW50X2xuZz48L2dlb3BvaW50X2xuZz4KICAgIDxnZW9wb2ludF9sYXQ+PC9nZW9wb2ludF9sYXQ+
-CjwvbG9jYXRpb24+</inboundTemplate>
+aW9uX2NvcmUiPgogICAgPF91cmk+PC9fdXJpPgogICAgPG9wZW5oZHNfaGllcmFyY2h5X2lkPjwv
+b3Blbmhkc19oaWVyYXJjaHlfaWQ+CiAgICA8b3Blbmhkc19sb2NhdGlvbl9pZD48L29wZW5oZHNf
+bG9jYXRpb25faWQ+CiAgICA8b3Blbmhkc19maWVsZF93b3JrZXJfaWQ+PC9vcGVuaGRzX2ZpZWxk
+X3dvcmtlcl9pZD4KICAgIDxsb2NhdGlvbl90eXBlPjwvbG9jYXRpb25fdHlwZT4KICAgIDxsb2Nh
+dGlvbl9uYW1lPjwvbG9jYXRpb25fbmFtZT4KICAgIDxnZW9wb2ludF9hY2M+PC9nZW9wb2ludF9h
+Y2M+CiAgICA8Z2VvcG9pbnRfYWx0PjwvZ2VvcG9pbnRfYWx0PgogICAgPGdlb3BvaW50X2xuZz48
+L2dlb3BvaW50X2xuZz4KICAgIDxnZW9wb2ludF9sYXQ+PC9nZW9wb2ludF9sYXQ+CjwvbG9jYXRp
+b24+</inboundTemplate>
         <outboundTemplate encoding="base64">PGxvY2F0aW9uPgogICAgPGV4dElkPjwvZXh0SWQ+CiAgICA8Y29sbGVjdGVkQnk+CiAgICAgICAg
 PGV4dElkPjwvZXh0SWQ+CiAgICA8L2NvbGxlY3RlZEJ5PgogICAgPGxvY2F0aW9uTGV2ZWw+CiAg
 ICAgICAgPGV4dElkPjwvZXh0SWQ+CiAgICA8L2xvY2F0aW9uTGV2ZWw+CiAgICA8bG9jYXRpb25O
@@ -510,7 +511,7 @@ Z2l0dWRlPjwvbG9uZ2l0dWRlPgogICAgPGxhdGl0dWRlPjwvbGF0aXR1ZGU+CjwvbG9jYXRpb24+
           <step>
             <sequenceNumber>0</sequenceNumber>
             <name>collectedBy - extId (out)</name>
-            <script>tmp[&apos;collectedBy&apos;][&apos;extId&apos;] = validate(msg[&apos;field_worker_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
+            <script>tmp[&apos;collectedBy&apos;][&apos;extId&apos;] = validate(msg[&apos;openhds_field_worker_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
             <type>Message Builder</type>
             <data>
               <entry>
@@ -518,6 +519,10 @@ Z2l0dWRlPjwvbG9uZ2l0dWRlPgogICAgPGxhdGl0dWRlPjwvbGF0aXR1ZGU+CjwvbG9jYXRpb24+
                 <string>tmp[&apos;collectedBy&apos;][&apos;extId&apos;]</string>
               </entry>
               <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;openhds_field_worker_id&apos;].toString().toUpperCase()</string>
+              </entry>
+              <entry>
                 <string>DefaultValue</string>
                 <string></string>
               </entry>
@@ -525,16 +530,12 @@ Z2l0dWRlPjwvbG9uZ2l0dWRlPgogICAgPGxhdGl0dWRlPjwvbGF0aXR1ZGU+CjwvbG9jYXRpb24+
                 <string>RegularExpressions</string>
                 <list/>
               </entry>
-              <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;field_worker_id&apos;].toString().toUpperCase()</string>
-              </entry>
             </data>
           </step>
           <step>
             <sequenceNumber>1</sequenceNumber>
             <name>roundNumber (out)</name>
-            <script>tmp[&apos;roundNumber&apos;] = validate(msg[&apos;round_number&apos;].toString(), &apos;&apos;, new Array());</script>
+            <script>tmp[&apos;roundNumber&apos;] = validate(msg[&apos;openhds_round_number&apos;].toString(), &apos;&apos;, new Array());</script>
             <type>Message Builder</type>
             <data>
               <entry>
@@ -542,16 +543,16 @@ Z2l0dWRlPjwvbG9uZ2l0dWRlPgogICAgPGxhdGl0dWRlPjwvbGF0aXR1ZGU+CjwvbG9jYXRpb24+
                 <string>tmp[&apos;roundNumber&apos;]</string>
               </entry>
               <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;openhds_round_number&apos;].toString()</string>
+              </entry>
+              <entry>
                 <string>DefaultValue</string>
                 <string></string>
               </entry>
               <entry>
                 <string>RegularExpressions</string>
                 <list/>
-              </entry>
-              <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;round_number&apos;].toString()</string>
               </entry>
             </data>
           </step>
@@ -566,6 +567,10 @@ Z2l0dWRlPjwvbG9uZ2l0dWRlPgogICAgPGxhdGl0dWRlPjwvbGF0aXR1ZGU+CjwvbG9jYXRpb24+
                 <string>tmp[&apos;visitDate&apos;]</string>
               </entry>
               <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;visit_date&apos;].toString()</string>
+              </entry>
+              <entry>
                 <string>DefaultValue</string>
                 <string></string>
               </entry>
@@ -573,16 +578,12 @@ Z2l0dWRlPjwvbG9uZ2l0dWRlPgogICAgPGxhdGl0dWRlPjwvbGF0aXR1ZGU+CjwvbG9jYXRpb24+
                 <string>RegularExpressions</string>
                 <list/>
               </entry>
-              <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;visit_date&apos;].toString()</string>
-              </entry>
             </data>
           </step>
           <step>
             <sequenceNumber>3</sequenceNumber>
             <name>visitLocation - extId (out)</name>
-            <script>tmp[&apos;visitLocation&apos;][&apos;extId&apos;] = validate(msg[&apos;location_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
+            <script>tmp[&apos;visitLocation&apos;][&apos;extId&apos;] = validate(msg[&apos;openhds_location_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
             <type>Message Builder</type>
             <data>
               <entry>
@@ -590,6 +591,10 @@ Z2l0dWRlPjwvbG9uZ2l0dWRlPgogICAgPGxhdGl0dWRlPjwvbGF0aXR1ZGU+CjwvbG9jYXRpb24+
                 <string>tmp[&apos;visitLocation&apos;][&apos;extId&apos;]</string>
               </entry>
               <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;openhds_location_id&apos;].toString().toUpperCase()</string>
+              </entry>
+              <entry>
                 <string>DefaultValue</string>
                 <string></string>
               </entry>
@@ -597,16 +602,12 @@ Z2l0dWRlPjwvbG9uZ2l0dWRlPgogICAgPGxhdGl0dWRlPjwvbGF0aXR1ZGU+CjwvbG9jYXRpb24+
                 <string>RegularExpressions</string>
                 <list/>
               </entry>
-              <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;location_id&apos;].toString().toUpperCase()</string>
-              </entry>
             </data>
           </step>
           <step>
             <sequenceNumber>4</sequenceNumber>
             <name>extId (out)</name>
-            <script>tmp[&apos;extId&apos;] = validate(msg[&apos;visit_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
+            <script>tmp[&apos;extId&apos;] = validate(msg[&apos;openhds_visit_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
             <type>Message Builder</type>
             <data>
               <entry>
@@ -614,6 +615,10 @@ Z2l0dWRlPjwvbG9uZ2l0dWRlPgogICAgPGxhdGl0dWRlPjwvbGF0aXR1ZGU+CjwvbG9jYXRpb24+
                 <string>tmp[&apos;extId&apos;]</string>
               </entry>
               <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;openhds_visit_id&apos;].toString().toUpperCase()</string>
+              </entry>
+              <entry>
                 <string>DefaultValue</string>
                 <string></string>
               </entry>
@@ -621,18 +626,15 @@ Z2l0dWRlPjwvbG9uZ2l0dWRlPgogICAgPGxhdGl0dWRlPjwvbGF0aXR1ZGU+CjwvbG9jYXRpb24+
                 <string>RegularExpressions</string>
                 <list/>
               </entry>
-              <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;visit_id&apos;].toString().toUpperCase()</string>
-              </entry>
             </data>
           </step>
         </steps>
         <inboundTemplate encoding="base64">PHZpc2l0IGV2ZW50PSJ2aXNpdCIgdGFibGUtbmFtZT0idmlzaXRfcmVnaXN0cmF0aW9uX2NvcmUi
-PgogICAgPF91cmk+PC9fdXJpPgogICAgPHZpc2l0X2RhdGU+PC92aXNpdF9kYXRlPgogICAgPHZp
-c2l0X2lkPjwvdmlzaXRfaWQ+CiAgICA8bG9jYXRpb25faWQ+PC9sb2NhdGlvbl9pZD4KICAgIDxm
-aWVsZF93b3JrZXJfaWQ+PC9maWVsZF93b3JrZXJfaWQ+CiAgICA8cm91bmRfbnVtYmVyPjwvcm91
-bmRfbnVtYmVyPgo8L3Zpc2l0Pg==</inboundTemplate>
+PgogICAgPF91cmk+PC9fdXJpPgogICAgPHZpc2l0X2RhdGU+PC92aXNpdF9kYXRlPgogICAgPG9w
+ZW5oZHNfdmlzaXRfaWQ+PC9vcGVuaGRzX3Zpc2l0X2lkPgogICAgPG9wZW5oZHNfbG9jYXRpb25f
+aWQ+PC9vcGVuaGRzX2xvY2F0aW9uX2lkPgogICAgPG9wZW5oZHNfZmllbGRfd29ya2VyX2lkPjwv
+b3Blbmhkc19maWVsZF93b3JrZXJfaWQ+CiAgICA8b3Blbmhkc19yb3VuZF9udW1iZXI+PC9vcGVu
+aGRzX3JvdW5kX251bWJlcj4KPC92aXNpdD4=</inboundTemplate>
         <outboundTemplate encoding="base64">PHZpc2l0PgogIDxleHRJZD48L2V4dElkPgogIDxjb2xsZWN0ZWRCeT4KICAgIDxleHRJZD48L2V4
 dElkPgogIDwvY29sbGVjdGVkQnk+CiAgPHJvdW5kTnVtYmVyPjwvcm91bmROdW1iZXI+CiAgPHZp
 c2l0RGF0ZT48L3Zpc2l0RGF0ZT4KICA8dmlzaXRMb2NhdGlvbj4KICAgIDxleHRJZD48L2V4dElk
@@ -759,7 +761,7 @@ PgogIDwvdmlzaXRMb2NhdGlvbj4KPC92aXNpdD4=</outboundTemplate>
           <step>
             <sequenceNumber>0</sequenceNumber>
             <name>visitDeath - extId (out)</name>
-            <script>tmp[&apos;visitDeath&apos;][&apos;extId&apos;] = validate(msg[&apos;visit_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
+            <script>tmp[&apos;visitDeath&apos;][&apos;extId&apos;] = validate(msg[&apos;openhds_visit_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
             <type>Message Builder</type>
             <data>
               <entry>
@@ -767,6 +769,10 @@ PgogIDwvdmlzaXRMb2NhdGlvbj4KPC92aXNpdD4=</outboundTemplate>
                 <string>tmp[&apos;visitDeath&apos;][&apos;extId&apos;]</string>
               </entry>
               <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;openhds_visit_id&apos;].toString().toUpperCase()</string>
+              </entry>
+              <entry>
                 <string>DefaultValue</string>
                 <string></string>
               </entry>
@@ -774,16 +780,12 @@ PgogIDwvdmlzaXRMb2NhdGlvbj4KPC92aXNpdD4=</outboundTemplate>
                 <string>RegularExpressions</string>
                 <list/>
               </entry>
-              <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;visit_id&apos;].toString().toUpperCase()</string>
-              </entry>
             </data>
           </step>
           <step>
             <sequenceNumber>1</sequenceNumber>
             <name>individual - extId (out)</name>
-            <script>tmp[&apos;individual&apos;][&apos;extId&apos;] = validate(msg[&apos;individual_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
+            <script>tmp[&apos;individual&apos;][&apos;extId&apos;] = validate(msg[&apos;openhds_individual_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
             <type>Message Builder</type>
             <data>
               <entry>
@@ -791,16 +793,16 @@ PgogIDwvdmlzaXRMb2NhdGlvbj4KPC92aXNpdD4=</outboundTemplate>
                 <string>tmp[&apos;individual&apos;][&apos;extId&apos;]</string>
               </entry>
               <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;openhds_individual_id&apos;].toString().toUpperCase()</string>
+              </entry>
+              <entry>
                 <string>DefaultValue</string>
                 <string></string>
               </entry>
               <entry>
                 <string>RegularExpressions</string>
                 <list/>
-              </entry>
-              <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;individual_id&apos;].toString().toUpperCase()</string>
               </entry>
             </data>
           </step>
@@ -815,16 +817,16 @@ PgogIDwvdmlzaXRMb2NhdGlvbj4KPC92aXNpdD4=</outboundTemplate>
                 <string>tmp[&apos;deathPlace&apos;]</string>
               </entry>
               <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;place_of_death&apos;].toString().toUpperCase()</string>
+              </entry>
+              <entry>
                 <string>DefaultValue</string>
                 <string></string>
               </entry>
               <entry>
                 <string>RegularExpressions</string>
                 <list/>
-              </entry>
-              <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;place_of_death&apos;].toString().toUpperCase()</string>
               </entry>
             </data>
           </step>
@@ -879,12 +881,16 @@ PgogIDwvdmlzaXRMb2NhdGlvbj4KPC92aXNpdD4=</outboundTemplate>
           <step>
             <sequenceNumber>5</sequenceNumber>
             <name>collectedBy - extId (out)</name>
-            <script>tmp[&apos;collectedBy&apos;][&apos;extId&apos;] = validate(msg[&apos;field_worker_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
+            <script>tmp[&apos;collectedBy&apos;][&apos;extId&apos;] = validate(msg[&apos;openhds_field_worker_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
             <type>Message Builder</type>
             <data>
               <entry>
                 <string>Variable</string>
                 <string>tmp[&apos;collectedBy&apos;][&apos;extId&apos;]</string>
+              </entry>
+              <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;openhds_field_worker_id&apos;].toString().toUpperCase()</string>
               </entry>
               <entry>
                 <string>DefaultValue</string>
@@ -894,18 +900,15 @@ PgogIDwvdmlzaXRMb2NhdGlvbj4KPC92aXNpdD4=</outboundTemplate>
                 <string>RegularExpressions</string>
                 <list/>
               </entry>
-              <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;field_worker_id&apos;].toString().toUpperCase()</string>
-              </entry>
             </data>
           </step>
         </steps>
-        <inboundTemplate encoding="base64">PGRlYXRoPgogICAgPF91cmk+PC9fdXJpPgogICAgPHZpc2l0X2lkPjwvdmlzaXRfaWQ+CiAgICA8
-Y2F1c2Vfb2ZfZGVhdGg+PC9jYXVzZV9vZl9kZWF0aD4KICAgIDxmaWVsZF93b3JrZXJfaWQ+PC9m
-aWVsZF93b3JrZXJfaWQ+CiAgICA8ZGF0ZV9vZl9kZWF0aD48L2RhdGVfb2ZfZGVhdGg+CiAgICA8
-cGxhY2Vfb2ZfZGVhdGg+PC9wbGFjZV9vZl9kZWF0aD4KICAgIDxpbmRpdmlkdWFsX2lkPjwvaW5k
-aXZpZHVhbF9pZD4KPC9kZWF0aD4=</inboundTemplate>
+        <inboundTemplate encoding="base64">PGRlYXRoPgogICAgPF91cmk+PC9fdXJpPgogICAgPG9wZW5oZHNfdmlzaXRfaWQ+PC9vcGVuaGRz
+X3Zpc2l0X2lkPgogICAgPGNhdXNlX29mX2RlYXRoPjwvY2F1c2Vfb2ZfZGVhdGg+CiAgICA8b3Bl
+bmhkc19maWVsZF93b3JrZXJfaWQ+PC9vcGVuaGRzX2ZpZWxkX3dvcmtlcl9pZD4KICAgIDxkYXRl
+X29mX2RlYXRoPjwvZGF0ZV9vZl9kZWF0aD4KICAgIDxwbGFjZV9vZl9kZWF0aD48L3BsYWNlX29m
+X2RlYXRoPgogICAgPG9wZW5oZHNfaW5kaXZpZHVhbF9pZD48L29wZW5oZHNfaW5kaXZpZHVhbF9p
+ZD4KPC9kZWF0aD4=</inboundTemplate>
         <outboundTemplate encoding="base64">PGRlYXRoPgogIDx2aXNpdERlYXRoPgogICAgPGV4dElkPjwvZXh0SWQ+CiAgPC92aXNpdERlYXRo
 PgogIDxpbmRpdmlkdWFsPgogICAgPGV4dElkPjwvZXh0SWQ+CiAgPC9pbmRpdmlkdWFsPgogIDxk
 ZWF0aFBsYWNlPjwvZGVhdGhQbGFjZT4KICA8ZGVhdGhDYXVzZT48L2RlYXRoQ2F1c2U+CiAgPGRl
@@ -1033,19 +1036,19 @@ ICA8L2NvbGxlY3RlZEJ5Pgo8L2RlYXRoPg==</outboundTemplate>
           <step>
             <sequenceNumber>0</sequenceNumber>
             <name>Death of Household transforms</name>
-            <script>tmp[&apos;collectedBy&apos;][&apos;extId&apos;] = msg[&apos;field_worker_id&apos;].toString().toUpperCase();
-tmp[&apos;visit&apos;][&apos;extId&apos;] = msg[&apos;visit_id&apos;].toString().toUpperCase();
-tmp[&apos;newHoh&apos;][&apos;extId&apos;] = msg[&apos;new_hoh_id&apos;].toString().toUpperCase();
-tmp[&apos;oldHoh&apos;][&apos;extId&apos;] = msg[&apos;individual_id&apos;].toString().toUpperCase();
-tmp[&apos;socialGroup&apos;][&apos;extId&apos;] = msg[&apos;household_id&apos;].toString().toUpperCase();
+            <script>tmp[&apos;collectedBy&apos;][&apos;extId&apos;] = msg[&apos;openhds_field_worker_id&apos;].toString().toUpperCase();
+tmp[&apos;visit&apos;][&apos;extId&apos;] = msg[&apos;openhds_visit_id&apos;].toString().toUpperCase();
+tmp[&apos;newHoh&apos;][&apos;extId&apos;] = msg[&apos;openhds_new_hoh_id&apos;].toString().toUpperCase();
+tmp[&apos;oldHoh&apos;][&apos;extId&apos;] = msg[&apos;openhds_individual_id&apos;].toString().toUpperCase();
+tmp[&apos;socialGroup&apos;][&apos;extId&apos;] = msg[&apos;openhds_household_id&apos;].toString().toUpperCase();
 
 //DEATH
-tmp[&apos;death&apos;][&apos;visitDeath&apos;][&apos;extId&apos;] = msg[&apos;visit_id&apos;].toString().toUpperCase();
-tmp[&apos;death&apos;][&apos;individual&apos;][&apos;extId&apos;] = msg[&apos;individual_id&apos;].toString().toUpperCase();
+tmp[&apos;death&apos;][&apos;visitDeath&apos;][&apos;extId&apos;] = msg[&apos;openhds_visit_id&apos;].toString().toUpperCase();
+tmp[&apos;death&apos;][&apos;individual&apos;][&apos;extId&apos;] = msg[&apos;openhds_individual_id&apos;].toString().toUpperCase();
 tmp[&apos;death&apos;][&apos;deathPlace&apos;] = msg[&apos;place_of_death&apos;].toString();
 tmp[&apos;death&apos;][&apos;deathCause&apos;] = msg[&apos;cause_of_death&apos;].toString();
 tmp[&apos;death&apos;][&apos;deathDate&apos;] = msg[&apos;date&apos;].toString();
-tmp[&apos;death&apos;][&apos;collectedBy&apos;][&apos;extId&apos;] = msg[&apos;field_worker_id&apos;].toString().toUpperCase();
+tmp[&apos;death&apos;][&apos;collectedBy&apos;][&apos;extId&apos;] = msg[&apos;openhds_field_worker_id&apos;].toString().toUpperCase();
 
 var relationsXml = new XML(&quot;&lt;memberships /&gt;&quot;);
 var relations = msg[&apos;relation&apos;].length();
@@ -1061,19 +1064,19 @@ tmp[&apos;memberships&apos;] = relationsXml;</script>
             <data>
               <entry>
                 <string>Script</string>
-                <string>tmp[&apos;collectedBy&apos;][&apos;extId&apos;] = msg[&apos;field_worker_id&apos;].toString().toUpperCase();
-tmp[&apos;visit&apos;][&apos;extId&apos;] = msg[&apos;visit_id&apos;].toString().toUpperCase();
-tmp[&apos;newHoh&apos;][&apos;extId&apos;] = msg[&apos;new_hoh_id&apos;].toString().toUpperCase();
-tmp[&apos;oldHoh&apos;][&apos;extId&apos;] = msg[&apos;individual_id&apos;].toString().toUpperCase();
-tmp[&apos;socialGroup&apos;][&apos;extId&apos;] = msg[&apos;household_id&apos;].toString().toUpperCase();
+                <string>tmp[&apos;collectedBy&apos;][&apos;extId&apos;] = msg[&apos;openhds_field_worker_id&apos;].toString().toUpperCase();
+tmp[&apos;visit&apos;][&apos;extId&apos;] = msg[&apos;openhds_visit_id&apos;].toString().toUpperCase();
+tmp[&apos;newHoh&apos;][&apos;extId&apos;] = msg[&apos;openhds_new_hoh_id&apos;].toString().toUpperCase();
+tmp[&apos;oldHoh&apos;][&apos;extId&apos;] = msg[&apos;openhds_individual_id&apos;].toString().toUpperCase();
+tmp[&apos;socialGroup&apos;][&apos;extId&apos;] = msg[&apos;openhds_household_id&apos;].toString().toUpperCase();
 
 //DEATH
-tmp[&apos;death&apos;][&apos;visitDeath&apos;][&apos;extId&apos;] = msg[&apos;visit_id&apos;].toString().toUpperCase();
-tmp[&apos;death&apos;][&apos;individual&apos;][&apos;extId&apos;] = msg[&apos;individual_id&apos;].toString().toUpperCase();
+tmp[&apos;death&apos;][&apos;visitDeath&apos;][&apos;extId&apos;] = msg[&apos;openhds_visit_id&apos;].toString().toUpperCase();
+tmp[&apos;death&apos;][&apos;individual&apos;][&apos;extId&apos;] = msg[&apos;openhds_individual_id&apos;].toString().toUpperCase();
 tmp[&apos;death&apos;][&apos;deathPlace&apos;] = msg[&apos;place_of_death&apos;].toString();
 tmp[&apos;death&apos;][&apos;deathCause&apos;] = msg[&apos;cause_of_death&apos;].toString();
 tmp[&apos;death&apos;][&apos;deathDate&apos;] = msg[&apos;date&apos;].toString();
-tmp[&apos;death&apos;][&apos;collectedBy&apos;][&apos;extId&apos;] = msg[&apos;field_worker_id&apos;].toString().toUpperCase();
+tmp[&apos;death&apos;][&apos;collectedBy&apos;][&apos;extId&apos;] = msg[&apos;openhds_field_worker_id&apos;].toString().toUpperCase();
 
 var relationsXml = new XML(&quot;&lt;memberships /&gt;&quot;);
 var relations = msg[&apos;relation&apos;].length();
@@ -1089,18 +1092,19 @@ tmp[&apos;memberships&apos;] = relationsXml;</string>
             </data>
           </step>
         </steps>
-        <inboundTemplate encoding="base64">PGRlYXRoSG9IPg0KICAgIDxfdXJpPjwvX3VyaT4NCiAgICA8dmlzaXRfaWQ+PC92aXNpdF9pZD4N
-CiAgICA8ZmllbGRfd29ya2VyX2lkPjwvZmllbGRfd29ya2VyX2lkPg0KICAgIDxuZXdfaG9oX2lk
-PjwvbmV3X2hvaF9pZD4NCiAgICA8aW5kaXZpZHVhbF9pZD48L2luZGl2aWR1YWxfaWQ+DQoJPGhv
-dXNlaG9sZF9pZD48L2hvdXNlaG9sZF9pZD4KCTxwbGFjZV9vZl9kZWF0aD48L3BsYWNlX29mX2Rl
-YXRoPgoJPHdob20+PC93aG9tPgoJPGRpYWdub3NlZGRlYXRoPjwvZGlhZ25vc2VkZGVhdGg+Cgk8
-b3RoZXJwbGFjZV9vZl9kZWF0aD48L290aGVycGxhY2Vfb2ZfZGVhdGg+Cgk8Y2F1c2VvZmRlYXRo
-ZGlhZ25vc2VkPjwvY2F1c2VvZmRlYXRoZGlhZ25vc2VkPgoJPGRhdGU+PC9kYXRlPgoJPGNhdXNl
-X29mX2RlYXRoPjwvY2F1c2Vfb2ZfZGVhdGg+CiAgICA8cmVsYXRpb24+DQogICAgICAgIDxtZW1i
-ZXJfbmFtZT48L21lbWJlcl9uYW1lPg0KICAgICAgICA8cmVsYXRpb25zaGlwX3RvX2dyb3VwX2hl
-YWQ+PC9yZWxhdGlvbnNoaXBfdG9fZ3JvdXBfaGVhZD4NCiAgICAgICAgPGV4dF9pZD48L2V4dF9p
-ZD4NCiAgICAgICAgPHNvY2lhbF9ncm91cF9pZD48L3NvY2lhbF9ncm91cF9pZD4NCiAgICA8L3Jl
-bGF0aW9uPg0KPC9kZWF0aEhvSD4=</inboundTemplate>
+        <inboundTemplate encoding="base64">PGRlYXRoSG9IPg0KICAgIDxfdXJpPjwvX3VyaT4NCiAgICA8b3Blbmhkc192aXNpdF9pZD48L29w
+ZW5oZHNfdmlzaXRfaWQ+DQogICAgPG9wZW5oZHNfZmllbGRfd29ya2VyX2lkPjwvb3Blbmhkc19m
+aWVsZF93b3JrZXJfaWQ+DQogICAgPG9wZW5oZHNfbmV3X2hvaF9pZD48L29wZW5oZHNfbmV3X2hv
+aF9pZD4NCiAgICA8b3Blbmhkc19pbmRpdmlkdWFsX2lkPjwvb3Blbmhkc19pbmRpdmlkdWFsX2lk
+Pg0KCTxvcGVuaGRzX2hvdXNlaG9sZF9pZD48L29wZW5oZHNfaG91c2Vob2xkX2lkPgoJPHBsYWNl
+X29mX2RlYXRoPjwvcGxhY2Vfb2ZfZGVhdGg+Cgk8d2hvbT48L3dob20+Cgk8ZGlhZ25vc2VkZGVh
+dGg+PC9kaWFnbm9zZWRkZWF0aD4KCTxvdGhlcnBsYWNlX29mX2RlYXRoPjwvb3RoZXJwbGFjZV9v
+Zl9kZWF0aD4KCTxjYXVzZW9mZGVhdGhkaWFnbm9zZWQ+PC9jYXVzZW9mZGVhdGhkaWFnbm9zZWQ+
+Cgk8ZGF0ZT48L2RhdGU+Cgk8Y2F1c2Vfb2ZfZGVhdGg+PC9jYXVzZV9vZl9kZWF0aD4KICAgIDxy
+ZWxhdGlvbj4NCiAgICAgICAgPG1lbWJlcl9uYW1lPjwvbWVtYmVyX25hbWU+DQogICAgICAgIDxy
+ZWxhdGlvbnNoaXBfdG9fZ3JvdXBfaGVhZD48L3JlbGF0aW9uc2hpcF90b19ncm91cF9oZWFkPg0K
+ICAgICAgICA8ZXh0X2lkPjwvZXh0X2lkPg0KICAgICAgICA8c29jaWFsX2dyb3VwX2lkPjwvc29j
+aWFsX2dyb3VwX2lkPg0KICAgIDwvcmVsYXRpb24+DQo8L2RlYXRoSG9IPg==</inboundTemplate>
         <outboundTemplate encoding="base64">PGRlYXRoX29mX2hoPg0KICAgIDxjb2xsZWN0ZWRCeT4KCQk8ZXh0SWQ+PC9leHRJZD4KCTwvY29s
 bGVjdGVkQnk+CiAgICA8dmlzaXQ+CgkJPGV4dElkPjwvZXh0SWQ+Cgk8L3Zpc2l0Pg0KICAgIDxu
 ZXdIb2g+CgkJPGV4dElkPjwvZXh0SWQ+Cgk8L25ld0hvaD4NCiAgICA8b2xkSG9oPgoJCTxleHRJ
@@ -1237,7 +1241,7 @@ cm91cD4NCgkgICAgPC9tZW1iZXJzaGlwPg0KCTwvbWVtYmVyc2hpcHM+CjwvZGVhdGhfb2ZfaGg+
           <step>
             <sequenceNumber>0</sequenceNumber>
             <name>collectedBy - extId (out)</name>
-            <script>tmp[&apos;collectedBy&apos;][&apos;extId&apos;] = validate(msg[&apos;field_worker_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
+            <script>tmp[&apos;collectedBy&apos;][&apos;extId&apos;] = validate(msg[&apos;openhds_field_worker_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
             <type>Message Builder</type>
             <data>
               <entry>
@@ -1246,7 +1250,7 @@ cm91cD4NCgkgICAgPC9tZW1iZXJzaGlwPg0KCTwvbWVtYmVyc2hpcHM+CjwvZGVhdGhfb2ZfaGg+
               </entry>
               <entry>
                 <string>Mapping</string>
-                <string>msg[&apos;field_worker_id&apos;].toString().toUpperCase()</string>
+                <string>msg[&apos;openhds_field_worker_id&apos;].toString().toUpperCase()</string>
               </entry>
               <entry>
                 <string>DefaultValue</string>
@@ -1261,12 +1265,16 @@ cm91cD4NCgkgICAgPC9tZW1iZXJzaGlwPg0KCTwvbWVtYmVyc2hpcHM+CjwvZGVhdGhfb2ZfaGg+
           <step>
             <sequenceNumber>1</sequenceNumber>
             <name>individual - extId (out)</name>
-            <script>tmp[&apos;individual&apos;][&apos;extId&apos;] = validate(msg[&apos;individual_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
+            <script>tmp[&apos;individual&apos;][&apos;extId&apos;] = validate(msg[&apos;openhds_individual_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
             <type>Message Builder</type>
             <data>
               <entry>
                 <string>Variable</string>
                 <string>tmp[&apos;individual&apos;][&apos;extId&apos;]</string>
+              </entry>
+              <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;openhds_individual_id&apos;].toString().toUpperCase()</string>
               </entry>
               <entry>
                 <string>DefaultValue</string>
@@ -1275,10 +1283,6 @@ cm91cD4NCgkgICAgPC9tZW1iZXJzaGlwPg0KCTwvbWVtYmVyc2hpcHM+CjwvZGVhdGhfb2ZfaGg+
               <entry>
                 <string>RegularExpressions</string>
                 <list/>
-              </entry>
-              <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;individual_id&apos;].toString().toUpperCase()</string>
               </entry>
             </data>
           </step>
@@ -1333,12 +1337,16 @@ cm91cD4NCgkgICAgPC9tZW1iZXJzaGlwPg0KCTwvbWVtYmVyc2hpcHM+CjwvZGVhdGhfb2ZfaGg+
           <step>
             <sequenceNumber>4</sequenceNumber>
             <name>visit - extId (out)</name>
-            <script>tmp[&apos;visit&apos;][&apos;extId&apos;] = validate(msg[&apos;visit_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
+            <script>tmp[&apos;visit&apos;][&apos;extId&apos;] = validate(msg[&apos;openhds_visit_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
             <type>Message Builder</type>
             <data>
               <entry>
                 <string>Variable</string>
                 <string>tmp[&apos;visit&apos;][&apos;extId&apos;]</string>
+              </entry>
+              <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;openhds_visit_id&apos;].toString().toUpperCase()</string>
               </entry>
               <entry>
                 <string>DefaultValue</string>
@@ -1347,10 +1355,6 @@ cm91cD4NCgkgICAgPC9tZW1iZXJzaGlwPg0KCTwvbWVtYmVyc2hpcHM+CjwvZGVhdGhfb2ZfaGg+
               <entry>
                 <string>RegularExpressions</string>
                 <list/>
-              </entry>
-              <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;visit_id&apos;].toString().toUpperCase()</string>
               </entry>
             </data>
           </step>
@@ -1365,6 +1369,10 @@ cm91cD4NCgkgICAgPC9tZW1iZXJzaGlwPg0KCTwvbWVtYmVyc2hpcHM+CjwvZGVhdGhfb2ZfaGg+
                 <string>tmp[&apos;recordedDate&apos;]</string>
               </entry>
               <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;date_of_migration&apos;].toString()</string>
+              </entry>
+              <entry>
                 <string>DefaultValue</string>
                 <string></string>
               </entry>
@@ -1372,19 +1380,16 @@ cm91cD4NCgkgICAgPC9tZW1iZXJzaGlwPg0KCTwvbWVtYmVyc2hpcHM+CjwvZGVhdGhfb2ZfaGg+
                 <string>RegularExpressions</string>
                 <list/>
               </entry>
-              <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;date_of_migration&apos;].toString()</string>
-              </entry>
             </data>
           </step>
         </steps>
-        <inboundTemplate encoding="base64">PG91dG1pZ3JhdGlvbj4KICAgIDxfdXJpPjwvX3VyaT4KICAgIDx2aXNpdF9pZD48L3Zpc2l0X2lk
-PgogICAgPG5hbWVfb2ZfZGVzdGluYXRpb24+PC9uYW1lX29mX2Rlc3RpbmF0aW9uPgogICAgPGZp
-ZWxkX3dvcmtlcl9pZD48L2ZpZWxkX3dvcmtlcl9pZD4KICAgIDxkYXRlX29mX21pZ3JhdGlvbj48
-L2RhdGVfb2ZfbWlncmF0aW9uPgogICAgPHJlYXNvbl9mb3Jfb3V0X21pZ3JhdGlvbj48L3JlYXNv
-bl9mb3Jfb3V0X21pZ3JhdGlvbj4KICAgIDxpbmRpdmlkdWFsX2lkPjwvaW5kaXZpZHVhbF9pZD4K
-PC9vdXRtaWdyYXRpb24+</inboundTemplate>
+        <inboundTemplate encoding="base64">PG91dG1pZ3JhdGlvbj4KICAgIDxfdXJpPjwvX3VyaT4KICAgIDxvcGVuaGRzX3Zpc2l0X2lkPjwv
+b3Blbmhkc192aXNpdF9pZD4KICAgIDxuYW1lX29mX2Rlc3RpbmF0aW9uPjwvbmFtZV9vZl9kZXN0
+aW5hdGlvbj4KICAgIDxvcGVuaGRzX2ZpZWxkX3dvcmtlcl9pZD48L29wZW5oZHNfZmllbGRfd29y
+a2VyX2lkPgogICAgPGRhdGVfb2ZfbWlncmF0aW9uPjwvZGF0ZV9vZl9taWdyYXRpb24+CiAgICA8
+cmVhc29uX2Zvcl9vdXRfbWlncmF0aW9uPjwvcmVhc29uX2Zvcl9vdXRfbWlncmF0aW9uPgogICAg
+PG9wZW5oZHNfaW5kaXZpZHVhbF9pZD48L29wZW5oZHNfaW5kaXZpZHVhbF9pZD4KPC9vdXRtaWdy
+YXRpb24+</inboundTemplate>
         <outboundTemplate encoding="base64">PG91dG1pZ3JhdGlvbj4KICAgIDxjb2xsZWN0ZWRCeT4KICAgICAgICA8ZXh0SWQ+PC9leHRJZD4K
 ICAgIDwvY29sbGVjdGVkQnk+CiAgICA8aW5kaXZpZHVhbD4KICAgICAgICA8ZXh0SWQ+PC9leHRJ
 ZD4KICAgIDwvaW5kaXZpZHVhbD4KICAgIDxkZXN0aW5hdGlvbj48L2Rlc3RpbmF0aW9uPgogICAg
@@ -1513,7 +1518,7 @@ bj4=</outboundTemplate>
           <step>
             <sequenceNumber>0</sequenceNumber>
             <name>collectedBy - extId (out)</name>
-            <script>tmp[&apos;collectedBy&apos;][&apos;extId&apos;] = validate(msg[&apos;field_worker_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
+            <script>tmp[&apos;collectedBy&apos;][&apos;extId&apos;] = validate(msg[&apos;openhds_field_worker_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
             <type>Message Builder</type>
             <data>
               <entry>
@@ -1522,7 +1527,7 @@ bj4=</outboundTemplate>
               </entry>
               <entry>
                 <string>Mapping</string>
-                <string>msg[&apos;field_worker_id&apos;].toString().toUpperCase()</string>
+                <string>msg[&apos;openhds_field_worker_id&apos;].toString().toUpperCase()</string>
               </entry>
               <entry>
                 <string>DefaultValue</string>
@@ -1561,7 +1566,7 @@ bj4=</outboundTemplate>
           <step>
             <sequenceNumber>2</sequenceNumber>
             <name>destination (out)</name>
-            <script>tmp[&apos;destination&apos;] = validate(msg[&apos;location_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
+            <script>tmp[&apos;destination&apos;] = validate(msg[&apos;openhds_location_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
             <type>Message Builder</type>
             <data>
               <entry>
@@ -1570,7 +1575,7 @@ bj4=</outboundTemplate>
               </entry>
               <entry>
                 <string>Mapping</string>
-                <string>msg[&apos;location_id&apos;].toString().toUpperCase()</string>
+                <string>msg[&apos;openhds_location_id&apos;].toString().toUpperCase()</string>
               </entry>
               <entry>
                 <string>DefaultValue</string>
@@ -1609,7 +1614,7 @@ bj4=</outboundTemplate>
           <step>
             <sequenceNumber>4</sequenceNumber>
             <name>visit - extId (out)</name>
-            <script>tmp[&apos;visit&apos;][&apos;extId&apos;] = validate(msg[&apos;visit_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
+            <script>tmp[&apos;visit&apos;][&apos;extId&apos;] = validate(msg[&apos;openhds_visit_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
             <type>Message Builder</type>
             <data>
               <entry>
@@ -1618,7 +1623,7 @@ bj4=</outboundTemplate>
               </entry>
               <entry>
                 <string>Mapping</string>
-                <string>msg[&apos;visit_id&apos;].toString().toUpperCase()</string>
+                <string>msg[&apos;openhds_visit_id&apos;].toString().toUpperCase()</string>
               </entry>
               <entry>
                 <string>DefaultValue</string>
@@ -1655,11 +1660,12 @@ bj4=</outboundTemplate>
             </data>
           </step>
         </steps>
-        <inboundTemplate encoding="base64">PG91dG1pZ3JhdGlvbj4KICAgIDxfdXJpPjwvX3VyaT4KICAgIDx2aXNpdF9pZD48L3Zpc2l0X2lk
-PgogICAgPGxvY2F0aW9uX2lkPjwvbG9jYXRpb25faWQ+CiAgICA8ZmllbGRfd29ya2VyX2lkPjwv
-ZmllbGRfd29ya2VyX2lkPgogICAgPGRhdGVfb2ZfbWlncmF0aW9uPjwvZGF0ZV9vZl9taWdyYXRp
-b24+CiAgICA8cmVhc29uPjwvcmVhc29uPgogICAgPGluZGl2aWR1YWxfaW5mb19pbmRpdmlkdWFs
-X2lkPjwvaW5kaXZpZHVhbF9pbmZvX2luZGl2aWR1YWxfaWQ+Cjwvb3V0bWlncmF0aW9uPg==</inboundTemplate>
+        <inboundTemplate encoding="base64">PG91dG1pZ3JhdGlvbj4KICAgIDxfdXJpPjwvX3VyaT4KICAgIDxvcGVuaGRzX3Zpc2l0X2lkPjwv
+b3Blbmhkc192aXNpdF9pZD4KICAgIDxvcGVuaGRzX2xvY2F0aW9uX2lkPjwvb3Blbmhkc19sb2Nh
+dGlvbl9pZD4KICAgIDxvcGVuaGRzX2ZpZWxkX3dvcmtlcl9pZD48L29wZW5oZHNfZmllbGRfd29y
+a2VyX2lkPgogICAgPGRhdGVfb2ZfbWlncmF0aW9uPjwvZGF0ZV9vZl9taWdyYXRpb24+CiAgICA8
+cmVhc29uPjwvcmVhc29uPgogICAgPGluZGl2aWR1YWxfaW5mb19pbmRpdmlkdWFsX2lkPjwvaW5k
+aXZpZHVhbF9pbmZvX2luZGl2aWR1YWxfaWQ+Cjwvb3V0bWlncmF0aW9uPg==</inboundTemplate>
         <outboundTemplate encoding="base64">PG91dG1pZ3JhdGlvbj4KICAgIDxjb2xsZWN0ZWRCeT4KICAgICAgICA8ZXh0SWQ+PC9leHRJZD4K
 ICAgIDwvY29sbGVjdGVkQnk+CiAgICA8aW5kaXZpZHVhbD4KICAgICAgICA8ZXh0SWQ+PC9leHRJ
 ZD4KICAgIDwvaW5kaXZpZHVhbD4KICAgIDxkZXN0aW5hdGlvbj48L2Rlc3RpbmF0aW9uPgogICAg
@@ -1788,12 +1794,16 @@ bj4=</outboundTemplate>
           <step>
             <sequenceNumber>0</sequenceNumber>
             <name>mother - extId (out)</name>
-            <script>tmp[&apos;mother&apos;][&apos;extId&apos;] = validate(msg[&apos;individual_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
+            <script>tmp[&apos;mother&apos;][&apos;extId&apos;] = validate(msg[&apos;openhds_individual_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
             <type>Message Builder</type>
             <data>
               <entry>
                 <string>Variable</string>
                 <string>tmp[&apos;mother&apos;][&apos;extId&apos;]</string>
+              </entry>
+              <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;openhds_individual_id&apos;].toString().toUpperCase()</string>
               </entry>
               <entry>
                 <string>DefaultValue</string>
@@ -1802,10 +1812,6 @@ bj4=</outboundTemplate>
               <entry>
                 <string>RegularExpressions</string>
                 <list/>
-              </entry>
-              <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;individual_id&apos;].toString().toUpperCase()</string>
               </entry>
             </data>
           </step>
@@ -1836,7 +1842,7 @@ bj4=</outboundTemplate>
           <step>
             <sequenceNumber>2</sequenceNumber>
             <name>recordedDate (out)</name>
-            <script>tmp[&apos;recordedDate&apos;] = validate(msg[&apos;recorded_date&apos;].toString(), &apos;&apos;, new Array());</script>
+            <script>tmp[&apos;recordedDate&apos;] = validate(msg[&apos;openhds_recorded_date&apos;].toString(), &apos;&apos;, new Array());</script>
             <type>Message Builder</type>
             <data>
               <entry>
@@ -1844,6 +1850,10 @@ bj4=</outboundTemplate>
                 <string>tmp[&apos;recordedDate&apos;]</string>
               </entry>
               <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;openhds_recorded_date&apos;].toString()</string>
+              </entry>
+              <entry>
                 <string>DefaultValue</string>
                 <string></string>
               </entry>
@@ -1851,16 +1861,12 @@ bj4=</outboundTemplate>
                 <string>RegularExpressions</string>
                 <list/>
               </entry>
-              <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;recorded_date&apos;].toString()</string>
-              </entry>
             </data>
           </step>
           <step>
             <sequenceNumber>3</sequenceNumber>
             <name>collectedBy - extId (out)</name>
-            <script>tmp[&apos;collectedBy&apos;][&apos;extId&apos;] = validate(msg[&apos;field_worker_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
+            <script>tmp[&apos;collectedBy&apos;][&apos;extId&apos;] = validate(msg[&apos;openhds_field_worker_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
             <type>Message Builder</type>
             <data>
               <entry>
@@ -1868,6 +1874,10 @@ bj4=</outboundTemplate>
                 <string>tmp[&apos;collectedBy&apos;][&apos;extId&apos;]</string>
               </entry>
               <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;openhds_field_worker_id&apos;].toString().toUpperCase()</string>
+              </entry>
+              <entry>
                 <string>DefaultValue</string>
                 <string></string>
               </entry>
@@ -1875,16 +1885,12 @@ bj4=</outboundTemplate>
                 <string>RegularExpressions</string>
                 <list/>
               </entry>
-              <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;field_worker_id&apos;].toString().toUpperCase()</string>
-              </entry>
             </data>
           </step>
           <step>
             <sequenceNumber>4</sequenceNumber>
             <name>visit - extId (out)</name>
-            <script>tmp[&apos;visit&apos;][&apos;extId&apos;] = validate(msg[&apos;visit_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
+            <script>tmp[&apos;visit&apos;][&apos;extId&apos;] = validate(msg[&apos;openhds_visit_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
             <type>Message Builder</type>
             <data>
               <entry>
@@ -1892,6 +1898,10 @@ bj4=</outboundTemplate>
                 <string>tmp[&apos;visit&apos;][&apos;extId&apos;]</string>
               </entry>
               <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;openhds_visit_id&apos;].toString().toUpperCase()</string>
+              </entry>
+              <entry>
                 <string>DefaultValue</string>
                 <string></string>
               </entry>
@@ -1899,18 +1909,15 @@ bj4=</outboundTemplate>
                 <string>RegularExpressions</string>
                 <list/>
               </entry>
-              <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;visit_id&apos;].toString().toUpperCase()</string>
-              </entry>
             </data>
           </step>
         </steps>
-        <inboundTemplate encoding="base64">PHByZWduYW5jeW9icz4KICAgIDxfdXJpPjwvX3VyaT4KICAgIDx2aXNpdF9pZD48L3Zpc2l0X2lk
-PgogICAgPGV4cGVjdGVkX2RlbGl2ZXJ5X2RhdGU+PC9leHBlY3RlZF9kZWxpdmVyeV9kYXRlPgog
-ICAgPGZpZWxkX3dvcmtlcl9pZD48L2ZpZWxkX3dvcmtlcl9pZD4KICAgIDxyZWNvcmRlZF9kYXRl
-PjwvcmVjb3JkZWRfZGF0ZT4KICAgIDxpbmRpdmlkdWFsX2lkPjwvaW5kaXZpZHVhbF9pZD4KPC9w
-cmVnbmFuY3lvYnM+</inboundTemplate>
+        <inboundTemplate encoding="base64">PHByZWduYW5jeW9icz4KICAgIDxfdXJpPjwvX3VyaT4KICAgIDxvcGVuaGRzX3Zpc2l0X2lkPjwv
+b3Blbmhkc192aXNpdF9pZD4KICAgIDxleHBlY3RlZF9kZWxpdmVyeV9kYXRlPjwvZXhwZWN0ZWRf
+ZGVsaXZlcnlfZGF0ZT4KICAgIDxvcGVuaGRzX2ZpZWxkX3dvcmtlcl9pZD48L29wZW5oZHNfZmll
+bGRfd29ya2VyX2lkPgogICAgPG9wZW5oZHNfcmVjb3JkZWRfZGF0ZT48L29wZW5oZHNfcmVjb3Jk
+ZWRfZGF0ZT4KICAgIDxvcGVuaGRzX2luZGl2aWR1YWxfaWQ+PC9vcGVuaGRzX2luZGl2aWR1YWxf
+aWQ+CjwvcHJlZ25hbmN5b2JzPg==</inboundTemplate>
         <outboundTemplate encoding="base64">PHByZWduYW5jeW9ic2VydmF0aW9uPgogIDxtb3RoZXI+CiAgICA8ZXh0SWQ+PC9leHRJZD4KICA8
 L21vdGhlcj4KICA8ZXhwZWN0ZWREZWxpdmVyeURhdGU+PC9leHBlY3RlZERlbGl2ZXJ5RGF0ZT4K
 ICA8cmVjb3JkZWREYXRlPjwvcmVjb3JkZWREYXRlPgogIDxjb2xsZWN0ZWRCeT4KICAgIDxleHRJ
@@ -2038,12 +2045,16 @@ CiAgPC92aXNpdD4KPC9wcmVnbmFuY3lvYnNlcnZhdGlvbj4=</outboundTemplate>
           <step>
             <sequenceNumber>0</sequenceNumber>
             <name>collectedBy - extId (out)</name>
-            <script>tmp[&apos;collectedBy&apos;][&apos;extId&apos;] = validate(msg[&apos;field_worker_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
+            <script>tmp[&apos;collectedBy&apos;][&apos;extId&apos;] = validate(msg[&apos;openhds_field_worker_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
             <type>Message Builder</type>
             <data>
               <entry>
                 <string>Variable</string>
                 <string>tmp[&apos;collectedBy&apos;][&apos;extId&apos;]</string>
+              </entry>
+              <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;openhds_field_worker_id&apos;].toString().toUpperCase()</string>
               </entry>
               <entry>
                 <string>DefaultValue</string>
@@ -2053,16 +2064,12 @@ CiAgPC92aXNpdD4KPC9wcmVnbmFuY3lvYnNlcnZhdGlvbj4=</outboundTemplate>
                 <string>RegularExpressions</string>
                 <list/>
               </entry>
-              <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;field_worker_id&apos;].toString().toUpperCase()</string>
-              </entry>
             </data>
           </step>
           <step>
             <sequenceNumber>1</sequenceNumber>
             <name>visit - extId (out)</name>
-            <script>tmp[&apos;visit&apos;][&apos;extId&apos;] = validate(msg[&apos;visit_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
+            <script>tmp[&apos;visit&apos;][&apos;extId&apos;] = validate(msg[&apos;openhds_visit_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
             <type>Message Builder</type>
             <data>
               <entry>
@@ -2070,12 +2077,12 @@ CiAgPC92aXNpdD4KPC9wcmVnbmFuY3lvYnNlcnZhdGlvbj4=</outboundTemplate>
                 <string>tmp[&apos;visit&apos;][&apos;extId&apos;]</string>
               </entry>
               <entry>
-                <string>DefaultValue</string>
-                <string></string>
+                <string>Mapping</string>
+                <string>msg[&apos;openhds_visit_id&apos;].toString().toUpperCase()</string>
               </entry>
               <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;visit_id&apos;].toString().toUpperCase()</string>
+                <string>DefaultValue</string>
+                <string></string>
               </entry>
               <entry>
                 <string>RegularExpressions</string>
@@ -2094,12 +2101,12 @@ CiAgPC92aXNpdD4KPC9wcmVnbmFuY3lvYnNlcnZhdGlvbj4=</outboundTemplate>
                 <string>tmp[&apos;individual&apos;][&apos;extId&apos;]</string>
               </entry>
               <entry>
-                <string>DefaultValue</string>
-                <string></string>
-              </entry>
-              <entry>
                 <string>Mapping</string>
                 <string>msg[&apos;individual_info_individual_id&apos;].toString().toUpperCase()</string>
+              </entry>
+              <entry>
+                <string>DefaultValue</string>
+                <string></string>
               </entry>
               <entry>
                 <string>RegularExpressions</string>
@@ -2118,12 +2125,12 @@ CiAgPC92aXNpdD4KPC9wcmVnbmFuY3lvYnNlcnZhdGlvbj4=</outboundTemplate>
                 <string>tmp[&apos;origin&apos;]</string>
               </entry>
               <entry>
-                <string>DefaultValue</string>
-                <string></string>
-              </entry>
-              <entry>
                 <string>Mapping</string>
                 <string>msg[&apos;origin&apos;].toString().toUpperCase()</string>
+              </entry>
+              <entry>
+                <string>DefaultValue</string>
+                <string></string>
               </entry>
               <entry>
                 <string>RegularExpressions</string>
@@ -2142,12 +2149,12 @@ CiAgPC92aXNpdD4KPC9wcmVnbmFuY3lvYnNlcnZhdGlvbj4=</outboundTemplate>
                 <string>tmp[&apos;reason&apos;]</string>
               </entry>
               <entry>
-                <string>DefaultValue</string>
-                <string></string>
-              </entry>
-              <entry>
                 <string>Mapping</string>
                 <string>msg[&apos;reason&apos;].toString().toUpperCase()</string>
+              </entry>
+              <entry>
+                <string>DefaultValue</string>
+                <string></string>
               </entry>
               <entry>
                 <string>RegularExpressions</string>
@@ -2166,12 +2173,12 @@ CiAgPC92aXNpdD4KPC9wcmVnbmFuY3lvYnNlcnZhdGlvbj4=</outboundTemplate>
                 <string>tmp[&apos;recordedDate&apos;]</string>
               </entry>
               <entry>
-                <string>DefaultValue</string>
-                <string></string>
-              </entry>
-              <entry>
                 <string>Mapping</string>
                 <string>msg[&apos;date_of_migration&apos;].toString()</string>
+              </entry>
+              <entry>
+                <string>DefaultValue</string>
+                <string></string>
               </entry>
               <entry>
                 <string>RegularExpressions</string>
@@ -2190,6 +2197,10 @@ CiAgPC92aXNpdD4KPC9wcmVnbmFuY3lvYnNlcnZhdGlvbj4=</outboundTemplate>
                 <string>tmp[&apos;migType&apos;]</string>
               </entry>
               <entry>
+                <string>Mapping</string>
+                <string></string>
+              </entry>
+              <entry>
                 <string>DefaultValue</string>
                 <string>&apos;INTERNAL_INMIGRATION&apos;</string>
               </entry>
@@ -2197,19 +2208,16 @@ CiAgPC92aXNpdD4KPC9wcmVnbmFuY3lvYnNlcnZhdGlvbj4=</outboundTemplate>
                 <string>RegularExpressions</string>
                 <list/>
               </entry>
-              <entry>
-                <string>Mapping</string>
-                <string></string>
-              </entry>
             </data>
           </step>
         </steps>
         <inboundTemplate encoding="base64">PGlubWlncmF0aW9uPgogICAgPF91cmk+PC9fdXJpPg0KICAgIDxyZWFzb24+PC9yZWFzb24+DQog
 ICAgPGRhdGVfb2ZfbWlncmF0aW9uPjwvZGF0ZV9vZl9taWdyYXRpb24+DQogICAgPGluZGl2aWR1
 YWxfaW5mb19pbmRpdmlkdWFsX2lkPjwvaW5kaXZpZHVhbF9pbmZvX2luZGl2aWR1YWxfaWQ+DQog
-ICAgPG9yaWdpbj48L29yaWdpbj4NCiAgICA8dmlzaXRfaWQ+PC92aXNpdF9pZD4NCiAgICA8bG9j
-YXRpb25faWQ+PC9sb2NhdGlvbl9pZD4NCiAgICA8ZmllbGRfd29ya2VyX2lkPjwvZmllbGRfd29y
-a2VyX2lkPg0KPC9pbm1pZ3JhdGlvbj4NCg==</inboundTemplate>
+ICAgPG9yaWdpbj48L29yaWdpbj4NCiAgICA8b3Blbmhkc192aXNpdF9pZD48L29wZW5oZHNfdmlz
+aXRfaWQ+DQogICAgPG9wZW5oZHNfbG9jYXRpb25faWQ+PC9vcGVuaGRzX2xvY2F0aW9uX2lkPg0K
+ICAgIDxvcGVuaGRzX2ZpZWxkX3dvcmtlcl9pZD48L29wZW5oZHNfZmllbGRfd29ya2VyX2lkPg0K
+PC9pbm1pZ3JhdGlvbj4NCg==</inboundTemplate>
         <outboundTemplate encoding="base64">PGlubWlncmF0aW9uPgogICAgPGNvbGxlY3RlZEJ5PgogICAgICAgIDxleHRJZD48L2V4dElkPgog
 ICAgPC9jb2xsZWN0ZWRCeT4KICAgIDx2aXNpdD4KICAgICAgICA8ZXh0SWQ+PC9leHRJZD4KICAg
 IDwvdmlzaXQ+CiAgICA8aW5kaXZpZHVhbD4KICAgICAgICA8ZXh0SWQ+PC9leHRJZD4KICAgIDwv
@@ -2338,7 +2346,7 @@ TUlHUkFUSU9OPC9taWdUeXBlPgo8L2lubWlncmF0aW9uPg==</outboundTemplate>
           <step>
             <sequenceNumber>0</sequenceNumber>
             <name>collectedBy - extId (out)</name>
-            <script>tmp[&apos;collectedBy&apos;][&apos;extId&apos;] = validate(msg[&apos;field_worker_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
+            <script>tmp[&apos;collectedBy&apos;][&apos;extId&apos;] = validate(msg[&apos;openhds_field_worker_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
             <type>Message Builder</type>
             <data>
               <entry>
@@ -2347,7 +2355,7 @@ TUlHUkFUSU9OPC9taWdUeXBlPgo8L2lubWlncmF0aW9uPg==</outboundTemplate>
               </entry>
               <entry>
                 <string>Mapping</string>
-                <string>msg[&apos;field_worker_id&apos;].toString().toUpperCase()</string>
+                <string>msg[&apos;openhds_field_worker_id&apos;].toString().toUpperCase()</string>
               </entry>
               <entry>
                 <string>DefaultValue</string>
@@ -2362,12 +2370,16 @@ TUlHUkFUSU9OPC9taWdUeXBlPgo8L2lubWlncmF0aW9uPg==</outboundTemplate>
           <step>
             <sequenceNumber>1</sequenceNumber>
             <name>visit - extId (out)</name>
-            <script>tmp[&apos;visit&apos;][&apos;extId&apos;] = validate(msg[&apos;visit_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
+            <script>tmp[&apos;visit&apos;][&apos;extId&apos;] = validate(msg[&apos;openhds_visit_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
             <type>Message Builder</type>
             <data>
               <entry>
                 <string>Variable</string>
                 <string>tmp[&apos;visit&apos;][&apos;extId&apos;]</string>
+              </entry>
+              <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;openhds_visit_id&apos;].toString().toUpperCase()</string>
               </entry>
               <entry>
                 <string>DefaultValue</string>
@@ -2376,10 +2388,6 @@ TUlHUkFUSU9OPC9taWdUeXBlPgo8L2lubWlncmF0aW9uPg==</outboundTemplate>
               <entry>
                 <string>RegularExpressions</string>
                 <list/>
-              </entry>
-              <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;visit_id&apos;].toString().toUpperCase()</string>
               </entry>
             </data>
           </step>
@@ -2394,16 +2402,16 @@ TUlHUkFUSU9OPC9taWdUeXBlPgo8L2lubWlncmF0aW9uPg==</outboundTemplate>
                 <string>tmp[&apos;individual&apos;][&apos;extId&apos;]</string>
               </entry>
               <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;individual_info_individual_id&apos;].toString().toUpperCase()</string>
+              </entry>
+              <entry>
                 <string>DefaultValue</string>
                 <string></string>
               </entry>
               <entry>
                 <string>RegularExpressions</string>
                 <list/>
-              </entry>
-              <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;individual_info_individual_id&apos;].toString().toUpperCase()</string>
               </entry>
             </data>
           </step>
@@ -2442,16 +2450,16 @@ TUlHUkFUSU9OPC9taWdUeXBlPgo8L2lubWlncmF0aW9uPg==</outboundTemplate>
                 <string>tmp[&apos;reason&apos;]</string>
               </entry>
               <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;reason&apos;].toString().toUpperCase()</string>
+              </entry>
+              <entry>
                 <string>DefaultValue</string>
                 <string></string>
               </entry>
               <entry>
                 <string>RegularExpressions</string>
                 <list/>
-              </entry>
-              <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;reason&apos;].toString().toUpperCase()</string>
               </entry>
             </data>
           </step>
@@ -2466,16 +2474,16 @@ TUlHUkFUSU9OPC9taWdUeXBlPgo8L2lubWlncmF0aW9uPg==</outboundTemplate>
                 <string>tmp[&apos;recordedDate&apos;]</string>
               </entry>
               <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;date_of_migration&apos;].toString()</string>
+              </entry>
+              <entry>
                 <string>DefaultValue</string>
                 <string></string>
               </entry>
               <entry>
                 <string>RegularExpressions</string>
                 <list/>
-              </entry>
-              <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;date_of_migration&apos;].toString()</string>
               </entry>
             </data>
           </step>
@@ -2490,16 +2498,16 @@ TUlHUkFUSU9OPC9taWdUeXBlPgo8L2lubWlncmF0aW9uPg==</outboundTemplate>
                 <string>tmp[&apos;migType&apos;]</string>
               </entry>
               <entry>
+                <string>Mapping</string>
+                <string></string>
+              </entry>
+              <entry>
                 <string>DefaultValue</string>
                 <string>&apos;EXTERNAL_INMIGRATION&apos;</string>
               </entry>
               <entry>
                 <string>RegularExpressions</string>
                 <list/>
-              </entry>
-              <entry>
-                <string>Mapping</string>
-                <string></string>
               </entry>
             </data>
           </step>
@@ -2514,16 +2522,16 @@ TUlHUkFUSU9OPC9taWdUeXBlPgo8L2lubWlncmF0aW9uPg==</outboundTemplate>
                 <string>tmp[&apos;individual&apos;][&apos;firstName&apos;]</string>
               </entry>
               <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;individual_info_first_name&apos;].toString().toUpperCase()</string>
+              </entry>
+              <entry>
                 <string>DefaultValue</string>
                 <string></string>
               </entry>
               <entry>
                 <string>RegularExpressions</string>
                 <list/>
-              </entry>
-              <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;individual_info_first_name&apos;].toString().toUpperCase()</string>
               </entry>
             </data>
           </step>
@@ -2538,16 +2546,16 @@ TUlHUkFUSU9OPC9taWdUeXBlPgo8L2lubWlncmF0aW9uPg==</outboundTemplate>
                 <string>tmp[&apos;individual&apos;][&apos;lastName&apos;]</string>
               </entry>
               <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;individual_info_last_name&apos;].toString().toUpperCase()</string>
+              </entry>
+              <entry>
                 <string>DefaultValue</string>
                 <string></string>
               </entry>
               <entry>
                 <string>RegularExpressions</string>
                 <list/>
-              </entry>
-              <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;individual_info_last_name&apos;].toString().toUpperCase()</string>
               </entry>
             </data>
           </step>
@@ -2562,16 +2570,16 @@ TUlHUkFUSU9OPC9taWdUeXBlPgo8L2lubWlncmF0aW9uPg==</outboundTemplate>
                 <string>tmp[&apos;individual&apos;][&apos;gender&apos;]</string>
               </entry>
               <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;individual_info_gender&apos;].toString().toUpperCase()</string>
+              </entry>
+              <entry>
                 <string>DefaultValue</string>
                 <string></string>
               </entry>
               <entry>
                 <string>RegularExpressions</string>
                 <list/>
-              </entry>
-              <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;individual_info_gender&apos;].toString().toUpperCase()</string>
               </entry>
             </data>
           </step>
@@ -2610,16 +2618,16 @@ TUlHUkFUSU9OPC9taWdUeXBlPgo8L2lubWlncmF0aW9uPg==</outboundTemplate>
                 <string>tmp[&apos;individual&apos;][&apos;mother&apos;][&apos;extId&apos;]</string>
               </entry>
               <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;individual_info_mother_id&apos;].toString().toUpperCase()</string>
+              </entry>
+              <entry>
                 <string>DefaultValue</string>
                 <string></string>
               </entry>
               <entry>
                 <string>RegularExpressions</string>
                 <list/>
-              </entry>
-              <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;individual_info_mother_id&apos;].toString().toUpperCase()</string>
               </entry>
             </data>
           </step>
@@ -2678,13 +2686,14 @@ X2JpcnRoPgogICAgPGRhdGVfb2ZfbWlncmF0aW9uPjwvZGF0ZV9vZl9taWdyYXRpb24+CiAgICA8
 aW5kaXZpZHVhbF9pbmZvX2ZpcnN0X25hbWU+PC9pbmRpdmlkdWFsX2luZm9fZmlyc3RfbmFtZT4K
 ICAgIDxpbmRpdmlkdWFsX2luZm9fbW90aGVyX2lkPjwvaW5kaXZpZHVhbF9pbmZvX21vdGhlcl9p
 ZD4KICAgIDxpbmRpdmlkdWFsX2luZm9faW5kaXZpZHVhbF9pZD48L2luZGl2aWR1YWxfaW5mb19p
-bmRpdmlkdWFsX2lkPgogICAgPG1vdmVkZnJvbT48L21vdmVkZnJvbT4KICAgIDx2aXNpdF9pZD48
-L3Zpc2l0X2lkPgogICAgPGluZGl2aWR1YWxfaW5mb19nZW5kZXI+PC9pbmRpdmlkdWFsX2luZm9f
-Z2VuZGVyPgogICAgPGxvY2F0aW9uX2lkPjwvbG9jYXRpb25faWQ+CiAgICA8ZmllbGRfd29ya2Vy
-X2lkPjwvZmllbGRfd29ya2VyX2lkPgogICAgPGluZGl2aWR1YWxfaW5mb19sYXN0X25hbWU+PC9p
-bmRpdmlkdWFsX2luZm9fbGFzdF9uYW1lPgogICAgPGluZGl2aWR1YWxfaW5mb19wYXJ0aWFsX2Rh
-dGU+PC9pbmRpdmlkdWFsX2luZm9fcGFydGlhbF9kYXRlPgogICAgPGluZGl2aWR1YWxfaW5mb19m
-YXRoZXJfaWQ+PC9pbmRpdmlkdWFsX2luZm9fZmF0aGVyX2lkPgo8L2lubWlncmF0aW9uPgo=</inboundTemplate>
+bmRpdmlkdWFsX2lkPgogICAgPG1vdmVkZnJvbT48L21vdmVkZnJvbT4KICAgIDxvcGVuaGRzX3Zp
+c2l0X2lkPjwvb3Blbmhkc192aXNpdF9pZD4KICAgIDxpbmRpdmlkdWFsX2luZm9fZ2VuZGVyPjwv
+aW5kaXZpZHVhbF9pbmZvX2dlbmRlcj4KICAgIDxvcGVuaGRzX2xvY2F0aW9uX2lkPjwvb3Blbmhk
+c19sb2NhdGlvbl9pZD4KICAgIDxvcGVuaGRzX2ZpZWxkX3dvcmtlcl9pZD48L29wZW5oZHNfZmll
+bGRfd29ya2VyX2lkPgogICAgPGluZGl2aWR1YWxfaW5mb19sYXN0X25hbWU+PC9pbmRpdmlkdWFs
+X2luZm9fbGFzdF9uYW1lPgogICAgPGluZGl2aWR1YWxfaW5mb19wYXJ0aWFsX2RhdGU+PC9pbmRp
+dmlkdWFsX2luZm9fcGFydGlhbF9kYXRlPgogICAgPGluZGl2aWR1YWxfaW5mb19mYXRoZXJfaWQ+
+PC9pbmRpdmlkdWFsX2luZm9fZmF0aGVyX2lkPgo8L2lubWlncmF0aW9uPgo=</inboundTemplate>
         <outboundTemplate encoding="base64">PGlubWlncmF0aW9uPgogICAgPGNvbGxlY3RlZEJ5PgogICAgICAgIDxleHRJZD48L2V4dElkPgog
 ICAgPC9jb2xsZWN0ZWRCeT4KICAgIDx2aXNpdD4KICAgICAgICA8ZXh0SWQ+PC9leHRJZD4KICAg
 IDwvdmlzaXQ+CiAgICA8aW5kaXZpZHVhbD4KICAgICAgICA8ZXh0SWQ+PC9leHRJZD4KICAgICAg
@@ -2819,11 +2828,11 @@ ZWREYXRlPgogICAgPG1pZ1R5cGU+PC9taWdUeXBlPgo8L2lubWlncmF0aW9uPg==</outboundTempla
             <name>Pregnancy Outcome Transform</name>
             <script>// converts to OpenHDS pregnancy outcome XML
 // basic fields
-tmp[&apos;collectedBy&apos;][&apos;extId&apos;] = msg[&apos;field_worker_id&apos;].toString().toUpperCase();
-tmp[&apos;visit&apos;][&apos;extId&apos;] = msg[&apos;visit_id&apos;].toString().toUpperCase();
+tmp[&apos;collectedBy&apos;][&apos;extId&apos;] = msg[&apos;openhds_field_worker_id&apos;].toString().toUpperCase();
+tmp[&apos;visit&apos;][&apos;extId&apos;] = msg[&apos;openhds_visit_id&apos;].toString().toUpperCase();
 tmp[&apos;outcomeDate&apos;] = msg[&apos;recorded_date&apos;].toString();
-tmp[&apos;mother&apos;][&apos;extId&apos;] = msg[&apos;mother_id&apos;].toString().toUpperCase();
-tmp[&apos;father&apos;][&apos;extId&apos;] = msg[&apos;father_id&apos;].toString().toUpperCase();
+tmp[&apos;mother&apos;][&apos;extId&apos;] = msg[&apos;openhds_mother_id&apos;].toString().toUpperCase();
+tmp[&apos;father&apos;][&apos;extId&apos;] = msg[&apos;openhds_father_id&apos;].toString().toUpperCase();
 
 // outcomes
 var outcomesXml = new XML(&quot;&lt;outcomes /&gt;&quot;);
@@ -2851,11 +2860,11 @@ tmp[&quot;outcomes&quot;] = outcomesXml;</script>
                 <string>Script</string>
                 <string>// converts to OpenHDS pregnancy outcome XML
 // basic fields
-tmp[&apos;collectedBy&apos;][&apos;extId&apos;] = msg[&apos;field_worker_id&apos;].toString().toUpperCase();
-tmp[&apos;visit&apos;][&apos;extId&apos;] = msg[&apos;visit_id&apos;].toString().toUpperCase();
+tmp[&apos;collectedBy&apos;][&apos;extId&apos;] = msg[&apos;openhds_field_worker_id&apos;].toString().toUpperCase();
+tmp[&apos;visit&apos;][&apos;extId&apos;] = msg[&apos;openhds_visit_id&apos;].toString().toUpperCase();
 tmp[&apos;outcomeDate&apos;] = msg[&apos;recorded_date&apos;].toString();
-tmp[&apos;mother&apos;][&apos;extId&apos;] = msg[&apos;mother_id&apos;].toString().toUpperCase();
-tmp[&apos;father&apos;][&apos;extId&apos;] = msg[&apos;father_id&apos;].toString().toUpperCase();
+tmp[&apos;mother&apos;][&apos;extId&apos;] = msg[&apos;openhds_mother_id&apos;].toString().toUpperCase();
+tmp[&apos;father&apos;][&apos;extId&apos;] = msg[&apos;openhds_father_id&apos;].toString().toUpperCase();
 
 // outcomes
 var outcomesXml = new XML(&quot;&lt;outcomes /&gt;&quot;);
@@ -2881,16 +2890,17 @@ tmp[&quot;outcomes&quot;] = outcomesXml;</string>
             </data>
           </step>
         </steps>
-        <inboundTemplate encoding="base64">PHByZWduYW5jeW91dGNvbWU+CiAgICA8X3VyaT48L191cmk+CiAgICA8dmlzaXRfaWQ+PC92aXNp
-dF9pZD4KICAgIDxtb3RoZXJfaWQ+PC9tb3RoZXJfaWQ+CiAgICAgPHBhcnRpYWxfZGF0ZT48L3Bh
-cnRpYWxfZGF0ZT4KICAgIDxmaWVsZF93b3JrZXJfaWQ+PC9maWVsZF93b3JrZXJfaWQ+CiAgICA8
-cmVjb3JkZWRfZGF0ZT48L3JlY29yZGVkX2RhdGU+CiAgICA8ZmF0aGVyX2lkPjwvZmF0aGVyX2lk
-PgogICAgPG91dGNvbWU+CiAgICAgICAgPG91dGNvbWVfdHlwZT48L291dGNvbWVfdHlwZT4KICAg
-ICAgICA8Zmlyc3RfbmFtZT48L2ZpcnN0X25hbWU+CiAgICAgICAgPHNvY2lhbF9ncm91cF9pZD48
-L3NvY2lhbF9ncm91cF9pZD4KICAgICAgICA8Z2VuZGVyPjwvZ2VuZGVyPgogICAgICAgIDxyZWxh
-dGlvbnNoaXBfdG9fZ3JvdXBfaGVhZD48L3JlbGF0aW9uc2hpcF90b19ncm91cF9oZWFkPgogICAg
-ICAgIDxjaGlsZF9pZD48L2NoaWxkX2lkPgogICAgICAgIDxsYXN0X25hbWU+PC9sYXN0X25hbWU+
-CiAgICA8L291dGNvbWU+CjwvcHJlZ25hbmN5b3V0Y29tZT4=</inboundTemplate>
+        <inboundTemplate encoding="base64">PHByZWduYW5jeW91dGNvbWU+CiAgICA8X3VyaT48L191cmk+CiAgICA8b3Blbmhkc192aXNpdF9p
+ZD48L29wZW5oZHNfdmlzaXRfaWQ+CiAgICA8b3Blbmhkc19tb3RoZXJfaWQ+PC9vcGVuaGRzX21v
+dGhlcl9pZD4KICAgIDxwYXJ0aWFsX2RhdGU+PC9wYXJ0aWFsX2RhdGU+CiAgICA8b3Blbmhkc19m
+aWVsZF93b3JrZXJfaWQ+PC9vcGVuaGRzX2ZpZWxkX3dvcmtlcl9pZD4KICAgIDxyZWNvcmRlZF9k
+YXRlPjwvcmVjb3JkZWRfZGF0ZT4KICAgIDxvcGVuaGRzX2ZhdGhlcl9pZD48L29wZW5oZHNfZmF0
+aGVyX2lkPgogICAgPG91dGNvbWU+CiAgICAgICAgPG91dGNvbWVfdHlwZT48L291dGNvbWVfdHlw
+ZT4KICAgICAgICA8Zmlyc3RfbmFtZT48L2ZpcnN0X25hbWU+CiAgICAgICAgPHNvY2lhbF9ncm91
+cF9pZD48L3NvY2lhbF9ncm91cF9pZD4KICAgICAgICA8Z2VuZGVyPjwvZ2VuZGVyPgogICAgICAg
+IDxyZWxhdGlvbnNoaXBfdG9fZ3JvdXBfaGVhZD48L3JlbGF0aW9uc2hpcF90b19ncm91cF9oZWFk
+PgogICAgICAgIDxjaGlsZF9pZD48L2NoaWxkX2lkPgogICAgICAgIDxsYXN0X25hbWU+PC9sYXN0
+X25hbWU+CiAgICA8L291dGNvbWU+CjwvcHJlZ25hbmN5b3V0Y29tZT4=</inboundTemplate>
         <outboundTemplate encoding="base64">PHByZWduYW5jeW91dGNvbWU+CiAgICA8Y29sbGVjdGVkQnk+CiAgICAgICAgPGV4dElkPjwvZXh0
 SWQ+CiAgICA8L2NvbGxlY3RlZEJ5PgogICAgPHZpc2l0PgogICAgICAgIDxleHRJZD48L2V4dElk
 PgogICAgPC92aXNpdD4KICAgIDxvdXRjb21lRGF0ZT48L291dGNvbWVEYXRlPgogICAgPG1vdGhl

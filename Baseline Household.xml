@@ -1,4 +1,4 @@
-<channel version="3.0.3">
+<channel version="3.1.1">
   <id>a2211a88-5d66-4ebf-843c-997e07287252</id>
   <nextMetaDataId>4</nextMetaDataId>
   <name>Baseline Household</name>
@@ -7,35 +7,27 @@
 It&apos;s important to point out that this is intentionally not included with update events. The reason is that household updates are not tied to a visit. This makes it difficult to determine when the right time is to try and insert them in the HDS. For example, if a new household is registered at a location, using a head of household of a newly in migrated individual, it would be wrong to try and send the household registration before the in migration.</description>
   <enabled>true</enabled>
   <lastModified>
-    <time>1413550084266</time>
+    <time>1431423072509</time>
     <timezone>Europe/Berlin</timezone>
   </lastModified>
-  <revision>2</revision>
-  <sourceConnector version="3.0.3">
+  <revision>6</revision>
+  <sourceConnector version="3.1.1">
     <metaDataId>0</metaDataId>
     <name>sourceConnector</name>
-    <properties class="com.mirth.connect.connectors.js.JavaScriptReceiverProperties" version="3.0.3">
-      <pollConnectorProperties version="3.0.3">
+    <properties class="com.mirth.connect.connectors.js.JavaScriptReceiverProperties" version="3.1.1">
+      <pluginProperties/>
+      <pollConnectorProperties version="3.1.1">
         <pollingType>interval</pollingType>
         <pollingHour>0</pollingHour>
         <pollingMinute>0</pollingMinute>
         <pollingFrequency>500</pollingFrequency>
       </pollConnectorProperties>
-      <responseConnectorProperties version="3.0.3">
+      <sourceConnectorProperties version="3.1.1">
         <responseVariable>None</responseVariable>
-        <defaultQueueOnResponses>
-          <string>None</string>
-          <string>Auto-generate (Before processing)</string>
-        </defaultQueueOnResponses>
-        <defaultQueueOffResponses>
-          <string>None</string>
-          <string>Auto-generate (Before processing)</string>
-          <string>Auto-generate (After source transformer)</string>
-          <string>Auto-generate (Destinations completed)</string>
-          <string>Postprocessor</string>
-        </defaultQueueOffResponses>
         <respondAfterProcessing>true</respondAfterProcessing>
-      </responseConnectorProperties>
+        <processBatch>false</processBatch>
+        <firstResponse>false</firstResponse>
+      </sourceConnectorProperties>
       <script>var forms = new java.util.ArrayList()
 
 var dbConn = DatabaseConnectionFactory.createDatabaseConnection(&apos;com.mysql.jdbc.Driver&apos;, globalMap.get(&quot;ODK_DATABASE_URL&quot;), globalMap.get(&quot;ODK_DATABASE_USER&quot;),globalMap.get(&quot;ODK_DATABASE_PASSWORD&quot;));
@@ -48,35 +40,49 @@ if (visitResult.next()) {
   return forms;
 }
 
-var householdResult = dbConn.executeCachedQuery(&quot;SELECT _URI, _CREATION_DATE, HOUSEHOLD_ID, FIELD_WORKER_ID, GROUP_NAME, SOCIAL_GROUP_TYPE, INDIVIDUAL_ID FROM &quot; + globalMap.get(&quot;SOCIAL_GROUP_TABLE&quot;) + &quot; WHERE processed_by_mirth=0&quot;);
+var householdResult = dbConn.executeCachedQuery(&quot;SELECT _URI, _CREATION_DATE, OPENHDS_HOUSEHOLD_ID, OPENHDS_FIELD_WORKER_ID, GROUP_NAME, SOCIAL_GROUP_TYPE, OPENHDS_INDIVIDUAL_ID FROM &quot; + globalMap.get(&quot;SOCIAL_GROUP_TABLE&quot;) + &quot; WHERE processed_by_mirth=0&quot;);
 forms.addAll(resultsToForms(householdResult, &quot;&lt;household event=&apos;household&apos; table-name=&apos;&quot; + globalMap.get(&quot;SOCIAL_GROUP_TABLE&quot;) + &quot;&apos;/&gt;&quot;));
 
-var relationshipResult = dbConn.executeCachedQuery(&quot;SELECT _URI, _CREATION_DATE, START_DATE, INDIVIDUAL_A, FIELD_WORKER_ID, INDIVIDUAL_B, RELATIONSHIP_TYPE FROM &quot; + globalMap.get(&quot;RELATIONSHIP_TABLE&quot;) + &quot; WHERE processed_by_mirth=0&quot;);
+var relationshipResult = dbConn.executeCachedQuery(&quot;SELECT _URI, _CREATION_DATE, START_DATE, OPENHDS_INDIVIDUAL_A, OPENHDS_FIELD_WORKER_ID, OPENHDS_INDIVIDUAL_B, RELATIONSHIP_TYPE FROM &quot; + globalMap.get(&quot;RELATIONSHIP_TABLE&quot;) + &quot; WHERE processed_by_mirth=0&quot;);
 forms.addAll(resultsToForms(relationshipResult, &quot;&lt;relationship event=&apos;relationship&apos; table-name=&apos;&quot; + globalMap.get(&quot;RELATIONSHIP_TABLE&quot;) + &quot;&apos;/&gt;&quot;));
 
-var membershipResult = dbConn.executeCachedQuery(&quot;SELECT _URI, _CREATION_DATE, START_DATE, FIELD_WORKER_ID, HOUSEHOLD_ID, RELATIONSHIP_TO_GROUP_HEAD, INDIVIDUAL_ID FROM &quot; + globalMap.get(&quot;MEMBERSHIP_TABLE&quot;) + &quot; WHERE processed_by_mirth=0&quot;);
+var membershipResult = dbConn.executeCachedQuery(&quot;SELECT _URI, _CREATION_DATE, START_DATE, OPENHDS_FIELD_WORKER_ID, OPENHDS_HOUSEHOLD_ID, RELATIONSHIP_TO_GROUP_HEAD, OPENHDS_INDIVIDUAL_ID FROM &quot; + globalMap.get(&quot;MEMBERSHIP_TABLE&quot;) + &quot; WHERE processed_by_mirth=0&quot;);
 forms.addAll(resultsToForms(membershipResult, &quot;&lt;membership event=&apos;membership&apos; table-name=&apos;&quot; + globalMap.get(&quot;MEMBERSHIP_TABLE&quot;) + &quot;&apos;/&gt;&quot;));
 
 dbConn.close();
 
 return forms;</script>
     </properties>
-    <transformer version="3.0.3">
+    <transformer version="3.1.1">
       <steps/>
       <inboundDataType>XML</inboundDataType>
       <outboundDataType>XML</outboundDataType>
-      <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-        <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+      <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+        <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
           <stripNamespaces>true</stripNamespaces>
         </serializationProperties>
+        <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+          <splitType>Element_Name</splitType>
+          <elementName></elementName>
+          <level>1</level>
+          <query></query>
+          <batchScript></batchScript>
+        </batchProperties>
       </inboundProperties>
-      <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-        <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+      <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+        <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
           <stripNamespaces>true</stripNamespaces>
         </serializationProperties>
+        <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+          <splitType>Element_Name</splitType>
+          <elementName></elementName>
+          <level>1</level>
+          <query></query>
+          <batchScript></batchScript>
+        </batchProperties>
       </outboundProperties>
     </transformer>
-    <filter version="3.0.3">
+    <filter version="3.1.1">
       <rules/>
     </filter>
     <transportName>JavaScript Reader</transportName>
@@ -85,11 +91,12 @@ return forms;</script>
     <waitForPrevious>true</waitForPrevious>
   </sourceConnector>
   <destinationConnectors>
-    <connector version="3.0.3">
+    <connector version="3.1.1">
       <metaDataId>1</metaDataId>
       <name>Relationships</name>
-      <properties class="com.mirth.connect.connectors.http.HttpDispatcherProperties" version="3.0.3">
-        <queueConnectorProperties version="3.0.3">
+      <properties class="com.mirth.connect.connectors.http.HttpDispatcherProperties" version="3.1.1">
+        <pluginProperties/>
+        <destinationConnectorProperties version="3.1.1">
           <queueEnabled>false</queueEnabled>
           <sendFirst>false</sendFirst>
           <retryIntervalMillis>10000</retryIntervalMillis>
@@ -97,28 +104,38 @@ return forms;</script>
           <retryCount>0</retryCount>
           <rotate>false</rotate>
           <threadCount>1</threadCount>
-        </queueConnectorProperties>
+          <validateResponse>false</validateResponse>
+        </destinationConnectorProperties>
         <host>${OPENHDS_PATH}/relationships</host>
+        <useProxyServer>false</useProxyServer>
+        <proxyAddress></proxyAddress>
+        <proxyPort></proxyPort>
         <method>post</method>
         <headers class="linked-hash-map"/>
         <parameters class="linked-hash-map"/>
-        <includeHeadersInResponse>false</includeHeadersInResponse>
+        <responseXmlBody>false</responseXmlBody>
+        <responseParseMultipart>true</responseParseMultipart>
+        <responseIncludeMetadata>false</responseIncludeMetadata>
+        <responseBinaryMimeTypes></responseBinaryMimeTypes>
+        <responseBinaryMimeTypesRegex>false</responseBinaryMimeTypesRegex>
         <multipart>false</multipart>
         <useAuthentication>true</useAuthentication>
         <authenticationType>Basic</authenticationType>
+        <usePreemptiveAuthentication>true</usePreemptiveAuthentication>
         <username>${OPENHDS_USER}</username>
         <password>${OPENHDS_PASSWORD}</password>
         <content>${message.transformedData}</content>
         <contentType>application/xml</contentType>
+        <dataTypeBinary>false</dataTypeBinary>
         <charset>UTF-8</charset>
         <socketTimeout>30000</socketTimeout>
       </properties>
-      <transformer version="3.0.3">
+      <transformer version="3.1.1">
         <steps>
           <step>
             <sequenceNumber>0</sequenceNumber>
             <name>collectedBy - extId (out)</name>
-            <script>tmp[&apos;collectedBy&apos;][&apos;extId&apos;] = validate(msg[&apos;field_worker_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
+            <script>tmp[&apos;collectedBy&apos;][&apos;extId&apos;] = validate(msg[&apos;openhds_field_worker_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
             <type>Message Builder</type>
             <data>
               <entry>
@@ -127,7 +144,7 @@ return forms;</script>
               </entry>
               <entry>
                 <string>Mapping</string>
-                <string>msg[&apos;field_worker_id&apos;].toString().toUpperCase()</string>
+                <string>msg[&apos;openhds_field_worker_id&apos;].toString().toUpperCase()</string>
               </entry>
               <entry>
                 <string>DefaultValue</string>
@@ -142,7 +159,7 @@ return forms;</script>
           <step>
             <sequenceNumber>1</sequenceNumber>
             <name>individualA - extId (out)</name>
-            <script>tmp[&apos;individualA&apos;][&apos;extId&apos;] = validate(msg[&apos;individual_a&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
+            <script>tmp[&apos;individualA&apos;][&apos;extId&apos;] = validate(msg[&apos;openhds_individual_a&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
             <type>Message Builder</type>
             <data>
               <entry>
@@ -150,12 +167,12 @@ return forms;</script>
                 <string>tmp[&apos;individualA&apos;][&apos;extId&apos;]</string>
               </entry>
               <entry>
-                <string>DefaultValue</string>
-                <string></string>
+                <string>Mapping</string>
+                <string>msg[&apos;openhds_individual_a&apos;].toString().toUpperCase()</string>
               </entry>
               <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;individual_a&apos;].toString().toUpperCase()</string>
+                <string>DefaultValue</string>
+                <string></string>
               </entry>
               <entry>
                 <string>RegularExpressions</string>
@@ -166,7 +183,7 @@ return forms;</script>
           <step>
             <sequenceNumber>2</sequenceNumber>
             <name>individualB - extId (out)</name>
-            <script>tmp[&apos;individualB&apos;][&apos;extId&apos;] = validate(msg[&apos;individual_b&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
+            <script>tmp[&apos;individualB&apos;][&apos;extId&apos;] = validate(msg[&apos;openhds_individual_b&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
             <type>Message Builder</type>
             <data>
               <entry>
@@ -174,12 +191,12 @@ return forms;</script>
                 <string>tmp[&apos;individualB&apos;][&apos;extId&apos;]</string>
               </entry>
               <entry>
-                <string>DefaultValue</string>
-                <string></string>
+                <string>Mapping</string>
+                <string>msg[&apos;openhds_individual_b&apos;].toString().toUpperCase()</string>
               </entry>
               <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;individual_b&apos;].toString().toUpperCase()</string>
+                <string>DefaultValue</string>
+                <string></string>
               </entry>
               <entry>
                 <string>RegularExpressions</string>
@@ -198,12 +215,12 @@ return forms;</script>
                 <string>tmp[&apos;startDate&apos;]</string>
               </entry>
               <entry>
-                <string>DefaultValue</string>
-                <string></string>
-              </entry>
-              <entry>
                 <string>Mapping</string>
                 <string>msg[&apos;start_date&apos;].toString()</string>
+              </entry>
+              <entry>
+                <string>DefaultValue</string>
+                <string></string>
               </entry>
               <entry>
                 <string>RegularExpressions</string>
@@ -214,7 +231,7 @@ return forms;</script>
           <step>
             <sequenceNumber>4</sequenceNumber>
             <name>aIsToB (out)</name>
-            <script>tmp[&apos;aIsToB&apos;] = validate((parseInt(msg[&apos;relationship_type&apos;] )+ 1).toString(), &apos;&apos;, new Array());</script>
+            <script>tmp[&apos;aIsToB&apos;] = validate(msg[&apos;relationship_type&apos;].toString(), &apos;&apos;, new Array());</script>
             <type>Message Builder</type>
             <data>
               <entry>
@@ -223,7 +240,7 @@ return forms;</script>
               </entry>
               <entry>
                 <string>Mapping</string>
-                <string>(parseInt(msg[&apos;relationship_type&apos;] )+ 1).toString()</string>
+                <string>msg[&apos;relationship_type&apos;].toString()</string>
               </entry>
               <entry>
                 <string>DefaultValue</string>
@@ -237,10 +254,11 @@ return forms;</script>
           </step>
         </steps>
         <inboundTemplate encoding="base64">PHJlbGF0aW9uc2hpcD4KICAgIDxfdXJpPjwvX3VyaT4KICAgIDxfY3JlYXRpb25fZGF0ZT48L19j
-cmVhdGlvbl9kYXRlPgogICAgPHN0YXJ0X2RhdGU+PC9zdGFydF9kYXRlPgogICAgPGluZGl2aWR1
-YWxfYT48L2luZGl2aWR1YWxfYT4KICAgIDxmaWVsZF93b3JrZXJfaWQ+PC9maWVsZF93b3JrZXJf
-aWQ+CiAgICA8aW5kaXZpZHVhbF9iPjwvaW5kaXZpZHVhbF9iPgogICAgPHJlbGF0aW9uc2hpcF90
-eXBlPjwvcmVsYXRpb25zaGlwX3R5cGU+CjwvcmVsYXRpb25zaGlwPg==</inboundTemplate>
+cmVhdGlvbl9kYXRlPgogICAgPHN0YXJ0X2RhdGU+PC9zdGFydF9kYXRlPgogICAgPG9wZW5oZHNf
+aW5kaXZpZHVhbF9hPjwvb3Blbmhkc19pbmRpdmlkdWFsX2E+CiAgICA8b3Blbmhkc19maWVsZF93
+b3JrZXJfaWQ+PC9vcGVuaGRzX2ZpZWxkX3dvcmtlcl9pZD4KICAgIDxvcGVuaGRzX2luZGl2aWR1
+YWxfYj48L29wZW5oZHNfaW5kaXZpZHVhbF9iPgogICAgPHJlbGF0aW9uc2hpcF90eXBlPjwvcmVs
+YXRpb25zaGlwX3R5cGU+CjwvcmVsYXRpb25zaGlwPg==</inboundTemplate>
         <outboundTemplate encoding="base64">PHJlbGF0aW9uc2hpcD4KICAgIDxjb2xsZWN0ZWRCeT4KICAgICAgICA8ZXh0SWQ+PC9leHRJZD4K
 ICAgIDwvY29sbGVjdGVkQnk+CiAgICA8aW5kaXZpZHVhbEE+CiAgICAgICAgPGV4dElkPjwvZXh0
 SWQ+CiAgICA8L2luZGl2aWR1YWxBPgogICAgPGluZGl2aWR1YWxCPgogICAgICAgIDxleHRJZD48
@@ -248,33 +266,61 @@ L2V4dElkPgogICAgPC9pbmRpdmlkdWFsQj4KICAgIDxzdGFydERhdGU+PC9zdGFydERhdGU+CiAg
 ICA8YUlzVG9CPjwvYUlzVG9CPgo8L3JlbGF0aW9uc2hpcD4=</outboundTemplate>
         <inboundDataType>XML</inboundDataType>
         <outboundDataType>XML</outboundDataType>
-        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </inboundProperties>
-        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </outboundProperties>
       </transformer>
-      <responseTransformer version="3.0.3">
+      <responseTransformer version="3.1.1">
         <steps/>
         <inboundDataType>XML</inboundDataType>
         <outboundDataType>XML</outboundDataType>
-        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </inboundProperties>
-        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </outboundProperties>
       </responseTransformer>
-      <filter version="3.0.3">
+      <filter version="3.1.1">
         <rules>
           <rule>
             <sequenceNumber>0</sequenceNumber>
@@ -296,11 +342,12 @@ ICA8YUlzVG9CPjwvYUlzVG9CPgo8L3JlbGF0aW9uc2hpcD4=</outboundTemplate>
       <enabled>true</enabled>
       <waitForPrevious>true</waitForPrevious>
     </connector>
-    <connector version="3.0.3">
+    <connector version="3.1.1">
       <metaDataId>2</metaDataId>
       <name>Households</name>
-      <properties class="com.mirth.connect.connectors.http.HttpDispatcherProperties" version="3.0.3">
-        <queueConnectorProperties version="3.0.3">
+      <properties class="com.mirth.connect.connectors.http.HttpDispatcherProperties" version="3.1.1">
+        <pluginProperties/>
+        <destinationConnectorProperties version="3.1.1">
           <queueEnabled>false</queueEnabled>
           <sendFirst>false</sendFirst>
           <retryIntervalMillis>10000</retryIntervalMillis>
@@ -308,28 +355,38 @@ ICA8YUlzVG9CPjwvYUlzVG9CPgo8L3JlbGF0aW9uc2hpcD4=</outboundTemplate>
           <retryCount>0</retryCount>
           <rotate>false</rotate>
           <threadCount>1</threadCount>
-        </queueConnectorProperties>
+          <validateResponse>false</validateResponse>
+        </destinationConnectorProperties>
         <host>${OPENHDS_PATH}/socialgroups</host>
+        <useProxyServer>false</useProxyServer>
+        <proxyAddress></proxyAddress>
+        <proxyPort></proxyPort>
         <method>post</method>
         <headers class="linked-hash-map"/>
         <parameters class="linked-hash-map"/>
-        <includeHeadersInResponse>false</includeHeadersInResponse>
+        <responseXmlBody>false</responseXmlBody>
+        <responseParseMultipart>true</responseParseMultipart>
+        <responseIncludeMetadata>false</responseIncludeMetadata>
+        <responseBinaryMimeTypes></responseBinaryMimeTypes>
+        <responseBinaryMimeTypesRegex>false</responseBinaryMimeTypesRegex>
         <multipart>false</multipart>
         <useAuthentication>true</useAuthentication>
         <authenticationType>Basic</authenticationType>
+        <usePreemptiveAuthentication>true</usePreemptiveAuthentication>
         <username>${OPENHDS_USER}</username>
         <password>${OPENHDS_PASSWORD}</password>
         <content>${message.transformedData}</content>
         <contentType>application/xml</contentType>
+        <dataTypeBinary>false</dataTypeBinary>
         <charset>UTF-8</charset>
         <socketTimeout>30000</socketTimeout>
       </properties>
-      <transformer version="3.0.3">
+      <transformer version="3.1.1">
         <steps>
           <step>
             <sequenceNumber>0</sequenceNumber>
             <name>collectedBy - extId (out)</name>
-            <script>tmp[&apos;collectedBy&apos;][&apos;extId&apos;] = validate(msg[&apos;field_worker_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
+            <script>tmp[&apos;collectedBy&apos;][&apos;extId&apos;] = validate(msg[&apos;openhds_field_worker_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
             <type>Message Builder</type>
             <data>
               <entry>
@@ -337,12 +394,12 @@ ICA8YUlzVG9CPjwvYUlzVG9CPgo8L3JlbGF0aW9uc2hpcD4=</outboundTemplate>
                 <string>tmp[&apos;collectedBy&apos;][&apos;extId&apos;]</string>
               </entry>
               <entry>
-                <string>DefaultValue</string>
-                <string></string>
+                <string>Mapping</string>
+                <string>msg[&apos;openhds_field_worker_id&apos;].toString().toUpperCase()</string>
               </entry>
               <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;field_worker_id&apos;].toString().toUpperCase()</string>
+                <string>DefaultValue</string>
+                <string></string>
               </entry>
               <entry>
                 <string>RegularExpressions</string>
@@ -353,7 +410,7 @@ ICA8YUlzVG9CPjwvYUlzVG9CPgo8L3JlbGF0aW9uc2hpcD4=</outboundTemplate>
           <step>
             <sequenceNumber>1</sequenceNumber>
             <name>extId (out)</name>
-            <script>tmp[&apos;extId&apos;] = validate(msg[&apos;household_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
+            <script>tmp[&apos;extId&apos;] = validate(msg[&apos;openhds_household_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
             <type>Message Builder</type>
             <data>
               <entry>
@@ -361,12 +418,12 @@ ICA8YUlzVG9CPjwvYUlzVG9CPgo8L3JlbGF0aW9uc2hpcD4=</outboundTemplate>
                 <string>tmp[&apos;extId&apos;]</string>
               </entry>
               <entry>
-                <string>DefaultValue</string>
-                <string></string>
+                <string>Mapping</string>
+                <string>msg[&apos;openhds_household_id&apos;].toString().toUpperCase()</string>
               </entry>
               <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;household_id&apos;].toString().toUpperCase()</string>
+                <string>DefaultValue</string>
+                <string></string>
               </entry>
               <entry>
                 <string>RegularExpressions</string>
@@ -385,12 +442,12 @@ ICA8YUlzVG9CPjwvYUlzVG9CPgo8L3JlbGF0aW9uc2hpcD4=</outboundTemplate>
                 <string>tmp[&apos;groupName&apos;]</string>
               </entry>
               <entry>
-                <string>DefaultValue</string>
-                <string></string>
-              </entry>
-              <entry>
                 <string>Mapping</string>
                 <string>msg[&apos;group_name&apos;].toString().toUpperCase()</string>
+              </entry>
+              <entry>
+                <string>DefaultValue</string>
+                <string></string>
               </entry>
               <entry>
                 <string>RegularExpressions</string>
@@ -401,7 +458,7 @@ ICA8YUlzVG9CPjwvYUlzVG9CPgo8L3JlbGF0aW9uc2hpcD4=</outboundTemplate>
           <step>
             <sequenceNumber>3</sequenceNumber>
             <name>groupHead - extId (out)</name>
-            <script>tmp[&apos;groupHead&apos;][&apos;extId&apos;] = validate(msg[&apos;individual_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
+            <script>tmp[&apos;groupHead&apos;][&apos;extId&apos;] = validate(msg[&apos;openhds_individual_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
             <type>Message Builder</type>
             <data>
               <entry>
@@ -409,12 +466,12 @@ ICA8YUlzVG9CPjwvYUlzVG9CPgo8L3JlbGF0aW9uc2hpcD4=</outboundTemplate>
                 <string>tmp[&apos;groupHead&apos;][&apos;extId&apos;]</string>
               </entry>
               <entry>
-                <string>DefaultValue</string>
-                <string></string>
+                <string>Mapping</string>
+                <string>msg[&apos;openhds_individual_id&apos;].toString().toUpperCase()</string>
               </entry>
               <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;individual_id&apos;].toString().toUpperCase()</string>
+                <string>DefaultValue</string>
+                <string></string>
               </entry>
               <entry>
                 <string>RegularExpressions</string>
@@ -448,43 +505,72 @@ ICA8YUlzVG9CPjwvYUlzVG9CPgo8L3JlbGF0aW9uc2hpcD4=</outboundTemplate>
           </step>
         </steps>
         <inboundTemplate encoding="base64">PGhvdXNlaG9sZD4KICAgIDxfdXJpPjwvX3VyaT4KICAgIDxfY3JlYXRpb25fZGF0ZT48L19jcmVh
-dGlvbl9kYXRlPgogICAgPGhvdXNlaG9sZF9pZD48L2hvdXNlaG9sZF9pZD4KICAgIDxmaWVsZF93
-b3JrZXJfaWQ+PC9maWVsZF93b3JrZXJfaWQ+CiAgICA8Z3JvdXBfbmFtZT48L2dyb3VwX25hbWU+
-CiAgICA8c29jaWFsX2dyb3VwX3R5cGU+PC9zb2NpYWxfZ3JvdXBfdHlwZT4KICAgIDxpbmRpdmlk
-dWFsX2lkPjwvaW5kaXZpZHVhbF9pZD4KPC9ob3VzZWhvbGQ+Cg==</inboundTemplate>
+dGlvbl9kYXRlPgogICAgPG9wZW5oZHNfaG91c2Vob2xkX2lkPjwvb3Blbmhkc19ob3VzZWhvbGRf
+aWQ+CiAgICA8b3Blbmhkc19maWVsZF93b3JrZXJfaWQ+PC9vcGVuaGRzX2ZpZWxkX3dvcmtlcl9p
+ZD4KICAgIDxncm91cF9uYW1lPjwvZ3JvdXBfbmFtZT4KICAgIDxzb2NpYWxfZ3JvdXBfdHlwZT48
+L3NvY2lhbF9ncm91cF90eXBlPgogICAgPG9wZW5oZHNfaW5kaXZpZHVhbF9pZD48L29wZW5oZHNf
+aW5kaXZpZHVhbF9pZD4KPC9ob3VzZWhvbGQ+Cg==</inboundTemplate>
         <outboundTemplate encoding="base64">PHNvY2lhbGdyb3VwPgogICAgPGNvbGxlY3RlZEJ5PgogICAgICAgIDxleHRJZD48L2V4dElkPgog
 ICAgPC9jb2xsZWN0ZWRCeT4KICAgIDxleHRJZD48L2V4dElkPgogICAgPGdyb3VwTmFtZT48L2dy
 b3VwTmFtZT4KICAgIDxncm91cEhlYWQ+CiAgICAgICAgPGV4dElkPjwvZXh0SWQ+CiAgICA8L2dy
 b3VwSGVhZD4KICAgIDxncm91cFR5cGU+PC9ncm91cFR5cGU+Cjwvc29jaWFsZ3JvdXA+</outboundTemplate>
         <inboundDataType>XML</inboundDataType>
         <outboundDataType>XML</outboundDataType>
-        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </inboundProperties>
-        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </outboundProperties>
       </transformer>
-      <responseTransformer version="3.0.3">
+      <responseTransformer version="3.1.1">
         <steps/>
         <inboundDataType>XML</inboundDataType>
         <outboundDataType>XML</outboundDataType>
-        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </inboundProperties>
-        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </outboundProperties>
       </responseTransformer>
-      <filter version="3.0.3">
+      <filter version="3.1.1">
         <rules>
           <rule>
             <sequenceNumber>0</sequenceNumber>
@@ -506,11 +592,12 @@ b3VwSGVhZD4KICAgIDxncm91cFR5cGU+PC9ncm91cFR5cGU+Cjwvc29jaWFsZ3JvdXA+</outboundTe
       <enabled>true</enabled>
       <waitForPrevious>true</waitForPrevious>
     </connector>
-    <connector version="3.0.3">
+    <connector version="3.1.1">
       <metaDataId>3</metaDataId>
       <name>Memberships</name>
-      <properties class="com.mirth.connect.connectors.http.HttpDispatcherProperties" version="3.0.3">
-        <queueConnectorProperties version="3.0.3">
+      <properties class="com.mirth.connect.connectors.http.HttpDispatcherProperties" version="3.1.1">
+        <pluginProperties/>
+        <destinationConnectorProperties version="3.1.1">
           <queueEnabled>false</queueEnabled>
           <sendFirst>false</sendFirst>
           <retryIntervalMillis>10000</retryIntervalMillis>
@@ -518,28 +605,38 @@ b3VwSGVhZD4KICAgIDxncm91cFR5cGU+PC9ncm91cFR5cGU+Cjwvc29jaWFsZ3JvdXA+</outboundTe
           <retryCount>0</retryCount>
           <rotate>false</rotate>
           <threadCount>1</threadCount>
-        </queueConnectorProperties>
+          <validateResponse>false</validateResponse>
+        </destinationConnectorProperties>
         <host>${OPENHDS_PATH}/memberships</host>
+        <useProxyServer>false</useProxyServer>
+        <proxyAddress></proxyAddress>
+        <proxyPort></proxyPort>
         <method>post</method>
         <headers class="linked-hash-map"/>
         <parameters class="linked-hash-map"/>
-        <includeHeadersInResponse>false</includeHeadersInResponse>
+        <responseXmlBody>false</responseXmlBody>
+        <responseParseMultipart>true</responseParseMultipart>
+        <responseIncludeMetadata>false</responseIncludeMetadata>
+        <responseBinaryMimeTypes></responseBinaryMimeTypes>
+        <responseBinaryMimeTypesRegex>false</responseBinaryMimeTypesRegex>
         <multipart>false</multipart>
         <useAuthentication>true</useAuthentication>
         <authenticationType>Basic</authenticationType>
+        <usePreemptiveAuthentication>true</usePreemptiveAuthentication>
         <username>${OPENHDS_USER}</username>
         <password>${OPENHDS_PASSWORD}</password>
         <content>${message.transformedData}</content>
         <contentType>application/xml</contentType>
+        <dataTypeBinary>false</dataTypeBinary>
         <charset>UTF-8</charset>
         <socketTimeout>30000</socketTimeout>
       </properties>
-      <transformer version="3.0.3">
+      <transformer version="3.1.1">
         <steps>
           <step>
             <sequenceNumber>0</sequenceNumber>
             <name>collectedBy - extId (out)</name>
-            <script>tmp[&apos;collectedBy&apos;][&apos;extId&apos;] = validate(msg[&apos;field_worker_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
+            <script>tmp[&apos;collectedBy&apos;][&apos;extId&apos;] = validate(msg[&apos;openhds_field_worker_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
             <type>Message Builder</type>
             <data>
               <entry>
@@ -547,6 +644,10 @@ b3VwSGVhZD4KICAgIDxncm91cFR5cGU+PC9ncm91cFR5cGU+Cjwvc29jaWFsZ3JvdXA+</outboundTe
                 <string>tmp[&apos;collectedBy&apos;][&apos;extId&apos;]</string>
               </entry>
               <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;openhds_field_worker_id&apos;].toString().toUpperCase()</string>
+              </entry>
+              <entry>
                 <string>DefaultValue</string>
                 <string></string>
               </entry>
@@ -554,16 +655,12 @@ b3VwSGVhZD4KICAgIDxncm91cFR5cGU+PC9ncm91cFR5cGU+Cjwvc29jaWFsZ3JvdXA+</outboundTe
                 <string>RegularExpressions</string>
                 <list/>
               </entry>
-              <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;field_worker_id&apos;].toString().toUpperCase()</string>
-              </entry>
             </data>
           </step>
           <step>
             <sequenceNumber>1</sequenceNumber>
             <name>individual - extId (out)</name>
-            <script>tmp[&apos;individual&apos;][&apos;extId&apos;] = validate(msg[&apos;individual_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
+            <script>tmp[&apos;individual&apos;][&apos;extId&apos;] = validate(msg[&apos;openhds_individual_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
             <type>Message Builder</type>
             <data>
               <entry>
@@ -571,6 +668,10 @@ b3VwSGVhZD4KICAgIDxncm91cFR5cGU+PC9ncm91cFR5cGU+Cjwvc29jaWFsZ3JvdXA+</outboundTe
                 <string>tmp[&apos;individual&apos;][&apos;extId&apos;]</string>
               </entry>
               <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;openhds_individual_id&apos;].toString().toUpperCase()</string>
+              </entry>
+              <entry>
                 <string>DefaultValue</string>
                 <string></string>
               </entry>
@@ -578,16 +679,12 @@ b3VwSGVhZD4KICAgIDxncm91cFR5cGU+PC9ncm91cFR5cGU+Cjwvc29jaWFsZ3JvdXA+</outboundTe
                 <string>RegularExpressions</string>
                 <list/>
               </entry>
-              <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;individual_id&apos;].toString().toUpperCase()</string>
-              </entry>
             </data>
           </step>
           <step>
             <sequenceNumber>2</sequenceNumber>
             <name>socialGroup - extId (out)</name>
-            <script>tmp[&apos;socialGroup&apos;][&apos;extId&apos;] = validate(msg[&apos;household_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
+            <script>tmp[&apos;socialGroup&apos;][&apos;extId&apos;] = validate(msg[&apos;openhds_household_id&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
             <type>Message Builder</type>
             <data>
               <entry>
@@ -595,16 +692,16 @@ b3VwSGVhZD4KICAgIDxncm91cFR5cGU+PC9ncm91cFR5cGU+Cjwvc29jaWFsZ3JvdXA+</outboundTe
                 <string>tmp[&apos;socialGroup&apos;][&apos;extId&apos;]</string>
               </entry>
               <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;openhds_household_id&apos;].toString().toUpperCase()</string>
+              </entry>
+              <entry>
                 <string>DefaultValue</string>
                 <string></string>
               </entry>
               <entry>
                 <string>RegularExpressions</string>
                 <list/>
-              </entry>
-              <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;household_id&apos;].toString().toUpperCase()</string>
               </entry>
             </data>
           </step>
@@ -619,16 +716,16 @@ b3VwSGVhZD4KICAgIDxncm91cFR5cGU+PC9ncm91cFR5cGU+Cjwvc29jaWFsZ3JvdXA+</outboundTe
                 <string>tmp[&apos;startDate&apos;]</string>
               </entry>
               <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;start_date&apos;].toString()</string>
+              </entry>
+              <entry>
                 <string>DefaultValue</string>
                 <string></string>
               </entry>
               <entry>
                 <string>RegularExpressions</string>
                 <list/>
-              </entry>
-              <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;start_date&apos;].toString()</string>
               </entry>
             </data>
           </step>
@@ -643,6 +740,10 @@ b3VwSGVhZD4KICAgIDxncm91cFR5cGU+PC9ncm91cFR5cGU+Cjwvc29jaWFsZ3JvdXA+</outboundTe
                 <string>tmp[&apos;bIsToA&apos;]</string>
               </entry>
               <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;relationship_to_group_head&apos;].toString()</string>
+              </entry>
+              <entry>
                 <string>DefaultValue</string>
                 <string></string>
               </entry>
@@ -650,19 +751,15 @@ b3VwSGVhZD4KICAgIDxncm91cFR5cGU+PC9ncm91cFR5cGU+Cjwvc29jaWFsZ3JvdXA+</outboundTe
                 <string>RegularExpressions</string>
                 <list/>
               </entry>
-              <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;relationship_to_group_head&apos;].toString()</string>
-              </entry>
             </data>
           </step>
         </steps>
         <inboundTemplate encoding="base64">PG1lbWJlcnNoaXA+CiAgICA8X3VyaT48L191cmk+CiAgICA8X2NyZWF0aW9uX2RhdGU+PC9fY3Jl
-YXRpb25fZGF0ZT4KICAgIDxzdGFydF9kYXRlPjwvc3RhcnRfZGF0ZT4KICAgIDxmaWVsZF93b3Jr
-ZXJfaWQ+PC9maWVsZF93b3JrZXJfaWQ+CiAgICA8aG91c2Vob2xkX2lkPjwvaG91c2Vob2xkX2lk
-PgogICAgPHJlbGF0aW9uc2hpcF90b19ncm91cF9oZWFkPjwvcmVsYXRpb25zaGlwX3RvX2dyb3Vw
-X2hlYWQ+CiAgICA8aW5kaXZpZHVhbF9pZD48L2luZGl2aWR1YWxfaWQ+CjwvbWVtYmVyc2hpcD4=
-</inboundTemplate>
+YXRpb25fZGF0ZT4KICAgIDxzdGFydF9kYXRlPjwvc3RhcnRfZGF0ZT4KICAgIDxvcGVuaGRzX2Zp
+ZWxkX3dvcmtlcl9pZD48L29wZW5oZHNfZmllbGRfd29ya2VyX2lkPgogICAgPG9wZW5oZHNfaG91
+c2Vob2xkX2lkPjwvb3Blbmhkc19ob3VzZWhvbGRfaWQ+CiAgICA8cmVsYXRpb25zaGlwX3RvX2dy
+b3VwX2hlYWQ+PC9yZWxhdGlvbnNoaXBfdG9fZ3JvdXBfaGVhZD4KICAgIDxvcGVuaGRzX2luZGl2
+aWR1YWxfaWQ+PC9vcGVuaGRzX2luZGl2aWR1YWxfaWQ+CjwvbWVtYmVyc2hpcD4=</inboundTemplate>
         <outboundTemplate encoding="base64">PG1lbWJlcnNoaXA+CiAgICA8Y29sbGVjdGVkQnk+CiAgICAgICAgPGV4dElkPjwvZXh0SWQ+CiAg
 ICA8L2NvbGxlY3RlZEJ5PgogICAgPGluZGl2aWR1YWw+CiAgICAgICAgPGV4dElkPjwvZXh0SWQ+
 CiAgICA8L2luZGl2aWR1YWw+CiAgICA8c29jaWFsR3JvdXA+CiAgICAgICAgPGV4dElkPjwvZXh0
@@ -670,33 +767,61 @@ SWQ+CiAgICA8L3NvY2lhbEdyb3VwPgogICAgPHN0YXJ0RGF0ZT48L3N0YXJ0RGF0ZT4KICAgIDxi
 SXNUb0E+PC9iSXNUb0E+CjwvbWVtYmVyc2hpcD4=</outboundTemplate>
         <inboundDataType>XML</inboundDataType>
         <outboundDataType>XML</outboundDataType>
-        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </inboundProperties>
-        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </outboundProperties>
       </transformer>
-      <responseTransformer version="3.0.3">
+      <responseTransformer version="3.1.1">
         <steps/>
         <inboundDataType>XML</inboundDataType>
         <outboundDataType>XML</outboundDataType>
-        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </inboundProperties>
-        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.0.3">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.0.3">
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
         </outboundProperties>
       </responseTransformer>
-      <filter version="3.0.3">
+      <filter version="3.1.1">
         <rules>
           <rule>
             <sequenceNumber>0</sequenceNumber>
@@ -748,10 +873,10 @@ return;
   <deployScript>// This script executes once when the channel is deployed
 // You only have access to the globalMap and globalChannelMap here to persist data
 return;</deployScript>
-  <shutdownScript>// This script executes once when the channel is undeployed
+  <undeployScript>// This script executes once when the channel is undeployed
 // You only have access to the globalMap and globalChannelMap here to persist data
-return;</shutdownScript>
-  <properties version="3.0.3">
+return;</undeployScript>
+  <properties version="3.1.1">
     <clearGlobalChannelMap>true</clearGlobalChannelMap>
     <messageStorageMode>PRODUCTION</messageStorageMode>
     <encryptData>false</encryptData>

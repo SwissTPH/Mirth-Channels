@@ -20,7 +20,7 @@
     <name>Retrieve Out Migration Forms</name>
     <tooltip>Reads Out Migrations from the database</tooltip>
     <code>function addOutMigrations(visitId, dbConn) {
-  var results = dbConn.executeCachedQuery(&quot;SELECT _URI, VISIT_ID, NAME_OF_DESTINATION, FIELD_WORKER_ID, DATE_OF_MIGRATION, REASON_FOR_OUT_MIGRATION, INDIVIDUAL_ID FROM &quot; + globalMap.get(&quot;OUT_MIGRATION_TABLE&quot;) + &quot; WHERE VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND processed_by_mirth =0&quot;);
+  var results = dbConn.executeCachedQuery(&quot;SELECT _URI, OPENHDS_VISIT_ID, NAME_OF_DESTINATION, OPENHDS_FIELD_WORKER_ID, DATE_OF_MIGRATION, REASON_FOR_OUT_MIGRATION, OPENHDS_INDIVIDUAL_ID FROM &quot; + globalMap.get(&quot;OUT_MIGRATION_TABLE&quot;) + &quot; WHERE OPENHDS_VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND processed_by_mirth =0&quot;);
   var forms = resultsToForms(results, &quot;&lt;outmigration event=&apos;outmigration&apos; table-name=&apos;&quot; + globalMap.get(&quot;OUT_MIGRATION_TABLE&quot;) + &quot;&apos; /&gt;&quot;);
   return forms;
 }</code>
@@ -33,7 +33,7 @@
     <tooltip>Retrieve the Death of Head of Households</tooltip>
     <code>function addHoHDeaths(visitId, dbConn) {
 	var deathToHoHForm = new java.util.ArrayList();
-	var results = dbConn.executeCachedQuery(&quot;SELECT _URI, VISIT_ID, FIELD_WORKER_ID, NEW_HOH_ID, INDIVIDUAL_ID, HOUSEHOLD_ID, PLACE_OF_DEATH, WHOM, DIAGNOSEDDEATH, OTHERPLACE_OF_DEATH, CAUSEOFDEATHDIAGNOSED, DATE, CAUSOFDEATHNOTDIAGNOSED, CAUSE_OF_DEATH FROM &quot; + globalMap.get(&quot;DEATH_TOHOH_TABLE&quot;) + &quot; WHERE VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND processed_by_mirth is null OR processed_by_mirth = 0&quot;);
+	var results = dbConn.executeCachedQuery(&quot;SELECT _URI, OPENHDS_VISIT_ID, OPENHDS_FIELD_WORKER_ID, OPENHDS_NEW_HOH_ID, OPENHDS_INDIVIDUAL_ID, OPENHDS_HOUSEHOLD_ID, PLACE_OF_DEATH, WHOM, DIAGNOSEDDEATH, OTHERPLACE_OF_DEATH, CAUSEOFDEATHDIAGNOSED, DATE, CAUSOFDEATHNOTDIAGNOSED, CAUSE_OF_DEATH FROM &quot; + globalMap.get(&quot;DEATH_TOHOH_TABLE&quot;) + &quot; WHERE OPENHDS_VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND processed_by_mirth is null OR processed_by_mirth = 0&quot;);
 	while(results.next()) {
     	var deathHoh = resultSetToXml(results, &quot;&lt;deathHoH event=&apos;deathofhousehold&apos; table-name=&apos;&quot; + globalMap.get(&quot;DEATH_TOHOH_TABLE&quot;) + &quot;&apos; /&gt;&quot;);
 
@@ -56,7 +56,7 @@
     <tooltip></tooltip>
     <code>function addOutMigrationsIM(visitId, dbConn) {
 
-var results = dbConn.executeCachedQuery(&quot;SELECT _URI, VISIT_ID, LOCATION_ID NAME_OF_DESTINATION, FIELD_WORKER_ID, DATE_SUB(DATE_OF_MIGRATION, INTERVAL 1 DAY) DATE_OF_MIGRATION, REASON as REASON_FOR_OUT_MIGRATION, INDIVIDUAL_INFO_INDIVIDUAL_ID as INDIVIDUAL_ID FROM &quot; + globalMap.get(&quot;IN_MIGRATION_TABLE&quot;) + &quot; WHERE VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND migration_type = &apos;INTERNAL_INMIGRATION&apos; AND processed_by_mirth =0 and INDIVIDUAL_INFO_INDIVIDUAL_ID not in (select INDIVIDUAL_ID FROM &quot; + globalMap.get(&quot;OUT_MIGRATION_TABLE&quot;)+&quot;)&quot;);  
+var results = dbConn.executeCachedQuery(&quot;SELECT _URI, OPENHDS_VISIT_ID, OPENHDS_LOCATION_ID NAME_OF_DESTINATION, OPENHDS_FIELD_WORKER_ID, DATE_SUB(DATE_OF_MIGRATION, INTERVAL 1 DAY) DATE_OF_MIGRATION, REASON as REASON_FOR_OUT_MIGRATION, INDIVIDUAL_INFO_INDIVIDUAL_ID as INDIVIDUAL_ID FROM &quot; + globalMap.get(&quot;IN_MIGRATION_TABLE&quot;) + &quot; WHERE OPENHDS_VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND openhds_migration_type = &apos;INTERNAL_INMIGRATION&apos; AND processed_by_mirth =0 and INDIVIDUAL_INFO_INDIVIDUAL_ID not in (select OPENHDS_INDIVIDUAL_ID FROM &quot; + globalMap.get(&quot;OUT_MIGRATION_TABLE&quot;)+&quot;)&quot;);  
 
 var forms = resultsToForms(results, &quot;&lt;outmigration event=&apos;outmigrationIM&apos; table-name=&apos;OMGIM&apos; /&gt;&quot;);
   return forms;
@@ -75,7 +75,7 @@ var forms = resultsToForms(results, &quot;&lt;outmigration event=&apos;outmigrat
 // Also, it&apos;s possible this pregnancy outcome depends 
 function addPregnancyOutcomes(visitId, dbConn) {
   var forms = new java.util.ArrayList();
-  var results = dbConn.executeCachedQuery(&quot;SELECT _URI, VISIT_ID, MOTHER_ID, PARTIAL_DATE,FIELD_WORKER_ID, RECORDED_DATE, FATHER_ID FROM &quot; + globalMap.get(&quot;PREGNANCY_OUTCOME_TABLE&quot;) + &quot; WHERE VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND processed_by_mirth =0&quot;);
+  var results = dbConn.executeCachedQuery(&quot;SELECT _URI, OPENHDS_VISIT_ID, OPENHDS_MOTHER_ID, PARTIAL_DATE, OPENHDS_FIELD_WORKER_ID, RECORDED_DATE, OPENHDS_FATHER_ID FROM &quot; + globalMap.get(&quot;PREGNANCY_OUTCOME_TABLE&quot;) + &quot; WHERE OPENHDS_VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND processed_by_mirth =0&quot;);
   while(results.next()) {
     var pregOut = resultSetToXml(results, &quot;&lt;pregnancyoutcome event=&apos;pregnancyoutcome&apos; table-name=&apos;&quot; + globalMap.get(&quot;PREGNANCY_OUTCOME_TABLE&quot;) + &quot;&apos; /&gt;&quot;);
     // are there any outcomes for this pregnancy outcome?
@@ -104,12 +104,12 @@ function resetProcessedErrored() {
 
 var dbConn = DatabaseConnectionFactory.createDatabaseConnection(&apos;com.mysql.jdbc.Driver&apos;, globalMap.get(&quot;ODK_DATABASE_URL&quot;), globalMap.get(&quot;ODK_DATABASE_USER&quot;), globalMap.get(&quot;ODK_DATABASE_PASSWORD&quot;));
   
-dbConn.executeUpdate(&quot;update VISIT_REGISTRATION_CORE set PROCESSED_BY_MIRTH=false where  VISIT_ID IN (select distinct VISIT_ID from PREGNANCY_OBSERVATION_CORE where PROCESSED_BY_MIRTH =0)&quot;);
-dbConn.executeUpdate(&quot;update VISIT_REGISTRATION_CORE set PROCESSED_BY_MIRTH=false where  VISIT_ID IN (select distinct VISIT_ID from PREGNANCY_OUTCOME_CORE where PROCESSED_BY_MIRTH =0)&quot;);
-dbConn.executeUpdate(&quot;update VISIT_REGISTRATION_CORE set PROCESSED_BY_MIRTH=false where  VISIT_ID IN (select distinct VISIT_ID from IN_MIGRATION_CORE where PROCESSED_BY_MIRTH =0)&quot;);
-dbConn.executeUpdate(&quot;update VISIT_REGISTRATION_CORE set PROCESSED_BY_MIRTH=false where  VISIT_ID IN (select distinct VISIT_ID from DEATH_REGISTRATION_CORE where PROCESSED_BY_MIRTH =0)&quot;);
-dbConn.executeUpdate(&quot;update VISIT_REGISTRATION_CORE set PROCESSED_BY_MIRTH=false where  VISIT_ID IN (select distinct VISIT_ID from OUT_MIGRATION_REGISTRATION_CORE where PROCESSED_BY_MIRTH =0)&quot;);
-dbConn.executeUpdate(&quot;update VISIT_REGISTRATION_CORE set PROCESSED_BY_MIRTH=false where  LOCATION_ID IN (select LOCATION_ID from LOCATION_REGISTRATION_CORE where PROCESSED_BY_MIRTH =0)&quot;);  
+dbConn.executeUpdate(&quot;update VISIT_REGISTRATION_CORE set PROCESSED_BY_MIRTH=false where OPENHDS_VISIT_ID IN (select distinct OPENHDS_VISIT_ID from PREGNANCY_OBSERVATION_CORE where PROCESSED_BY_MIRTH =0)&quot;);
+dbConn.executeUpdate(&quot;update VISIT_REGISTRATION_CORE set PROCESSED_BY_MIRTH=false where OPENHDS_VISIT_ID IN (select distinct OPENHDS_VISIT_ID from PREGNANCY_OUTCOME_CORE where PROCESSED_BY_MIRTH =0)&quot;);
+dbConn.executeUpdate(&quot;update VISIT_REGISTRATION_CORE set PROCESSED_BY_MIRTH=false where OPENHDS_VISIT_ID IN (select distinct OPENHDS_VISIT_ID from IN_MIGRATION_CORE where PROCESSED_BY_MIRTH =0)&quot;);
+dbConn.executeUpdate(&quot;update VISIT_REGISTRATION_CORE set PROCESSED_BY_MIRTH=false where OPENHDS_VISIT_ID IN (select distinct OPENHDS_VISIT_ID from DEATH_REGISTRATION_CORE where PROCESSED_BY_MIRTH =0)&quot;);
+dbConn.executeUpdate(&quot;update VISIT_REGISTRATION_CORE set PROCESSED_BY_MIRTH=false where OPENHDS_VISIT_ID IN (select distinct OPENHDS_VISIT_ID from OUT_MIGRATION_REGISTRATION_CORE where PROCESSED_BY_MIRTH =0)&quot;);
+dbConn.executeUpdate(&quot;update VISIT_REGISTRATION_CORE set PROCESSED_BY_MIRTH=false where OPENHDS_LOCATION_ID IN (select OPENHDS_LOCATION_ID from LOCATION_REGISTRATION_CORE where PROCESSED_BY_MIRTH =0)&quot;);  
 dbConn.close();  
 
 }</code>
@@ -121,7 +121,7 @@ dbConn.close();
     <name>Retrieve Baseline Form</name>
     <tooltip></tooltip>
     <code>function addBaseline(visitId, dbConn) {
-  var results = dbConn.executeCachedQuery(&quot;SELECT _URI, INDIVIDUAL_INFO_DATE_OF_BIRTH, DATE_OF_MIGRATION, INDIVIDUAL_INFO_FIRST_NAME, INDIVIDUAL_INFO_MOTHER_ID, INDIVIDUAL_INFO_INDIVIDUAL_ID, VISIT_ID, INDIVIDUAL_INFO_GENDER, LOCATION_ID, FIELD_WORKER_ID, INDIVIDUAL_INFO_LAST_NAME, INDIVIDUAL_INFO_PARTIAL_DATE, INDIVIDUAL_INFO_FATHER_ID FROM &quot; + globalMap.get(&quot;BASELINE_TABLE&quot;) + &quot; WHERE VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND migration_type = &apos;BASELINE&apos; AND processed_by_mirth=0 order by INDIVIDUAL_INFO_DATE_OF_BIRTH ASC&quot;);
+  var results = dbConn.executeCachedQuery(&quot;SELECT _URI, INDIVIDUAL_INFO_DATE_OF_BIRTH, DATE_OF_MIGRATION, INDIVIDUAL_INFO_FIRST_NAME, INDIVIDUAL_INFO_MOTHER_ID, INDIVIDUAL_INFO_INDIVIDUAL_ID, OPENHDS_VISIT_ID, INDIVIDUAL_INFO_GENDER, OPENHDS_LOCATION_ID, OPENHDS_FIELD_WORKER_ID, INDIVIDUAL_INFO_LAST_NAME, INDIVIDUAL_INFO_PARTIAL_DATE, INDIVIDUAL_INFO_FATHER_ID FROM &quot; + globalMap.get(&quot;BASELINE_TABLE&quot;) + &quot; WHERE OPENHDS_VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND openhds_migration_type = &apos;BASELINE&apos; AND processed_by_mirth=0 order by INDIVIDUAL_INFO_DATE_OF_BIRTH ASC&quot;);
   var baselineForms = resultsToForms(results, &quot;&lt;baseline event=&apos;baseline&apos; table-name=&apos;&quot; + globalMap.get(&quot;BASELINE_TABLE&quot;) + &quot;&apos;/&gt;&quot;);
   return baselineForms;
 }</code>
@@ -133,7 +133,7 @@ dbConn.close();
     <name>Retrieve Pregnancy Observation Forms</name>
     <tooltip>Retrieve Pregnancy Observations</tooltip>
     <code>function addPregnancyObs(visitId, dbConn) {
-  var results = dbConn.executeCachedQuery(&quot;SELECT _URI, VISIT_ID,EXPECTED_DELIVERY_DATE, FIELD_WORKER_ID, RECORDED_DATE, INDIVIDUAL_ID FROM &quot; + globalMap.get(&quot;PREGNANCY_OBS_TABLE&quot;) + &quot; WHERE VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND processed_by_mirth =0&quot;);
+  var results = dbConn.executeCachedQuery(&quot;SELECT _URI, OPENHDS_VISIT_ID, EXPECTED_DELIVERY_DATE, OPENHDS_FIELD_WORKER_ID, OPENHDS_RECORDED_DATE, OPENHDS_INDIVIDUAL_ID FROM &quot; + globalMap.get(&quot;PREGNANCY_OBS_TABLE&quot;) + &quot; WHERE OPENHDS_VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND processed_by_mirth =0&quot;);
   var pregnancyObsForms = resultsToForms(results, &quot;&lt;pregnancyobs event=&apos;pregnancyobs&apos; table-name=&apos;&quot; + globalMap.get(&quot;PREGNANCY_OBS_TABLE&quot;) + &quot;&apos;/&gt;&quot;);
   return pregnancyObsForms;
 }</code>
@@ -170,7 +170,7 @@ function resultSetToXml(rs, xmlElement) {
     <name>Retrieve External In Migration Forms</name>
     <tooltip>Retreive External In Migration Forms</tooltip>
     <code>function addExternalInmigrations(visitId, dbConn) {
-  var results = dbConn.executeCachedQuery(&quot;SELECT _URI, REASON, INDIVIDUAL_INFO_DATE_OF_BIRTH, DATE_OF_MIGRATION, INDIVIDUAL_INFO_FIRST_NAME, INDIVIDUAL_INFO_MOTHER_ID, INDIVIDUAL_INFO_INDIVIDUAL_ID, MOVEDFROM, VISIT_ID, INDIVIDUAL_INFO_GENDER, LOCATION_ID, FIELD_WORKER_ID, INDIVIDUAL_INFO_LAST_NAME, INDIVIDUAL_INFO_PARTIAL_DATE, INDIVIDUAL_INFO_FATHER_ID FROM &quot; + globalMap.get(&quot;IN_MIGRATION_TABLE&quot;) + &quot; WHERE VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND migration_type = &apos;EXTERNAL_INMIGRATION&apos; AND processed_by_mirth=0 order by INDIVIDUAL_INFO_DATE_OF_BIRTH ASC&quot;);
+  var results = dbConn.executeCachedQuery(&quot;SELECT _URI, REASON, INDIVIDUAL_INFO_DATE_OF_BIRTH, DATE_OF_MIGRATION, INDIVIDUAL_INFO_FIRST_NAME, INDIVIDUAL_INFO_MOTHER_ID, INDIVIDUAL_INFO_INDIVIDUAL_ID, MOVEDFROM, OPENHDS_VISIT_ID, INDIVIDUAL_INFO_GENDER, OPENHDS_LOCATION_ID, OPENHDS_FIELD_WORKER_ID, INDIVIDUAL_INFO_LAST_NAME, INDIVIDUAL_INFO_PARTIAL_DATE, INDIVIDUAL_INFO_FATHER_ID FROM &quot; + globalMap.get(&quot;IN_MIGRATION_TABLE&quot;) + &quot; WHERE OPENHDS_VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND openhds_migration_type = &apos;EXTERNAL_INMIGRATION&apos; AND processed_by_mirth=0 order by INDIVIDUAL_INFO_DATE_OF_BIRTH ASC&quot;);
   var inMigrationForms = resultsToForms(results, &quot;&lt;inmigration event=&apos;external-inmigration&apos; table-name=&apos;&quot; + globalMap.get(&quot;IN_MIGRATION_TABLE&quot;) + &quot;&apos;/&gt;&quot;);
   return inMigrationForms;
 }</code>
@@ -207,7 +207,7 @@ function resultSetToXml(rs, xmlElement) {
 
 if (tableName == globalMap.get(&quot;VISIT_TABLE&quot;) ) {
 	var dbConn = DatabaseConnectionFactory.createDatabaseConnection(&apos;com.mysql.jdbc.Driver&apos;, globalMap.get(&quot;ODK_DATABASE_URL&quot;), globalMap.get(&quot;ODK_DATABASE_USER&quot;), globalMap.get(&quot;ODK_DATABASE_PASSWORD&quot;));
-    var result = dbConn.executeUpdate(&quot;UPDATE &quot; + tableName + &quot; SET processed_by_mirth = &quot; + status + &quot; WHERE VISIT_ID = &apos;&quot; + originalXml[&quot;visit_id&quot;].toString() + &quot;&apos;&quot;);
+    var result = dbConn.executeUpdate(&quot;UPDATE &quot; + tableName + &quot; SET processed_by_mirth = &quot; + status + &quot; WHERE OPENHDS_VISIT_ID = &apos;&quot; + originalXml[&quot;openhds_visit_id&quot;].toString() + &quot;&apos;&quot;);
     dbConn.close();
 } else if (tableName !== &quot;OMGIM&quot;) {
  var dbConn = DatabaseConnectionFactory.createDatabaseConnection(&apos;com.mysql.jdbc.Driver&apos;, globalMap.get(&quot;ODK_DATABASE_URL&quot;), globalMap.get(&quot;ODK_DATABASE_USER&quot;), globalMap.get(&quot;ODK_DATABASE_PASSWORD&quot;));
@@ -223,7 +223,7 @@ if (tableName == globalMap.get(&quot;VISIT_TABLE&quot;) ) {
     <name>Retrieve Internal In Migration Forms</name>
     <tooltip>Retrieve Internal In Migration Forms</tooltip>
     <code>function addInternalInmigrations(visitId, dbConn) {
-  var results = dbConn.executeCachedQuery(&quot;SELECT _URI, REASON, DATE_OF_MIGRATION, INDIVIDUAL_INFO_INDIVIDUAL_ID, ORIGIN, VISIT_ID, LOCATION_ID, FIELD_WORKER_ID  FROM &quot; + globalMap.get(&quot;IN_MIGRATION_TABLE&quot;) + &quot; WHERE VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND migration_type = &apos;INTERNAL_INMIGRATION&apos; AND processed_by_mirth=0&quot;);
+  var results = dbConn.executeCachedQuery(&quot;SELECT _URI, REASON, DATE_OF_MIGRATION, INDIVIDUAL_INFO_INDIVIDUAL_ID, ORIGIN, OPENHDS_VISIT_ID, OPENHDS_LOCATION_ID, OPENHDS_FIELD_WORKER_ID FROM &quot; + globalMap.get(&quot;IN_MIGRATION_TABLE&quot;) + &quot; WHERE OPENHDS_VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND openhds_migration_type = &apos;INTERNAL_INMIGRATION&apos; AND processed_by_mirth=0&quot;);
   var inMigrationForms = resultsToForms(results, &quot;&lt;inmigration event=&apos;internal-inmigration&apos; table-name=&apos;&quot; + globalMap.get(&quot;IN_MIGRATION_TABLE&quot;) + &quot;&apos;/&gt;&quot;);
   return inMigrationForms;
 }</code>
@@ -235,7 +235,7 @@ if (tableName == globalMap.get(&quot;VISIT_TABLE&quot;) ) {
     <name>Retrieve Death Forms</name>
     <tooltip>Retrieve Death Forms</tooltip>
     <code>function addDeaths(visitId, dbConn) {
-  var results = dbConn.executeCachedQuery(&quot;SELECT _URI, VISIT_ID, CAUSE_OF_DEATH, FIELD_WORKER_ID, DATE_OF_DEATH, PLACE_OF_DEATH, INDIVIDUAL_ID FROM &quot; + globalMap.get(&quot;DEATH_TABLE&quot;) + &quot; WHERE VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND processed_by_mirth =0&quot;);
+  var results = dbConn.executeCachedQuery(&quot;SELECT _URI, OPENHDS_VISIT_ID, CAUSE_OF_DEATH, OPENHDS_FIELD_WORKER_ID, DATE_OF_DEATH, PLACE_OF_DEATH, OPENHDS_INDIVIDUAL_ID FROM &quot; + globalMap.get(&quot;DEATH_TABLE&quot;) + &quot; WHERE OPENHDS_VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND processed_by_mirth =0&quot;);
   var deathForms = resultsToForms(results, &quot;&lt;death event=&apos;death&apos; table-name=&apos;&quot; + globalMap.get(&quot;DEATH_TABLE&quot;) + &quot;&apos;/&gt;&quot;);
   return deathForms;
 }</code>
