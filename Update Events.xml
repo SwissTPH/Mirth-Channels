@@ -1,7 +1,7 @@
 <channel version="3.1.1">
   <id>95bbf706-26dc-4af7-84ff-aed09a2607e8</id>
   <nextMetaDataId>12</nextMetaDataId>
-  <name>Update Events</name>
+  <name>Update Events last</name>
   <description>This channel will attempt to read the submissions from ODK in a dependency aware way. Though XForms has no notion of dependency, there is an inherit dependency betweens update forms. The dependenc looks like:&#xd;
 Update Events -&gt; Visit -&gt; Location&#xd;
 where all update events depend on a visit, and a visit might potentially depend on a location therefore, forms are processed in this order:&#xd;
@@ -13,10 +13,10 @@ Visit &#xd;
 Any events...</description>
   <enabled>true</enabled>
   <lastModified>
-    <time>1431424299337</time>
+    <time>1431445932741</time>
     <timezone>Europe/Berlin</timezone>
   </lastModified>
-  <revision>23</revision>
+  <revision>26</revision>
   <sourceConnector version="3.1.1">
     <metaDataId>0</metaDataId>
     <name>sourceConnector</name>
@@ -37,6 +37,14 @@ Any events...</description>
       <script>var forms = new java.util.ArrayList()
 
 var dbConn = DatabaseConnectionFactory.createDatabaseConnection(&apos;com.mysql.jdbc.Driver&apos;, globalMap.get(&quot;ODK_DATABASE_URL&quot;), globalMap.get(&quot;ODK_DATABASE_USER&quot;), globalMap.get(&quot;ODK_DATABASE_PASSWORD&quot;));
+
+var checkUpdate = dbConn.executeCachedQuery(&quot;SELECT FLG_SCENARIO FROM &quot; + globalMap.get(&quot;SCENARIO_TABLE&quot;) + &quot; WHERE FLG_SCENARIO=1&quot;);
+
+if(!checkUpdate.next()){
+	dbConn.close();
+	return forms;
+}
+
 var visitResult = dbConn.executeCachedQuery(&quot;SELECT DISTINCT VISIT_DATE, OPENHDS_VISIT_ID, OPENHDS_LOCATION_ID, OPENHDS_FIELD_WORKER_ID, OPENHDS_ROUND_NUMBER FROM &quot; + globalMap.get(&quot;VISIT_TABLE&quot;) + &quot; WHERE processed_by_mirth=0 OR processed_by_mirth IS NULL order by START ASC&quot;);
 
 while(visitResult.next()) {
@@ -833,12 +841,16 @@ PgogIDwvdmlzaXRMb2NhdGlvbj4KPC92aXNpdD4=</outboundTemplate>
           <step>
             <sequenceNumber>3</sequenceNumber>
             <name>deathCause (out)</name>
-            <script>tmp[&apos;deathCause&apos;] = validate(msg[&apos;cause_of_death&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
+            <script>tmp[&apos;deathCause&apos;] = validate(msg[&apos;causeofdeathdiagnosed&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
             <type>Message Builder</type>
             <data>
               <entry>
                 <string>Variable</string>
                 <string>tmp[&apos;deathCause&apos;]</string>
+              </entry>
+              <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;causeofdeathdiagnosed&apos;].toString().toUpperCase()</string>
               </entry>
               <entry>
                 <string>DefaultValue</string>
@@ -847,10 +859,6 @@ PgogIDwvdmlzaXRMb2NhdGlvbj4KPC92aXNpdD4=</outboundTemplate>
               <entry>
                 <string>RegularExpressions</string>
                 <list/>
-              </entry>
-              <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;cause_of_death&apos;].toString().toUpperCase()</string>
               </entry>
             </data>
           </step>
@@ -865,16 +873,16 @@ PgogIDwvdmlzaXRMb2NhdGlvbj4KPC92aXNpdD4=</outboundTemplate>
                 <string>tmp[&apos;deathDate&apos;]</string>
               </entry>
               <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;date_of_death&apos;].toString()</string>
+              </entry>
+              <entry>
                 <string>DefaultValue</string>
                 <string></string>
               </entry>
               <entry>
                 <string>RegularExpressions</string>
                 <list/>
-              </entry>
-              <entry>
-                <string>Mapping</string>
-                <string>msg[&apos;date_of_death&apos;].toString()</string>
               </entry>
             </data>
           </step>
@@ -1046,7 +1054,7 @@ tmp[&apos;socialGroup&apos;][&apos;extId&apos;] = msg[&apos;openhds_household_id
 tmp[&apos;death&apos;][&apos;visitDeath&apos;][&apos;extId&apos;] = msg[&apos;openhds_visit_id&apos;].toString().toUpperCase();
 tmp[&apos;death&apos;][&apos;individual&apos;][&apos;extId&apos;] = msg[&apos;openhds_individual_id&apos;].toString().toUpperCase();
 tmp[&apos;death&apos;][&apos;deathPlace&apos;] = msg[&apos;place_of_death&apos;].toString();
-tmp[&apos;death&apos;][&apos;deathCause&apos;] = msg[&apos;cause_of_death&apos;].toString();
+tmp[&apos;death&apos;][&apos;deathCause&apos;] = msg[&apos;causeofdeathdiagnosed&apos;].toString();
 tmp[&apos;death&apos;][&apos;deathDate&apos;] = msg[&apos;date&apos;].toString();
 tmp[&apos;death&apos;][&apos;collectedBy&apos;][&apos;extId&apos;] = msg[&apos;openhds_field_worker_id&apos;].toString().toUpperCase();
 
@@ -1074,7 +1082,7 @@ tmp[&apos;socialGroup&apos;][&apos;extId&apos;] = msg[&apos;openhds_household_id
 tmp[&apos;death&apos;][&apos;visitDeath&apos;][&apos;extId&apos;] = msg[&apos;openhds_visit_id&apos;].toString().toUpperCase();
 tmp[&apos;death&apos;][&apos;individual&apos;][&apos;extId&apos;] = msg[&apos;openhds_individual_id&apos;].toString().toUpperCase();
 tmp[&apos;death&apos;][&apos;deathPlace&apos;] = msg[&apos;place_of_death&apos;].toString();
-tmp[&apos;death&apos;][&apos;deathCause&apos;] = msg[&apos;cause_of_death&apos;].toString();
+tmp[&apos;death&apos;][&apos;deathCause&apos;] = msg[&apos;causeofdeathdiagnosed&apos;].toString();
 tmp[&apos;death&apos;][&apos;deathDate&apos;] = msg[&apos;date&apos;].toString();
 tmp[&apos;death&apos;][&apos;collectedBy&apos;][&apos;extId&apos;] = msg[&apos;openhds_field_worker_id&apos;].toString().toUpperCase();
 
@@ -2679,6 +2687,30 @@ TUlHUkFUSU9OPC9taWdUeXBlPgo8L2lubWlncmF0aW9uPg==</outboundTemplate>
               </entry>
             </data>
           </step>
+          <step>
+            <sequenceNumber>14</sequenceNumber>
+            <name>individual - middleName (out) &lt;-- individual_info_middlename (in)</name>
+            <script>tmp[&apos;individual&apos;][&apos;middleName&apos;] = validate(msg[&apos;individual_info_middlename&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
+            <type>Message Builder</type>
+            <data>
+              <entry>
+                <string>Variable</string>
+                <string>tmp[&apos;individual&apos;][&apos;middleName&apos;]</string>
+              </entry>
+              <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;individual_info_middlename&apos;].toString().toUpperCase()</string>
+              </entry>
+              <entry>
+                <string>DefaultValue</string>
+                <string></string>
+              </entry>
+              <entry>
+                <string>RegularExpressions</string>
+                <list/>
+              </entry>
+            </data>
+          </step>
         </steps>
         <inboundTemplate encoding="base64">PGlubWlncmF0aW9uPgogICAgPF91cmk+PC9fdXJpPgogICAgPHJlYXNvbj48L3JlYXNvbj4KICAg
 IDxpbmRpdmlkdWFsX2luZm9fZGF0ZV9vZl9iaXJ0aD48L2luZGl2aWR1YWxfaW5mb19kYXRlX29m
@@ -2843,10 +2875,11 @@ for(var i = 0; i &lt; outcomes; i++) {
     outcomesXml[&apos;outcome&apos;][i][&apos;type&apos;] = msg[&apos;outcome&apos;][i][&apos;outcome_type&apos;].toString();
     outcomesXml[&apos;outcome&apos;][i][&apos;child&apos;][&apos;extId&apos;] = msg[&apos;outcome&apos;][i][&apos;child_id&apos;].toString();
     outcomesXml[&apos;outcome&apos;][i][&apos;child&apos;][&apos;firstName&apos;] = msg[&apos;outcome&apos;][i][&apos;first_name&apos;].toString();
+    outcomesXml[&apos;outcome&apos;][i][&apos;child&apos;][&apos;middleName&apos;] = msg[&apos;outcome&apos;][i][&apos;middle_name&apos;].toString();
     outcomesXml[&apos;outcome&apos;][i][&apos;child&apos;][&apos;lastName&apos;] = msg[&apos;outcome&apos;][i][&apos;last_name&apos;].toString();
     outcomesXml[&apos;outcome&apos;][i][&apos;child&apos;][&apos;gender&apos;] = msg[&apos;outcome&apos;][i][&apos;gender&apos;].toString();
     outcomesXml[&apos;outcome&apos;][i][&apos;child&apos;][&apos;partialDate&apos;] = msg[&apos;partial_date&apos;].toString();
-    outcomesXml[&apos;outcome&apos;][i][&apos;childMembership&apos;][&apos;socialGroup&apos;][&apos;extId&apos;] = msg[&apos;outcome&apos;][i][&apos;social_group_id&apos;].toString()
+    outcomesXml[&apos;outcome&apos;][i][&apos;childMembership&apos;][&apos;socialGroup&apos;][&apos;extId&apos;] = msg[&apos;outcome&apos;][i][&apos;social_group_id&apos;].toString();
     outcomesXml[&apos;outcome&apos;][i][&apos;childMembership&apos;][&apos;bIsToA&apos;] = (parseInt(msg[&apos;outcome&apos;][i][&apos;relationship_to_group_head&apos;])+ 1).toString();
   } else {
     outcomesXml[&apos;outcome&apos;][i][&apos;type&apos;] = msg[&apos;outcome&apos;][i][&apos;outcome_type&apos;].toString();
@@ -2875,10 +2908,11 @@ for(var i = 0; i &lt; outcomes; i++) {
     outcomesXml[&apos;outcome&apos;][i][&apos;type&apos;] = msg[&apos;outcome&apos;][i][&apos;outcome_type&apos;].toString();
     outcomesXml[&apos;outcome&apos;][i][&apos;child&apos;][&apos;extId&apos;] = msg[&apos;outcome&apos;][i][&apos;child_id&apos;].toString();
     outcomesXml[&apos;outcome&apos;][i][&apos;child&apos;][&apos;firstName&apos;] = msg[&apos;outcome&apos;][i][&apos;first_name&apos;].toString();
+    outcomesXml[&apos;outcome&apos;][i][&apos;child&apos;][&apos;middleName&apos;] = msg[&apos;outcome&apos;][i][&apos;middle_name&apos;].toString();
     outcomesXml[&apos;outcome&apos;][i][&apos;child&apos;][&apos;lastName&apos;] = msg[&apos;outcome&apos;][i][&apos;last_name&apos;].toString();
     outcomesXml[&apos;outcome&apos;][i][&apos;child&apos;][&apos;gender&apos;] = msg[&apos;outcome&apos;][i][&apos;gender&apos;].toString();
     outcomesXml[&apos;outcome&apos;][i][&apos;child&apos;][&apos;partialDate&apos;] = msg[&apos;partial_date&apos;].toString();
-    outcomesXml[&apos;outcome&apos;][i][&apos;childMembership&apos;][&apos;socialGroup&apos;][&apos;extId&apos;] = msg[&apos;outcome&apos;][i][&apos;social_group_id&apos;].toString()
+    outcomesXml[&apos;outcome&apos;][i][&apos;childMembership&apos;][&apos;socialGroup&apos;][&apos;extId&apos;] = msg[&apos;outcome&apos;][i][&apos;social_group_id&apos;].toString();
     outcomesXml[&apos;outcome&apos;][i][&apos;childMembership&apos;][&apos;bIsToA&apos;] = (parseInt(msg[&apos;outcome&apos;][i][&apos;relationship_to_group_head&apos;])+ 1).toString();
   } else {
     outcomesXml[&apos;outcome&apos;][i][&apos;type&apos;] = msg[&apos;outcome&apos;][i][&apos;outcome_type&apos;].toString();
