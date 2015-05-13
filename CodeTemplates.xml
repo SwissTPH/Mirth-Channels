@@ -121,7 +121,7 @@ dbConn.close();
     <name>Retrieve Baseline Form</name>
     <tooltip></tooltip>
     <code>function addBaseline(visitId, dbConn) {
-  var results = dbConn.executeCachedQuery(&quot;SELECT _URI, INDIVIDUAL_INFO_DATE_OF_BIRTH, DATE_OF_MIGRATION, INDIVIDUAL_INFO_FIRST_NAME, INDIVIDUAL_INFO_MOTHER_ID, INDIVIDUAL_INFO_INDIVIDUAL_ID, OPENHDS_VISIT_ID, INDIVIDUAL_INFO_GENDER, OPENHDS_LOCATION_ID, OPENHDS_FIELD_WORKER_ID, INDIVIDUAL_INFO_LAST_NAME, INDIVIDUAL_INFO_PARTIAL_DATE, INDIVIDUAL_INFO_FATHER_ID, INDIVIDUAL_INFO_MIDDLENAME FROM &quot; + globalMap.get(&quot;BASELINE_TABLE&quot;) + &quot; WHERE OPENHDS_VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND openhds_migration_type = &apos;BASELINE&apos; AND processed_by_mirth=0 order by INDIVIDUAL_INFO_DATE_OF_BIRTH ASC&quot;);
+  var results = dbConn.executeCachedQuery(&quot;SELECT _URI, INDIVIDUAL_INFO_DATE_OF_BIRTH, DATE_OF_MIGRATION, INDIVIDUAL_INFO_FIRST_NAME, INDIVIDUAL_INFO_MOTHER_ID, INDIVIDUAL_INFO_INDIVIDUAL_ID, OPENHDS_VISIT_ID, INDIVIDUAL_INFO_GENDER, OPENHDS_LOCATION_ID, OPENHDS_FIELD_WORKER_ID, INDIVIDUAL_INFO_LAST_NAME, INDIVIDUAL_INFO_PARTIAL_DATE, INDIVIDUAL_INFO_FATHER_ID, INDIVIDUAL_INFO_MIDDLE_NAME FROM &quot; + globalMap.get(&quot;BASELINE_TABLE&quot;) + &quot; WHERE OPENHDS_VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND openhds_migration_type = &apos;BASELINE&apos; AND processed_by_mirth=0 order by INDIVIDUAL_INFO_DATE_OF_BIRTH ASC&quot;);
   var baselineForms = resultsToForms(results, &quot;&lt;baseline event=&apos;baseline&apos; table-name=&apos;&quot; + globalMap.get(&quot;BASELINE_TABLE&quot;) + &quot;&apos;/&gt;&quot;);
   return baselineForms;
 }</code>
@@ -170,7 +170,7 @@ function resultSetToXml(rs, xmlElement) {
     <name>Retrieve External In Migration Forms</name>
     <tooltip>Retrieve External In Migration Forms</tooltip>
     <code>function addExternalInmigrations(visitId, dbConn) {
-  var results = dbConn.executeCachedQuery(&quot;SELECT _URI, REASON, INDIVIDUAL_INFO_DATE_OF_BIRTH, DATE_OF_MIGRATION, INDIVIDUAL_INFO_FIRST_NAME, INDIVIDUAL_INFO_MOTHER_ID, INDIVIDUAL_INFO_INDIVIDUAL_ID, MOVEDFROM, OPENHDS_VISIT_ID, INDIVIDUAL_INFO_GENDER, OPENHDS_LOCATION_ID, OPENHDS_FIELD_WORKER_ID, INDIVIDUAL_INFO_LAST_NAME, INDIVIDUAL_INFO_PARTIAL_DATE, INDIVIDUAL_INFO_FATHER_ID, INDIVIDUAL_INFO_MIDDLENAME FROM &quot; + globalMap.get(&quot;IN_MIGRATION_TABLE&quot;) + &quot; WHERE OPENHDS_VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND openhds_migration_type = &apos;EXTERNAL_INMIGRATION&apos; AND processed_by_mirth=0 order by INDIVIDUAL_INFO_DATE_OF_BIRTH ASC&quot;);
+  var results = dbConn.executeCachedQuery(&quot;SELECT _URI, REASON, INDIVIDUAL_INFO_DATE_OF_BIRTH, DATE_OF_MIGRATION, INDIVIDUAL_INFO_FIRST_NAME, INDIVIDUAL_INFO_MOTHER_ID, INDIVIDUAL_INFO_INDIVIDUAL_ID, MOVEDFROM, OPENHDS_VISIT_ID, INDIVIDUAL_INFO_GENDER, OPENHDS_LOCATION_ID, OPENHDS_FIELD_WORKER_ID, INDIVIDUAL_INFO_LAST_NAME, INDIVIDUAL_INFO_PARTIAL_DATE, INDIVIDUAL_INFO_FATHER_ID, INDIVIDUAL_INFO_MIDDLE_NAME FROM &quot; + globalMap.get(&quot;IN_MIGRATION_TABLE&quot;) + &quot; WHERE OPENHDS_VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND openhds_migration_type = &apos;EXTERNAL_INMIGRATION&apos; AND processed_by_mirth=0 order by INDIVIDUAL_INFO_DATE_OF_BIRTH ASC&quot;);
   var inMigrationForms = resultsToForms(results, &quot;&lt;inmigration event=&apos;external-inmigration&apos; table-name=&apos;&quot; + globalMap.get(&quot;IN_MIGRATION_TABLE&quot;) + &quot;&apos;/&gt;&quot;);
   return inMigrationForms;
 }</code>

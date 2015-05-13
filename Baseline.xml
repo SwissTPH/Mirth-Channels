@@ -13,10 +13,10 @@ Visit &#xd;
 Any events...</description>
   <enabled>true</enabled>
   <lastModified>
-    <time>1430925882168</time>
+    <time>1431504870112</time>
     <timezone>Europe/Berlin</timezone>
   </lastModified>
-  <revision>8</revision>
+  <revision>9</revision>
   <sourceConnector version="3.1.1">
     <metaDataId>0</metaDataId>
     <name>sourceConnector</name>
@@ -1328,6 +1328,30 @@ CiAgPC92aXNpdD4KPC9wcmVnbmFuY3lvYnNlcnZhdGlvbj4=</outboundTemplate>
               <entry>
                 <string>Mapping</string>
                 <string>msg[&apos;individual_info_partial_date&apos;].toString()</string>
+              </entry>
+              <entry>
+                <string>DefaultValue</string>
+                <string></string>
+              </entry>
+              <entry>
+                <string>RegularExpressions</string>
+                <list/>
+              </entry>
+            </data>
+          </step>
+          <step>
+            <sequenceNumber>14</sequenceNumber>
+            <name>individual - middleName (out)</name>
+            <script>tmp[&apos;individual&apos;][&apos;middleName&apos;] = validate(msg[&apos;individual_info_middle_name&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
+            <type>Message Builder</type>
+            <data>
+              <entry>
+                <string>Variable</string>
+                <string>tmp[&apos;individual&apos;][&apos;middleName&apos;]</string>
+              </entry>
+              <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;individual_info_middle_name&apos;].toString().toUpperCase()</string>
               </entry>
               <entry>
                 <string>DefaultValue</string>

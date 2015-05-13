@@ -2,21 +2,25 @@
   <id>95bbf706-26dc-4af7-84ff-aed09a2607e8</id>
   <nextMetaDataId>12</nextMetaDataId>
   <name>Update Events last</name>
-  <description>This channel will attempt to read the submissions from ODK in a dependency aware way. Though XForms has no notion of dependency, there is an inherit dependency betweens update forms. The dependenc looks like:&#xd;
+  <description>This channel will attempt to read the submissions from ODK in a dependency aware way. Though XForms has no notion of dependency, there is an inherit dependency between update forms. The dependency looks like:&#xd;
+&#xd;
 Update Events -&gt; Visit -&gt; Location&#xd;
-where all update events depend on a visit, and a visit might potentially depend on a location therefore, forms are processed in this order:&#xd;
+&#xd;
+where all update events depend on a visit, and a visit might potentially depend on a location. therefore, forms are processed in this order:&#xd;
+&#xd;
 Location, Visit, Update Events&#xd;
 &#xd;
 Moreover, the entry point of searching is Visit, since one is always created, whether a new location or not. Then a check is made to see if a Location was created during the visit. After that check, all update forms are checked. In the end, a list will be in order of:&#xd;
+&#xd;
 Location - Optional, only if the visit is at a new locattion not already registered&#xd;
 Visit &#xd;
 Any events...</description>
   <enabled>true</enabled>
   <lastModified>
-    <time>1431445932741</time>
+    <time>1431504427418</time>
     <timezone>Europe/Berlin</timezone>
   </lastModified>
-  <revision>26</revision>
+  <revision>31</revision>
   <sourceConnector version="3.1.1">
     <metaDataId>0</metaDataId>
     <name>sourceConnector</name>
@@ -37,13 +41,6 @@ Any events...</description>
       <script>var forms = new java.util.ArrayList()
 
 var dbConn = DatabaseConnectionFactory.createDatabaseConnection(&apos;com.mysql.jdbc.Driver&apos;, globalMap.get(&quot;ODK_DATABASE_URL&quot;), globalMap.get(&quot;ODK_DATABASE_USER&quot;), globalMap.get(&quot;ODK_DATABASE_PASSWORD&quot;));
-
-var checkUpdate = dbConn.executeCachedQuery(&quot;SELECT FLG_SCENARIO FROM &quot; + globalMap.get(&quot;SCENARIO_TABLE&quot;) + &quot; WHERE FLG_SCENARIO=1&quot;);
-
-if(!checkUpdate.next()){
-	dbConn.close();
-	return forms;
-}
 
 var visitResult = dbConn.executeCachedQuery(&quot;SELECT DISTINCT VISIT_DATE, OPENHDS_VISIT_ID, OPENHDS_LOCATION_ID, OPENHDS_FIELD_WORKER_ID, OPENHDS_ROUND_NUMBER FROM &quot; + globalMap.get(&quot;VISIT_TABLE&quot;) + &quot; WHERE processed_by_mirth=0 OR processed_by_mirth IS NULL order by START ASC&quot;);
 
@@ -841,7 +838,7 @@ PgogIDwvdmlzaXRMb2NhdGlvbj4KPC92aXNpdD4=</outboundTemplate>
           <step>
             <sequenceNumber>3</sequenceNumber>
             <name>deathCause (out)</name>
-            <script>tmp[&apos;deathCause&apos;] = validate(msg[&apos;causeofdeathdiagnosed&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
+            <script>tmp[&apos;deathCause&apos;] = validate(msg[&apos;cause_of_death&apos;].toString(), &apos;&apos;, new Array());</script>
             <type>Message Builder</type>
             <data>
               <entry>
@@ -850,7 +847,7 @@ PgogIDwvdmlzaXRMb2NhdGlvbj4KPC92aXNpdD4=</outboundTemplate>
               </entry>
               <entry>
                 <string>Mapping</string>
-                <string>msg[&apos;causeofdeathdiagnosed&apos;].toString().toUpperCase()</string>
+                <string>msg[&apos;cause_of_death&apos;].toString()</string>
               </entry>
               <entry>
                 <string>DefaultValue</string>
@@ -1054,7 +1051,7 @@ tmp[&apos;socialGroup&apos;][&apos;extId&apos;] = msg[&apos;openhds_household_id
 tmp[&apos;death&apos;][&apos;visitDeath&apos;][&apos;extId&apos;] = msg[&apos;openhds_visit_id&apos;].toString().toUpperCase();
 tmp[&apos;death&apos;][&apos;individual&apos;][&apos;extId&apos;] = msg[&apos;openhds_individual_id&apos;].toString().toUpperCase();
 tmp[&apos;death&apos;][&apos;deathPlace&apos;] = msg[&apos;place_of_death&apos;].toString();
-tmp[&apos;death&apos;][&apos;deathCause&apos;] = msg[&apos;causeofdeathdiagnosed&apos;].toString();
+tmp[&apos;death&apos;][&apos;deathCause&apos;] = msg[&apos;cause_of_death&apos;].toString();
 tmp[&apos;death&apos;][&apos;deathDate&apos;] = msg[&apos;date&apos;].toString();
 tmp[&apos;death&apos;][&apos;collectedBy&apos;][&apos;extId&apos;] = msg[&apos;openhds_field_worker_id&apos;].toString().toUpperCase();
 
@@ -1082,7 +1079,7 @@ tmp[&apos;socialGroup&apos;][&apos;extId&apos;] = msg[&apos;openhds_household_id
 tmp[&apos;death&apos;][&apos;visitDeath&apos;][&apos;extId&apos;] = msg[&apos;openhds_visit_id&apos;].toString().toUpperCase();
 tmp[&apos;death&apos;][&apos;individual&apos;][&apos;extId&apos;] = msg[&apos;openhds_individual_id&apos;].toString().toUpperCase();
 tmp[&apos;death&apos;][&apos;deathPlace&apos;] = msg[&apos;place_of_death&apos;].toString();
-tmp[&apos;death&apos;][&apos;deathCause&apos;] = msg[&apos;causeofdeathdiagnosed&apos;].toString();
+tmp[&apos;death&apos;][&apos;deathCause&apos;] = msg[&apos;cause_of_death&apos;].toString();
 tmp[&apos;death&apos;][&apos;deathDate&apos;] = msg[&apos;date&apos;].toString();
 tmp[&apos;death&apos;][&apos;collectedBy&apos;][&apos;extId&apos;] = msg[&apos;openhds_field_worker_id&apos;].toString().toUpperCase();
 
@@ -2690,7 +2687,7 @@ TUlHUkFUSU9OPC9taWdUeXBlPgo8L2lubWlncmF0aW9uPg==</outboundTemplate>
           <step>
             <sequenceNumber>14</sequenceNumber>
             <name>individual - middleName (out) &lt;-- individual_info_middlename (in)</name>
-            <script>tmp[&apos;individual&apos;][&apos;middleName&apos;] = validate(msg[&apos;individual_info_middlename&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
+            <script>tmp[&apos;individual&apos;][&apos;middleName&apos;] = validate(msg[&apos;individual_info_middle_name&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
             <type>Message Builder</type>
             <data>
               <entry>
@@ -2699,7 +2696,7 @@ TUlHUkFUSU9OPC9taWdUeXBlPgo8L2lubWlncmF0aW9uPg==</outboundTemplate>
               </entry>
               <entry>
                 <string>Mapping</string>
-                <string>msg[&apos;individual_info_middlename&apos;].toString().toUpperCase()</string>
+                <string>msg[&apos;individual_info_middle_name&apos;].toString().toUpperCase()</string>
               </entry>
               <entry>
                 <string>DefaultValue</string>
