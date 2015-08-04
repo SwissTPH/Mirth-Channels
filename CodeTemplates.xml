@@ -65,6 +65,56 @@ var forms = resultsToForms(results, &quot;&lt;outmigration event=&apos;outmigrat
     <scope>0</scope>
   </codeTemplate>
   <codeTemplate version="3.1.1">
+    <id>41cb0d6e-16a9-4331-a094-3d26bc95343d</id>
+    <name>ExtraForm::Get Core Table Structure</name>
+    <tooltip>Extracts the Table Structure from a given ExtraForm Core Table and returns a JS Array with the info about each of its columns</tooltip>
+    <code>// modify function_name and parameters as you wish.
+// one function per template is recommended. i.e.) create a new code template for each new function.
+function getCoreTableStructure(CORE_TABLE_NAME){
+	var listOfObjects = [];
+	var connection;
+	try {
+		connection = DatabaseConnectionFactory.createConnection(&apos;com.mysql.jdbc.Driver&apos;,globalMap.get(&quot;ODK_DATABASE_URL&quot;), globalMap.get(&quot;ODK_DATABASE_USER&quot;),globalMap.get(&quot;ODK_DATABASE_PASSWORD&quot;));
+		var metaData = connection.getMetaData();	
+		var result;
+		try { 
+			result = metaData.getColumns(null, null, CORE_TABLE_NAME, null);
+			var counter = 1;
+			while (result.next()) {		
+				var columnName = result.getString(&quot;COLUMN_NAME&quot;);
+				var defaultValue = result.getString(&quot;COLUMN_DEF&quot;);
+				var dataType = result.getInt(&quot;DATA_TYPE&quot;);
+				var typeName = result.getString(&quot;TYPE_NAME&quot;);
+				var nullable = result.getInt(&quot;NULLABLE&quot;);
+				var columnSize = result.getInt(&quot;COLUMN_SIZE&quot;);
+
+				var ColumnDummy = {
+					&apos;name&apos; : columnName, 
+					&apos;type&apos; : typeName,
+					&apos;default_value&apos; : defaultValue,
+					&apos;size&apos; : columnSize,
+					&apos;allow_null&apos; : (nullable == java.sql.ResultSetMetaData.columnNoNulls)?&quot;false&quot;:&quot;true&quot;
+				}
+				listOfObjects.push(ColumnDummy);
+				counter++;
+			}
+		}
+		finally {
+			if(result){
+				result.close();
+			}
+		}
+	} finally {
+		if (connection) { 
+			connection.close();
+		}
+	}
+	return listOfObjects;
+}</code>
+    <type>FUNCTION</type>
+    <scope>0</scope>
+  </codeTemplate>
+  <codeTemplate version="3.1.1">
     <id>4e1616a1-7ed4-4f52-b32a-e1ea48b2eaa2</id>
     <name>Retrieve Pregnancy Outcome Forms</name>
     <tooltip>Retrieve Pregnancy Outcome Forms</tooltip>
@@ -91,6 +141,44 @@ function addPregnancyOutcomes(visitId, dbConn) {
   return forms;
 }
 </code>
+    <type>FUNCTION</type>
+    <scope>0</scope>
+  </codeTemplate>
+  <codeTemplate version="3.1.1">
+    <id>4f519d07-5871-49f1-98b8-7731eb918dcc</id>
+    <name>ExtraForm::getCoreTableFromFormName</name>
+    <tooltip>Extract the Core Table name for a given formId in the ODK database</tooltip>
+    <code>// modify function_name and parameters as you wish.
+// one function per template is recommended. i.e.) create a new code template for each new function.
+function getCoreTableFromFormName(extraFormName){		
+	var tableName;
+	var sql = &quot;SELECT _CREATION_DATE, SUBMISSION_FORM_ID, URI_SUBMISSION_DATA_MODEL FROM _form_info_submission_association&quot;;
+		
+	var connection;
+	try {
+		connection = DatabaseConnectionFactory.createConnection(&apos;com.mysql.jdbc.Driver&apos;,globalMap.get(&quot;ODK_DATABASE_URL&quot;), globalMap.get(&quot;ODK_DATABASE_USER&quot;),globalMap.get(&quot;ODK_DATABASE_PASSWORD&quot;));
+
+		var stmt = connection.createStatement(); 
+		var rs = stmt.executeQuery(sql);
+  
+		while (rs.next()) {
+			var c = rs.getString(&quot;_CREATION_DATE&quot;);
+			var form = rs.getString(&quot;SUBMISSION_FORM_ID&quot;);
+			var uri = rs.getString(&quot;URI_SUBMISSION_DATA_MODEL&quot;);
+		        
+			if(form.equalsIgnoreCase(extraFormName)){		        		
+		    	tableName = processForm(uri);
+		 	}
+		}		    
+	} catch (e) {
+	}
+	finally{
+		if(connection){
+			connection.close();
+		}
+	}
+	return tableName;
+}</code>
     <type>FUNCTION</type>
     <scope>0</scope>
   </codeTemplate>
@@ -129,6 +217,92 @@ dbConn.close();
     <scope>0</scope>
   </codeTemplate>
   <codeTemplate version="3.1.1">
+    <id>612198b9-5430-4ea0-b473-a61903ef82dc</id>
+    <name>ExtraForm::processForm</name>
+    <tooltip>Helper function to extract the Core Table Name from a given form URI in the ODK database</tooltip>
+    <code>// modify function_name and parameters as you wish.
+// one function per template is recommended. i.e.) create a new code template for each new function.
+function processForm(uri){
+	var tableNameResult = null; 
+	var sql = &quot;SELECT _URI, ELEMENT_TYPE, PERSIST_AS_TABLE_NAME, ELEMENT_NAME, PERSIST_AS_COLUMN_NAME, PARENT_URI_FORM_DATA_MODEL FROM _form_data_model WHERE URI_SUBMISSION_DATA_MODEL = ?&quot;;
+		
+	var connection;
+	try{
+			connection = DatabaseConnectionFactory.createConnection(&apos;com.mysql.jdbc.Driver&apos;, globalMap.get(&quot;ODK_DATABASE_URL&quot;), globalMap.get(&quot;ODK_DATABASE_USER&quot;),globalMap.get(&quot;ODK_DATABASE_PASSWORD&quot;));
+			var ps = connection.prepareStatement(sql);
+			ps.setString(1, uri);
+			
+			var rs;
+			try{
+				var rs = ps.executeQuery();
+
+			    if (rs.next()) {
+			    	var elementType = rs.getString(&quot;ELEMENT_TYPE&quot;);
+			    	var columnName = rs.getString(&quot;PERSIST_AS_COLUMN_NAME&quot;);
+			    	var element_uri = rs.getString(&quot;_URI&quot;);
+			    	var parent_uri = rs.getString(&quot;PARENT_URI_FORM_DATA_MODEL&quot;);
+			    	var tableName = rs.getString(&quot;PERSIST_AS_TABLE_NAME&quot;);
+			    	var elementName = rs.getString(&quot;ELEMENT_NAME&quot;);
+			    	
+			    	// Check for starting group 	
+			    	if(parent_uri.equals(uri) &amp;&amp; elementType.equalsIgnoreCase(&quot;GROUP&quot;) &amp;&amp; (columnName == null)){
+			    		tableNameResult = tableName;
+			    	}
+			    }
+			}
+			catch(e){
+			}
+			finally{
+				if(rs != null)
+					rs.close();
+			}
+		}
+		catch(e){
+		}
+		finally{
+			if(connection != null)
+				connection.close();
+		}
+		return tableNameResult;
+	}</code>
+    <type>FUNCTION</type>
+    <scope>0</scope>
+  </codeTemplate>
+  <codeTemplate version="3.1.1">
+    <id>62092782-50c9-4182-a310-439da6c7cfa4</id>
+    <name>ExtraForm::createTableDummy</name>
+    <tooltip>Create XML from JS Array containing Information about odk extraform table structure</tooltip>
+    <code>// modify function_name and parameters as you wish.
+// one function per template is recommended. i.e.) create a new code template for each new function.
+function createTableDummy(CORE_TABLE_NAME, uuid, primaryKey, listOfObjects){
+	var table = &lt;table key={uuid} name={CORE_TABLE_NAME} primaryKey={primaryKey} /&gt;;
+
+	/* CREATE XML FROM JS ARRAY */
+	if(listOfObjects.length &gt; 0){
+		var columns = &lt;&gt;&lt;/&gt;;
+
+		listOfObjects.forEach(function(entry) {
+			var name = entry[&apos;name&apos;].toString();
+			var type = entry[&apos;type&apos;].toString();
+			var size = entry[&apos;size&apos;].toString();
+			var allow_null = entry[&apos;allow_null&apos;].toString();
+			var default_value = entry[&apos;default_value&apos;];
+
+			var column = &lt;columns name={name} type={type} size={size} allowNull={allow_null}&gt;&lt;/columns&gt;;
+
+			if(default_value){
+				column.@default_value = default_value;
+			}
+			columns += column;
+		});
+		table.columns = columns;
+	}
+	return table;
+}</code>
+    <type>FUNCTION</type>
+    <scope>0</scope>
+  </codeTemplate>
+  <codeTemplate version="3.1.1">
     <id>63d7ca76-9a59-450e-87dc-e48fbcf87e42</id>
     <name>Retrieve Pregnancy Observation Forms</name>
     <tooltip>Retrieve Pregnancy Observations</tooltip>
@@ -161,6 +335,63 @@ function resultSetToXml(rs, xmlElement) {
   }
 
   return result;
+}</code>
+    <type>FUNCTION</type>
+    <scope>0</scope>
+  </codeTemplate>
+  <codeTemplate version="3.1.1">
+    <id>699d31d5-9c63-45b7-af5f-dcad0cc6be5b</id>
+    <name>ExtraForm::getExtraFormData</name>
+    <tooltip>Extracts ExtraForm Data from a given ExtraForm Table and returns a JS-Array containing objects (JS-Array) for each data entry, describing its colum entries</tooltip>
+    <code>// modify function_name and parameters as you wish.
+// one function per template is recommended. i.e.) create a new code template for each new function.
+function getExtraFormData(tableName, rowsToFetch){
+	var listOfObjects = [];
+	var tableNameResult = null; 
+	var sql = &quot;SELECT * FROM &quot; + tableName + &quot; WHERE PROCESSED_BY_MIRTH = 0 LIMIT &quot; + rowsToFetch;
+	var connection;
+	try{
+		connection = DatabaseConnectionFactory.createConnection(&apos;com.mysql.jdbc.Driver&apos;,globalMap.get(&quot;ODK_DATABASE_URL&quot;), globalMap.get(&quot;ODK_DATABASE_USER&quot;),globalMap.get(&quot;ODK_DATABASE_PASSWORD&quot;));
+		var rs;
+		var stmt;
+		try{
+			stmt = connection.createStatement();
+			rs = stmt.executeQuery(sql);
+			var rsmd = rs.getMetaData(); //ResultSetMetaData
+
+			while(rs.next()){ //ResultSet should contain at most rowsToFetch entries due to the LIMIT rowsToFetch in SELECT above
+				var listOfColumns = [];
+				for(var counter = 1; counter &lt;= rsmd.getColumnCount(); counter++ ){
+					var columnName = rsmd.getColumnName(counter);
+					var value = rs.getString(columnName);
+					var columnTypeName = rsmd.getColumnTypeName(counter);
+
+					var columnEntry = {
+						&apos;columnName&apos; : columnName, 
+						&apos;value&apos; : value,
+						&apos;columnTypeName&apos; : columnTypeName
+					}
+					listOfColumns.push(columnEntry);
+				}
+				listOfObjects.push(listOfColumns);
+		    }
+		}
+		catch(e){
+		}
+		finally{
+			if(rs != null)
+				rs.close();
+			if(stmt != null)
+				stmt.close();
+		}
+	}
+	catch(e){
+	}
+	finally{
+		if(connection != null)
+			connection.close();
+	}
+	return listOfObjects;
 }</code>
     <type>FUNCTION</type>
     <scope>0</scope>
@@ -226,6 +457,44 @@ if (tableName == globalMap.get(&quot;VISIT_TABLE&quot;) ) {
   var results = dbConn.executeCachedQuery(&quot;SELECT _URI, REASON, DATE_OF_MIGRATION, INDIVIDUAL_INFO_INDIVIDUAL_ID, ORIGIN, OPENHDS_VISIT_ID, OPENHDS_LOCATION_ID, OPENHDS_FIELD_WORKER_ID FROM &quot; + globalMap.get(&quot;IN_MIGRATION_TABLE&quot;) + &quot; WHERE OPENHDS_VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND openhds_migration_type = &apos;INTERNAL_INMIGRATION&apos; AND processed_by_mirth=0&quot;);
   var inMigrationForms = resultsToForms(results, &quot;&lt;inmigration event=&apos;internal-inmigration&apos; table-name=&apos;&quot; + globalMap.get(&quot;IN_MIGRATION_TABLE&quot;) + &quot;&apos;/&gt;&quot;);
   return inMigrationForms;
+}</code>
+    <type>FUNCTION</type>
+    <scope>0</scope>
+  </codeTemplate>
+  <codeTemplate version="3.1.1">
+    <id>cce2bb0e-524e-4a9d-9a66-9cf21efad667</id>
+    <name>ExtraForm::getPrimaryKeyList</name>
+    <tooltip>Get the Primary Keys for a given Extra Form Core Table as a Javascript String Array</tooltip>
+    <code>// modify function_name and parameters as you wish.
+// one function per template is recommended. i.e.) create a new code template for each new function.
+function getPrimaryKeyList(CORE_TABLE_NAME) {
+	var connection;
+	var primaryKeyList = [];
+	try {
+		connection = DatabaseConnectionFactory.createConnection(&apos;com.mysql.jdbc.Driver&apos;,globalMap.get(&quot;ODK_DATABASE_URL&quot;), globalMap.get(&quot;ODK_DATABASE_USER&quot;),globalMap.get(&quot;ODK_DATABASE_PASSWORD&quot;));
+		var metaData = connection.getMetaData();	
+	
+		var result;
+		try { 
+			var result = metaData.getPrimaryKeys(null, null, CORE_TABLE_NAME);
+			var counter = 0;
+			while (result.next()) {		
+				var primaryKey = result.getString(&quot;COLUMN_NAME&quot;);
+				primaryKeyList.push(primaryKey);
+				counter++;
+			}
+		}
+		finally {
+			if(result){
+				result.close();
+			}
+	}
+	} finally {
+		if (connection) { 
+			connection.close();
+		}
+	}
+	return primaryKeyList;
 }</code>
     <type>FUNCTION</type>
     <scope>0</scope>

@@ -1,0 +1,374 @@
+<channel version="3.1.1">
+  <id>b83fc07a-85e5-4ad6-8429-89b1185efbae</id>
+  <nextMetaDataId>4</nextMetaDataId>
+  <name>ExtraFormSendDataChannel</name>
+  <description>This Channel will query the openhds.form table and look for any data sets that contain a value in CORE_TABLE field and where the status field is set to 2 (READY). If it finds such an entry, it will query the matching CORE_TABLE in the ODK Aggregate database and process all contents that contain a PROCESSED_BY_MIRTH value of 0. It send these values as XML payload to the OpenHDS ExtraForm Controller. On error, will set the PROCESSED_BY_MIRTH flag for this entry to 2, in any other case, sets the flag to 1.</description>
+  <enabled>true</enabled>
+  <lastModified>
+    <time>1438337999764</time>
+    <timezone>Europe/Berlin</timezone>
+  </lastModified>
+  <revision>256</revision>
+  <sourceConnector version="3.1.1">
+    <metaDataId>0</metaDataId>
+    <name>sourceConnector</name>
+    <properties class="com.mirth.connect.connectors.js.JavaScriptReceiverProperties" version="3.1.1">
+      <pluginProperties/>
+      <pollConnectorProperties version="3.1.1">
+        <pollingType>interval</pollingType>
+        <pollingHour>0</pollingHour>
+        <pollingMinute>0</pollingMinute>
+        <pollingFrequency>5000</pollingFrequency>
+      </pollConnectorProperties>
+      <sourceConnectorProperties version="3.1.1">
+        <responseVariable>None</responseVariable>
+        <respondAfterProcessing>true</respondAfterProcessing>
+        <processBatch>false</processBatch>
+        <firstResponse>false</firstResponse>
+      </sourceConnectorProperties>
+      <script>var dbConn;
+ 
+var list = new java.util.ArrayList();
+
+try {
+//	dbConn = DatabaseConnectionFactory.createDatabaseConnection(&apos;com.mysql.jdbc.Driver&apos;,&apos;jdbc:mysql://localhost:3306/openhds&apos;,&apos;data&apos;,&apos;data&apos;);
+	dbConn = DatabaseConnectionFactory.createDatabaseConnection(&apos;com.mysql.jdbc.Driver&apos;,globalMap.get(&quot;OPENHDS_DATABASE_URL&quot;), globalMap.get(&quot;OPENHDS_DATABASE_USER&quot;),globalMap.get(&quot;OPENHDS_DATABASE_PASSWORD&quot;));
+
+	// You may access this result below with $(&apos;column_name&apos;)
+	var result = dbConn.executeCachedQuery(&quot;SELECT uuid, formName, active, deleted, CORE_TABLE, status FROM form&quot;);
+	var resultSize = result.size();
+
+	if(resultSize&gt;0){
+		for(var i = 0;i&lt;resultSize;i++){
+			result.next();
+
+			var coreTable = result.getString(&quot;CORE_TABLE&quot;);
+			//logger.info(&quot;coreTable: &quot; + coreTable);
+			var uuid = result.getString(&quot;uuid&quot;);
+			//logger.info(&quot;uuid: &quot; + uuid);
+			var formName = result.getString(&quot;formName&quot;);
+			//logger.info(&quot;formName: &quot; + formName);
+			var active = result.getString(&quot;active&quot;);
+			//logger.info(&quot;active: &quot; + active);
+			var deleted = result.getBoolean(&quot;deleted&quot;);
+			//logger.info(&quot;deleted: &quot; + deleted);
+			var status = result.getInt(&quot;status&quot;);
+			//logger.info(&quot;status: &quot; + status);
+
+			if((coreTable.trim().length() &gt; 0) &amp;&amp; !deleted 
+						&amp;&amp; (active != null &amp;&amp; active.equalsIgnoreCase(&quot;yes&quot;))
+						&amp;&amp; status == 2)
+			{
+				logger.info(&quot;status 2, Proceed...&quot;)
+				//channelMap.put(&quot;CORE_TABLE&quot;, coreTable); //For postprocessor
+
+				var listOfObjects = getExtraFormData(coreTable, 10);
+				var objectCount = listOfObjects.length;
+
+				logger.info(&quot;Data count: &quot; + objectCount);
+				//channelMap.put(&quot;objectCount&quot;, objectCount); //For postprocessor and filter
+
+				if(objectCount &gt; 0){ 
+					listOfObjects.forEach(function(object) {
+						var extraform = &lt;extraform formName={formName} coreTable={coreTable} /&gt;;
+						var dataEntries = &lt;&gt;&lt;/&gt;;
+
+						var entriesCount = object.length;
+						logger.info(&quot;No. of entries: &quot; + entriesCount);
+
+						if(entriesCount &gt; 0){
+							object.forEach(function(entry) {
+								var columnName = entry[&apos;columnName&apos;];
+								var value = entry[&apos;value&apos;];
+								var columnTypeName = entry[&apos;columnTypeName&apos;];
+
+								if(value == null)
+									value = &quot;&quot;;
+
+								//logger.info(columnName + &quot; &quot; + value + &quot; &quot; + columnTypeName);
+								if(columnName == &quot;_URI&quot;){
+									//channelMap.put(&quot;_URI&quot;, value); //For postprocessor
+									//logger.info(&quot;Found columnName _URI with value: &quot; + value);
+									extraform.@uri = value;
+								}
+								var data = &lt;data columnName={columnName} type={columnTypeName}&gt;{value}&lt;/data&gt;;
+								dataEntries += data;
+							});
+
+							extraform.data = dataEntries;
+							logger.info(&quot;XML: &quot; + extraform.toXMLString());
+							list.add(extraform);
+						}
+					});
+				}
+			}
+        }
+	}
+	logger.info(&quot;List contents: &quot; + list);
+	logger.info(&quot;List size: &quot; + list.size());
+	return list;
+} finally {
+	if (dbConn) { 
+		dbConn.close();
+	}
+}</script>
+    </properties>
+    <transformer version="3.1.1">
+      <steps/>
+      <inboundDataType>XML</inboundDataType>
+      <outboundDataType>XML</outboundDataType>
+      <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+        <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
+          <stripNamespaces>true</stripNamespaces>
+        </serializationProperties>
+        <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+          <splitType>Element_Name</splitType>
+          <elementName></elementName>
+          <level>1</level>
+          <query></query>
+          <batchScript></batchScript>
+        </batchProperties>
+      </inboundProperties>
+      <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+        <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
+          <stripNamespaces>true</stripNamespaces>
+        </serializationProperties>
+        <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+          <splitType>Element_Name</splitType>
+          <elementName></elementName>
+          <level>1</level>
+          <query></query>
+          <batchScript></batchScript>
+        </batchProperties>
+      </outboundProperties>
+    </transformer>
+    <filter version="3.1.1">
+      <rules/>
+    </filter>
+    <transportName>JavaScript Reader</transportName>
+    <mode>SOURCE</mode>
+    <enabled>true</enabled>
+    <waitForPrevious>true</waitForPrevious>
+  </sourceConnector>
+  <destinationConnectors>
+    <connector version="3.1.1">
+      <metaDataId>2</metaDataId>
+      <name>Destination 1</name>
+      <properties class="com.mirth.connect.connectors.http.HttpDispatcherProperties" version="3.1.1">
+        <pluginProperties/>
+        <destinationConnectorProperties version="3.1.1">
+          <queueEnabled>false</queueEnabled>
+          <sendFirst>false</sendFirst>
+          <retryIntervalMillis>10000</retryIntervalMillis>
+          <regenerateTemplate>false</regenerateTemplate>
+          <retryCount>0</retryCount>
+          <rotate>false</rotate>
+          <threadCount>1</threadCount>
+          <validateResponse>false</validateResponse>
+        </destinationConnectorProperties>
+        <host>${OPENHDS_PATH}/extraform/insert</host>
+        <useProxyServer>false</useProxyServer>
+        <proxyAddress></proxyAddress>
+        <proxyPort></proxyPort>
+        <method>post</method>
+        <headers class="linked-hash-map"/>
+        <parameters class="linked-hash-map"/>
+        <responseXmlBody>false</responseXmlBody>
+        <responseParseMultipart>true</responseParseMultipart>
+        <responseIncludeMetadata>false</responseIncludeMetadata>
+        <responseBinaryMimeTypes></responseBinaryMimeTypes>
+        <responseBinaryMimeTypesRegex>false</responseBinaryMimeTypesRegex>
+        <multipart>false</multipart>
+        <useAuthentication>true</useAuthentication>
+        <authenticationType>Basic</authenticationType>
+        <usePreemptiveAuthentication>true</usePreemptiveAuthentication>
+        <username>${OPENHDS_USER}</username>
+        <password>${OPENHDS_PASSWORD}</password>
+        <content>${message.transformedData}</content>
+        <contentType>application/xml</contentType>
+        <dataTypeBinary>false</dataTypeBinary>
+        <charset>UTF-8</charset>
+        <socketTimeout>30000</socketTimeout>
+      </properties>
+      <transformer version="3.1.1">
+        <steps>
+          <step>
+            <sequenceNumber>0</sequenceNumber>
+            <name>Strip away arguments</name>
+            <script>/* Remove attributes we don&apos;t need before sending them. We put them in for using them in the postprocessor */
+var formData = msg;
+delete formData.@coreTable;
+delete formData.@uri;</script>
+            <type>JavaScript</type>
+            <data>
+              <entry>
+                <string>Script</string>
+                <string>/* Remove attributes we don&apos;t need before sending them. We put them in for using them in the postprocessor */
+var formData = msg;
+delete formData.@coreTable;
+delete formData.@uri;</string>
+              </entry>
+            </data>
+          </step>
+        </steps>
+        <inboundTemplate encoding="base64"></inboundTemplate>
+        <outboundTemplate encoding="base64"></outboundTemplate>
+        <inboundDataType>XML</inboundDataType>
+        <outboundDataType>XML</outboundDataType>
+        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
+            <stripNamespaces>true</stripNamespaces>
+          </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
+        </inboundProperties>
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
+            <stripNamespaces>true</stripNamespaces>
+          </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
+        </outboundProperties>
+      </transformer>
+      <responseTransformer version="3.1.1">
+        <steps/>
+        <inboundDataType>XML</inboundDataType>
+        <outboundDataType>XML</outboundDataType>
+        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
+            <stripNamespaces>true</stripNamespaces>
+          </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
+        </inboundProperties>
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
+            <stripNamespaces>true</stripNamespaces>
+          </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
+            <batchScript></batchScript>
+          </batchProperties>
+        </outboundProperties>
+      </responseTransformer>
+      <filter version="3.1.1">
+        <rules>
+          <rule>
+            <sequenceNumber>0</sequenceNumber>
+            <name>New Rule</name>
+            <data>
+              <entry>
+                <string>Script</string>
+                <string>var length = msg[&quot;data&quot;].length();
+return length &gt; 0;</string>
+              </entry>
+            </data>
+            <type>JavaScript</type>
+            <script>var length = msg[&quot;data&quot;].length();
+return length &gt; 0;</script>
+            <operator>NONE</operator>
+          </rule>
+        </rules>
+      </filter>
+      <transportName>HTTP Sender</transportName>
+      <mode>DESTINATION</mode>
+      <enabled>true</enabled>
+      <waitForPrevious>true</waitForPrevious>
+    </connector>
+  </destinationConnectors>
+  <preprocessingScript>// Modify the message variable below to pre process data
+return message;</preprocessingScript>
+  <postprocessingScript>// This script executes once after a message has been processed
+// Responses returned from here will be stored as &quot;Postprocessor&quot; in the response map
+var channel_Id = 2;
+var processedByMirthStatus = 1;
+
+var status = message.getConnectorMessages().get(channel_Id).getStatus();  
+
+if(status == &apos;ERROR&apos;){
+	logger.debug(&apos;Error while sending new data for ExtraFormTable. Status = &apos; + status);
+	var responseMessage = responseMap.get(&quot;d&quot; + channel_Id);
+	logger.debug(&apos;responseMessage: &apos; + responseMessage);
+
+	var rawMessage = responseMap.get(&quot;d&quot; + channel_Id).getMessage();
+	logger.debug(&apos;rawmsg: &apos; + rawMessage);
+	processedByMirthStatus = 2;
+
+	var connectorName = message.getConnectorMessages().get(channel_Id).getConnectorName();
+
+	logger.info(&quot;ERROR-CHANNEL channelError: &quot; + connectorName);
+	logger.info(&quot;ERROR-CHANNEL requestError: &quot; + responseMessage);
+	logger.info(&quot;ERROR-CHANNEL transformed: &quot; + rawMessage);
+	//globalMap.put(&quot;channelError&quot;, connectorMessage.getConnectorName());
+	//globalMap.put(&quot;requestError&quot;, responseMap.get(&quot;d&quot;+j).getMessage());
+	//globalMap.put(&quot;transformed&quot;, connectorMessage.getTransformedData());
+}
+var rawMessage = new XML(message.getConnectorMessages().get(channel_Id).getRawData());
+logger.info(&quot;Postprocessor: &quot; + rawMessage);
+
+var tableName = rawMessage.@coreTable;
+var _URI = rawMessage.@uri;
+
+if(tableName &amp;&amp; _URI){
+	logger.info(&quot;Set &quot; + _URI + &quot; in &quot; + tableName + &quot; to &quot; + processedByMirthStatus);
+	var dbConn = DatabaseConnectionFactory.createDatabaseConnection(&apos;com.mysql.jdbc.Driver&apos;,&apos;jdbc:mysql://localhost:3306/odk_prod&apos;,&apos;data&apos;,&apos;data&apos;);
+	var result = dbConn.executeUpdate(&quot;UPDATE &quot; + tableName + &quot; SET PROCESSED_BY_MIRTH = &quot; + processedByMirthStatus + &quot; WHERE _URI = &apos;&quot; + _URI + &quot;&apos;&quot;);
+	dbConn.close();
+}
+else{
+	logger.info(&quot;Nothing to update&quot;);
+}
+
+return;</postprocessingScript>
+  <deployScript>// This script executes once when the channel is deployed
+// You only have access to the globalMap and globalChannelMap here to persist data
+return;</deployScript>
+  <undeployScript>// This script executes once when the channel is undeployed
+// You only have access to the globalMap and globalChannelMap here to persist data
+return;</undeployScript>
+  <properties version="3.1.1">
+    <clearGlobalChannelMap>true</clearGlobalChannelMap>
+    <messageStorageMode>DEVELOPMENT</messageStorageMode>
+    <encryptData>false</encryptData>
+    <removeContentOnCompletion>false</removeContentOnCompletion>
+    <removeAttachmentsOnCompletion>false</removeAttachmentsOnCompletion>
+    <initialState>STARTED</initialState>
+    <storeAttachments>false</storeAttachments>
+    <tags class="linked-hash-set"/>
+    <metaDataColumns>
+      <metaDataColumn>
+        <name>SOURCE</name>
+        <type>STRING</type>
+        <mappingName>mirth_source</mappingName>
+      </metaDataColumn>
+      <metaDataColumn>
+        <name>TYPE</name>
+        <type>STRING</type>
+        <mappingName>mirth_type</mappingName>
+      </metaDataColumn>
+    </metaDataColumns>
+    <attachmentProperties>
+      <type>None</type>
+      <properties/>
+    </attachmentProperties>
+    <archiveEnabled>true</archiveEnabled>
+  </properties>
+</channel>

@@ -31,6 +31,11 @@ globalMap.put(&quot;ODK_DATABASE_URL&quot;,&quot;jdbc:mysql://localhost/odk_prod
 globalMap.put(&quot;ODK_DATABASE_USER&quot;,&quot;data&quot;);
 globalMap.put(&quot;ODK_DATABASE_PASSWORD&quot;,&quot;data&quot;);
 
+/** OpenHDS Information */
+globalMap.put(&quot;OPENHDS_DATABASE_URL&quot;,&quot;jdbc:mysql://localhost/openhds&quot;);
+globalMap.put(&quot;OPENHDS_DATABASE_USER&quot;,&quot;data&quot;);
+globalMap.put(&quot;OPENHDS_DATABASE_PASSWORD&quot;,&quot;data&quot;);
+
 globalMap.put(&quot;HRS_DATABASE_URL&quot;,&quot;jdbc:mysql://localhost/hrs_mysql_db&quot;);
 globalMap.put(&quot;HRS_DATABASE_USER&quot;,&quot;data&quot;);
 globalMap.put(&quot;HRS_DATABASE_PASSWORD&quot;,&quot;data&quot;);
