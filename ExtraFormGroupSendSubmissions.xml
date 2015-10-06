@@ -5,10 +5,10 @@
   <description></description>
   <enabled>true</enabled>
   <lastModified>
-    <time>1444008226692</time>
+    <time>1444122878553</time>
     <timezone>Europe/Berlin</timezone>
   </lastModified>
-  <revision>51</revision>
+  <revision>55</revision>
   <sourceConnector version="3.1.1">
     <metaDataId>0</metaDataId>
     <name>sourceConnector</name>
@@ -52,7 +52,7 @@ try {
 						&amp;&amp; status == 2)
 			{
 				list = readDataXml(formName, coreTable);
-				/*				
+				/*
 				logger.info(&quot;Entries in list: &quot; + list.size());
 				for(var i = 0; i &lt; list.size(); i++){
 					logger.info(&quot;List entry: &quot; + list.get(i).toXMLString());
@@ -124,7 +124,7 @@ finally {
           <threadCount>1</threadCount>
           <validateResponse>false</validateResponse>
         </destinationConnectorProperties>
-        <host>http://192.168.56.1:8081/openhds/api/rest/extraform/insert</host>
+        <host>${OPENHDS_PATH}/extraform/insert</host>
         <useProxyServer>false</useProxyServer>
         <proxyAddress></proxyAddress>
         <proxyPort></proxyPort>
@@ -241,7 +241,6 @@ return message;</preprocessingScript>
   <postprocessingScript>// This script executes once after a message has been processed
 // Responses returned from here will be stored as &quot;Postprocessor&quot; in the response map
 
-/*
 var channel_Id = 1;
 var processedByMirthStatus = 1;
 
@@ -269,7 +268,6 @@ if(tableName &amp;&amp; _URI){
 }
 else{
 }
-*/
 
 return;</postprocessingScript>
   <deployScript>// This script executes once when the channel is deployed

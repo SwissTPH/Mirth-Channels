@@ -5,10 +5,10 @@
   <description></description>
   <enabled>true</enabled>
   <lastModified>
-    <time>1444007296217</time>
+    <time>1444122870940</time>
     <timezone>Europe/Berlin</timezone>
   </lastModified>
-  <revision>52</revision>
+  <revision>54</revision>
   <sourceConnector version="3.1.1">
     <metaDataId>0</metaDataId>
     <name>sourceConnector</name>

@@ -222,8 +222,8 @@ function handleSelectNData(elementType, elementName, tableName, columnName, pare
 							//filteredRootElement.@coreTable = _tableName;
 							//filteredRootElement.@uri = currentSubmissionURI;
 
-							filteredRootElement = &lt;extraform formName={formId} /&gt;;
-							//filteredRootElement = &lt;extraform formName={formId} coreTable={coreTable} uri={currentSubmissionURI}/&gt;;
+							//filteredRootElement = &lt;extraform formName={formId} /&gt;;
+							filteredRootElement = &lt;extraform formName={formId} coreTable={coreTable} uri={currentSubmissionURI}/&gt;;
 							var new_children = &lt;&gt;&lt;/&gt;;
 							filteredRootElement.data = new_children;
 				
@@ -769,8 +769,8 @@ function getAllElementsForFormId(formName, rootElement){
 // one function per template is recommended. i.e.) create a new code template for each new function.
 function getSubmissionList(tableName, connection){
 	var rowsToFetch = 10;
-	//var sql = &quot;SELECT _URI FROM &quot; + tableName + &quot; WHERE PROCESSED_BY_MIRTH = 0 LIMIT &quot; + rowsToFetch;  //For production also add a WHERE PROCESSEDBYMIRTH = 0 !
-	var sql = &quot;SELECT _URI FROM &quot; + tableName + &quot; LIMIT &quot; + rowsToFetch;  //For production also add a WHERE PROCESSEDBYMIRTH = 0 !
+	var sql = &quot;SELECT _URI FROM &quot; + tableName + &quot; WHERE PROCESSED_BY_MIRTH = 0 LIMIT &quot; + rowsToFetch;  //For production also add a WHERE PROCESSEDBYMIRTH = 0 !
+	//var sql = &quot;SELECT _URI FROM &quot; + tableName + &quot; LIMIT &quot; + rowsToFetch;  //For production also add a WHERE PROCESSEDBYMIRTH = 0 !
 
 	var submissionURIList = [];
 	var stmt;
