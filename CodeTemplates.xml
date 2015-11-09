@@ -133,7 +133,7 @@ function handleElement(uri, elementType, elementName, tableName, columnName, par
     <tooltip>Retrieve the Death of Head of Households</tooltip>
     <code>function addHoHDeaths(visitId, dbConn) {
 	var deathToHoHForm = new java.util.ArrayList();
-	var results = dbConn.executeCachedQuery(&quot;SELECT _URI, OPENHDS_VISIT_ID, OPENHDS_FIELD_WORKER_ID, OPENHDS_NEW_HOH_ID, OPENHDS_INDIVIDUAL_ID, OPENHDS_HOUSEHOLD_ID, PLACE_OF_DEATH, WHOM, DIAGNOSEDDEATH, OTHERPLACE_OF_DEATH, CAUSEOFDEATHDIAGNOSED, DATE, CAUSOFDEATHNOTDIAGNOSED, CAUSE_OF_DEATH FROM &quot; + globalMap.get(&quot;DEATH_TOHOH_TABLE&quot;) + &quot; WHERE OPENHDS_VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND processed_by_mirth is null OR processed_by_mirth = 0&quot;);
+	var results = dbConn.executeCachedQuery(&quot;SELECT _URI, OPENHDS_VISIT_ID, OPENHDS_FIELD_WORKER_ID, OPENHDS_NEW_HOH_ID, OPENHDS_INDIVIDUAL_ID, OPENHDS_HOUSEHOLD_ID, PLACE_OF_DEATH, DATE, CAUSE_OF_DEATH FROM &quot; + globalMap.get(&quot;DEATH_TOHOH_TABLE&quot;) + &quot; WHERE OPENHDS_VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND processed_by_mirth is null OR processed_by_mirth = 0&quot;);
 	while(results.next()) {
     	var deathHoh = resultSetToXml(results, &quot;&lt;deathHoH event=&apos;deathofhousehold&apos; table-name=&apos;&quot; + globalMap.get(&quot;DEATH_TOHOH_TABLE&quot;) + &quot;&apos; /&gt;&quot;);
 
