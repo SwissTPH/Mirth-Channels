@@ -133,7 +133,7 @@ function handleElement(uri, elementType, elementName, tableName, columnName, par
     <tooltip>Retrieve the Death of Head of Households</tooltip>
     <code>function addHoHDeaths(visitId, dbConn) {
 	var deathToHoHForm = new java.util.ArrayList();
-	var results = dbConn.executeCachedQuery(&quot;SELECT _URI, OPENHDS_VISIT_ID, OPENHDS_FIELD_WORKER_ID, OPENHDS_NEW_HOH_ID, OPENHDS_INDIVIDUAL_ID, OPENHDS_HOUSEHOLD_ID, PLACE_OF_DEATH, DATE, CAUSE_OF_DEATH FROM &quot; + globalMap.get(&quot;DEATH_TOHOH_TABLE&quot;) + &quot; WHERE OPENHDS_VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND processed_by_mirth is null OR processed_by_mirth = 0&quot;);
+	var results = dbConn.executeCachedQuery(&quot;SELECT _URI, OPENHDS_VISIT_ID, OPENHDS_FIELD_WORKER_ID, OPENHDS_NEW_HOH_ID, OPENHDS_INDIVIDUAL_ID, OPENHDS_HOUSEHOLD_ID, PLACE_OF_DEATH, DATE, CAUSE_OF_DEATH FROM &quot; + globalMap.get(&quot;DEATH_TOHOH_TABLE&quot;) + &quot; WHERE OPENHDS_VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND processed_by_mirth = 0&quot;);
 	while(results.next()) {
     	var deathHoh = resultSetToXml(results, &quot;&lt;deathHoH event=&apos;deathofhousehold&apos; table-name=&apos;&quot; + globalMap.get(&quot;DEATH_TOHOH_TABLE&quot;) + &quot;&apos; /&gt;&quot;);
 
@@ -416,12 +416,12 @@ function resetProcessedErrored() {
 
 var dbConn = DatabaseConnectionFactory.createDatabaseConnection(&apos;com.mysql.jdbc.Driver&apos;, globalMap.get(&quot;ODK_DATABASE_URL&quot;), globalMap.get(&quot;ODK_DATABASE_USER&quot;), globalMap.get(&quot;ODK_DATABASE_PASSWORD&quot;));
   
-dbConn.executeUpdate(&quot;update VISIT_REGISTRATION_CORE set PROCESSED_BY_MIRTH=false where OPENHDS_VISIT_ID IN (select distinct OPENHDS_VISIT_ID from PREGNANCY_OBSERVATION_CORE where PROCESSED_BY_MIRTH =0)&quot;);
-dbConn.executeUpdate(&quot;update VISIT_REGISTRATION_CORE set PROCESSED_BY_MIRTH=false where OPENHDS_VISIT_ID IN (select distinct OPENHDS_VISIT_ID from PREGNANCY_OUTCOME_CORE where PROCESSED_BY_MIRTH =0)&quot;);
-dbConn.executeUpdate(&quot;update VISIT_REGISTRATION_CORE set PROCESSED_BY_MIRTH=false where OPENHDS_VISIT_ID IN (select distinct OPENHDS_VISIT_ID from IN_MIGRATION_CORE where PROCESSED_BY_MIRTH =0)&quot;);
-dbConn.executeUpdate(&quot;update VISIT_REGISTRATION_CORE set PROCESSED_BY_MIRTH=false where OPENHDS_VISIT_ID IN (select distinct OPENHDS_VISIT_ID from DEATH_REGISTRATION_CORE where PROCESSED_BY_MIRTH =0)&quot;);
-dbConn.executeUpdate(&quot;update VISIT_REGISTRATION_CORE set PROCESSED_BY_MIRTH=false where OPENHDS_VISIT_ID IN (select distinct OPENHDS_VISIT_ID from OUT_MIGRATION_REGISTRATION_CORE where PROCESSED_BY_MIRTH =0)&quot;);
-dbConn.executeUpdate(&quot;update VISIT_REGISTRATION_CORE set PROCESSED_BY_MIRTH=false where OPENHDS_LOCATION_ID IN (select OPENHDS_LOCATION_ID from LOCATION_REGISTRATION_CORE where PROCESSED_BY_MIRTH =0)&quot;);  
+dbConn.executeUpdate(&quot;update VISIT_REGISTRATION_CORE set PROCESSED_BY_MIRTH=0 where OPENHDS_VISIT_ID IN (select distinct OPENHDS_VISIT_ID from PREGNANCY_OBSERVATION_CORE where PROCESSED_BY_MIRTH =0)&quot;);
+dbConn.executeUpdate(&quot;update VISIT_REGISTRATION_CORE set PROCESSED_BY_MIRTH=0 where OPENHDS_VISIT_ID IN (select distinct OPENHDS_VISIT_ID from PREGNANCY_OUTCOME_CORE where PROCESSED_BY_MIRTH =0)&quot;);
+dbConn.executeUpdate(&quot;update VISIT_REGISTRATION_CORE set PROCESSED_BY_MIRTH=0 where OPENHDS_VISIT_ID IN (select distinct OPENHDS_VISIT_ID from IN_MIGRATION_CORE where PROCESSED_BY_MIRTH =0)&quot;);
+dbConn.executeUpdate(&quot;update VISIT_REGISTRATION_CORE set PROCESSED_BY_MIRTH=0 where OPENHDS_VISIT_ID IN (select distinct OPENHDS_VISIT_ID from DEATH_REGISTRATION_CORE where PROCESSED_BY_MIRTH =0)&quot;);
+dbConn.executeUpdate(&quot;update VISIT_REGISTRATION_CORE set PROCESSED_BY_MIRTH=0 where OPENHDS_VISIT_ID IN (select distinct OPENHDS_VISIT_ID from OUT_MIGRATION_REGISTRATION_CORE where PROCESSED_BY_MIRTH =0)&quot;);
+dbConn.executeUpdate(&quot;update VISIT_REGISTRATION_CORE set PROCESSED_BY_MIRTH=0 where OPENHDS_LOCATION_ID IN (select OPENHDS_LOCATION_ID from LOCATION_REGISTRATION_CORE where PROCESSED_BY_MIRTH =0)&quot;);  
 dbConn.close();  
 
 }</code>
