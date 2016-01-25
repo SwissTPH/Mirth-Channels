@@ -17,10 +17,10 @@ Visit &#xd;
 Any events...</description>
   <enabled>true</enabled>
   <lastModified>
-    <time>1450168442291</time>
+    <time>1453707481635</time>
     <timezone>Europe/Berlin</timezone>
   </lastModified>
-  <revision>11</revision>
+  <revision>3</revision>
   <sourceConnector version="3.3.1">
     <metaDataId>0</metaDataId>
     <name>sourceConnector</name>
@@ -670,17 +670,43 @@ Z2l0dWRlPjwvbG9uZ2l0dWRlPgogICAgPGxhdGl0dWRlPjwvbGF0aXR1ZGU+CjwvbG9jYXRpb24+
               </entry>
             </data>
           </step>
+          <step>
+            <sequenceNumber>5</sequenceNumber>
+            <name>realVisit (out)</name>
+            <script>tmp[&apos;realVisit&apos;] = validate(msg[&apos;real_visit&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
+            <type>Message Builder</type>
+            <data>
+              <entry>
+                <string>Variable</string>
+                <string>tmp[&apos;realVisit&apos;]</string>
+              </entry>
+              <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;real_visit&apos;].toString().toUpperCase()</string>
+              </entry>
+              <entry>
+                <string>DefaultValue</string>
+                <string></string>
+              </entry>
+              <entry>
+                <string>RegularExpressions</string>
+                <list/>
+              </entry>
+            </data>
+          </step>
         </steps>
         <inboundTemplate encoding="base64">PHZpc2l0IGV2ZW50PSJ2aXNpdCIgdGFibGUtbmFtZT0idmlzaXRfcmVnaXN0cmF0aW9uX2NvcmUi
 PgogICAgPF91cmk+PC9fdXJpPgogICAgPHZpc2l0X2RhdGU+PC92aXNpdF9kYXRlPgogICAgPG9w
 ZW5oZHNfdmlzaXRfaWQ+PC9vcGVuaGRzX3Zpc2l0X2lkPgogICAgPG9wZW5oZHNfbG9jYXRpb25f
 aWQ+PC9vcGVuaGRzX2xvY2F0aW9uX2lkPgogICAgPG9wZW5oZHNfZmllbGRfd29ya2VyX2lkPjwv
 b3Blbmhkc19maWVsZF93b3JrZXJfaWQ+CiAgICA8b3Blbmhkc19yb3VuZF9udW1iZXI+PC9vcGVu
-aGRzX3JvdW5kX251bWJlcj4KPC92aXNpdD4=</inboundTemplate>
+aGRzX3JvdW5kX251bWJlcj4KICAgIDxyZWFsX3Zpc2l0PjwvcmVhbF92aXNpdD4KPC92aXNpdD4=
+</inboundTemplate>
         <outboundTemplate encoding="base64">PHZpc2l0PgogIDxleHRJZD48L2V4dElkPgogIDxjb2xsZWN0ZWRCeT4KICAgIDxleHRJZD48L2V4
 dElkPgogIDwvY29sbGVjdGVkQnk+CiAgPHJvdW5kTnVtYmVyPjwvcm91bmROdW1iZXI+CiAgPHZp
 c2l0RGF0ZT48L3Zpc2l0RGF0ZT4KICA8dmlzaXRMb2NhdGlvbj4KICAgIDxleHRJZD48L2V4dElk
-PgogIDwvdmlzaXRMb2NhdGlvbj4KPC92aXNpdD4=</outboundTemplate>
+PgogIDwvdmlzaXRMb2NhdGlvbj4KICA8cmVhbFZpc2l0PjwvcmVhbFZpc2l0Pgo8L3Zpc2l0Pg==
+</outboundTemplate>
         <inboundDataType>XML</inboundDataType>
         <outboundDataType>XML</outboundDataType>
         <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.3.1">
@@ -2771,6 +2797,30 @@ TUlHUkFUSU9OPC9taWdUeXBlPgo8L2lubWlncmF0aW9uPg==</outboundTemplate>
               </entry>
             </data>
           </step>
+          <step>
+            <sequenceNumber>15</sequenceNumber>
+            <name>individual - religion (out) &lt;-- individual_info_religion (in)</name>
+            <script>tmp[&apos;individual&apos;][&apos;religion&apos;] = validate(msg[&apos;individual_info_religion&apos;].toString(), &apos;&apos;, new Array());</script>
+            <type>Message Builder</type>
+            <data>
+              <entry>
+                <string>Variable</string>
+                <string>tmp[&apos;individual&apos;][&apos;religion&apos;]</string>
+              </entry>
+              <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;individual_info_religion&apos;].toString()</string>
+              </entry>
+              <entry>
+                <string>DefaultValue</string>
+                <string></string>
+              </entry>
+              <entry>
+                <string>RegularExpressions</string>
+                <list/>
+              </entry>
+            </data>
+          </step>
         </steps>
         <inboundTemplate encoding="base64">PGlubWlncmF0aW9uPgogICAgPF91cmk+PC9fdXJpPgogICAgPHJlYXNvbj48L3JlYXNvbj4KICAg
 IDxpbmRpdmlkdWFsX2luZm9fZGF0ZV9vZl9iaXJ0aD48L2luZGl2aWR1YWxfaW5mb19kYXRlX29m
@@ -2785,7 +2835,8 @@ c19sb2NhdGlvbl9pZD4KICAgIDxvcGVuaGRzX2ZpZWxkX3dvcmtlcl9pZD48L29wZW5oZHNfZmll
 bGRfd29ya2VyX2lkPgogICAgPGluZGl2aWR1YWxfaW5mb19sYXN0X25hbWU+PC9pbmRpdmlkdWFs
 X2luZm9fbGFzdF9uYW1lPgogICAgPGluZGl2aWR1YWxfaW5mb19wYXJ0aWFsX2RhdGU+PC9pbmRp
 dmlkdWFsX2luZm9fcGFydGlhbF9kYXRlPgogICAgPGluZGl2aWR1YWxfaW5mb19mYXRoZXJfaWQ+
-PC9pbmRpdmlkdWFsX2luZm9fZmF0aGVyX2lkPgo8L2lubWlncmF0aW9uPgo=</inboundTemplate>
+PC9pbmRpdmlkdWFsX2luZm9fZmF0aGVyX2lkPgogICAgPGluZGl2aWR1YWxfaW5mb19yZWxpZ2lv
+bj48L2luZGl2aWR1YWxfaW5mb19yZWxpZ2lvbj4KPC9pbm1pZ3JhdGlvbj4K</inboundTemplate>
         <outboundTemplate encoding="base64">PGlubWlncmF0aW9uPgogICAgPGNvbGxlY3RlZEJ5PgogICAgICAgIDxleHRJZD48L2V4dElkPgog
 ICAgPC9jb2xsZWN0ZWRCeT4KICAgIDx2aXNpdD4KICAgICAgICA8ZXh0SWQ+PC9leHRJZD4KICAg
 IDwvdmlzaXQ+CiAgICA8aW5kaXZpZHVhbD4KICAgICAgICA8ZXh0SWQ+PC9leHRJZD4KICAgICAg
@@ -2793,9 +2844,10 @@ ICA8Zmlyc3ROYW1lPjwvZmlyc3ROYW1lPgogICAgICAgIDxsYXN0TmFtZT48L2xhc3ROYW1lPgog
 ICAgICAgIDxnZW5kZXI+PC9nZW5kZXI+CiAgICAgICAgPGRvYj48L2RvYj4KCQk8ZG9iQXNwZWN0
 PjwvZG9iQXNwZWN0PgogICAgICAgIDxtb3RoZXI+CiAgICAgICAgICAgIDxleHRJZD48L2V4dElk
 PgogICAgICAgIDwvbW90aGVyPgogICAgICAgIDxmYXRoZXI+CiAgICAgICAgICAgIDxleHRJZD48
-L2V4dElkPgogICAgICAgIDwvZmF0aGVyPgogICAgPC9pbmRpdmlkdWFsPgogICAgPG9yaWdpbj48
-L29yaWdpbj4KICAgIDxyZWFzb24+PC9yZWFzb24+CiAgICA8cmVjb3JkZWREYXRlPjwvcmVjb3Jk
-ZWREYXRlPgogICAgPG1pZ1R5cGU+PC9taWdUeXBlPgo8L2lubWlncmF0aW9uPg==</outboundTemplate>
+L2V4dElkPgogICAgICAgIDwvZmF0aGVyPgogICAgICAgIDxyZWxpZ2lvbj48L3JlbGlnaW9uPgog
+ICAgPC9pbmRpdmlkdWFsPgogICAgPG9yaWdpbj48L29yaWdpbj4KICAgIDxyZWFzb24+PC9yZWFz
+b24+CiAgICA8cmVjb3JkZWREYXRlPjwvcmVjb3JkZWREYXRlPgogICAgPG1pZ1R5cGU+PC9taWdU
+eXBlPgo8L2lubWlncmF0aW9uPg==</outboundTemplate>
         <inboundDataType>XML</inboundDataType>
         <outboundDataType>XML</outboundDataType>
         <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.3.1">
