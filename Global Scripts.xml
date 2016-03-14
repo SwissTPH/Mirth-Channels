@@ -32,6 +32,7 @@ globalMap.put(&quot;ODK_DATABASE_USER&quot;,&quot;data&quot;);
 globalMap.put(&quot;ODK_DATABASE_PASSWORD&quot;,&quot;data&quot;);
 
 /** OpenHDS Information */
+//globalMap.put(&quot;OPENHDS_DATABASE_URL&quot;,&quot;jdbc:mysql://localhost/openhds&quot;);
 globalMap.put(&quot;OPENHDS_DATABASE_URL&quot;,&quot;jdbc:mysql://localhost/openhds&quot;);
 globalMap.put(&quot;OPENHDS_DATABASE_USER&quot;,&quot;data&quot;);
 globalMap.put(&quot;OPENHDS_DATABASE_PASSWORD&quot;,&quot;data&quot;);
@@ -47,6 +48,7 @@ globalMap.put(&quot;ERROR_PATH&quot;,&quot;/home/data/Errors.csv&quot;);
 globalMap.put(&quot;OUTPUT_PATH&quot;,&quot;/home/data/&quot;);
 
 // odk tables
+
 globalMap.put(&quot;BASELINE_TABLE&quot;,&quot;BASELINE_CORE&quot;);
 globalMap.put(&quot;DEATH_TABLE&quot;,&quot;DEATH_REGISTRATION_CORE&quot;);
 globalMap.put(&quot;IN_MIGRATION_TABLE&quot;,&quot;IN_MIGRATION_CORE&quot;);
@@ -59,8 +61,31 @@ globalMap.put(&quot;PREGNANCY_OUTCOME_TABLE&quot;,&quot;PREGNANCY_OUTCOME_CORE&q
 globalMap.put(&quot;RELATIONSHIP_TABLE&quot;,&quot;RELATIONSHIP_CORE&quot;);
 globalMap.put(&quot;SOCIAL_GROUP_TABLE&quot;,&quot;SOCIAL_GROUP_REGISTRATION_CORE&quot;);
 globalMap.put(&quot;VISIT_TABLE&quot;,&quot;VISIT_REGISTRATION_CORE&quot;);
-globalMap.put(&quot;DEATH_TOHOH_TABLE&quot;,&quot;DEATHTOHOH_CORE&quot;);
-globalMap.put(&quot;DEATH_HOH_RELATIONS&quot;,&quot;DEATHTOHOH_MEMBERSHIPTONEWHOH&quot;);
+globalMap.put(&quot;DEATH_TOHOH_TABLE&quot;,&quot;DEATH_TO_HOH_CORE&quot;);
+globalMap.put(&quot;DEATH_HOH_RELATIONS&quot;,&quot;DEATH_TO_HOH_MEMBERSHIPTONEWHOH&quot;);
+globalMap.put(&quot;CHANGE_HOH_TABLE&quot;,&quot;CHANGE_HOH_CORE&quot;);
+globalMap.put(&quot;CHANGE_HOH_RELATIONS&quot;,&quot;CHANGE_HOH_MEMBERSHIPTONEWHOH&quot;);
+
+
+/**
+// odk tables
+globalMap.put(&quot;BASELINE_TABLE&quot;,&quot;BASELINE_CORE&quot;.toLowerCase());
+globalMap.put(&quot;DEATH_TABLE&quot;,&quot;DEATH_REGISTRATION_CORE&quot;.toLowerCase());
+globalMap.put(&quot;IN_MIGRATION_TABLE&quot;,&quot;IN_MIGRATION_CORE&quot;.toLowerCase());
+globalMap.put(&quot;LOCATION_TABLE&quot;,&quot;LOCATION_REGISTRATION_CORE&quot;.toLowerCase());
+globalMap.put(&quot;MEMBERSHIP_TABLE&quot;,&quot;MEMBERSHIP_CORE&quot;.toLowerCase());
+globalMap.put(&quot;OUT_MIGRATION_TABLE&quot;,&quot;OUT_MIGRATION_REGISTRATION_CORE&quot;.toLowerCase());
+globalMap.put(&quot;OUTCOMES_TABLE&quot;,&quot;PREGNANCY_OUTCOME_OUTCOMES&quot;.toLowerCase());
+globalMap.put(&quot;PREGNANCY_OBS_TABLE&quot;,&quot;PREGNANCY_OBSERVATION_CORE&quot;.toLowerCase());
+globalMap.put(&quot;PREGNANCY_OUTCOME_TABLE&quot;,&quot;PREGNANCY_OUTCOME_CORE&quot;.toLowerCase());
+globalMap.put(&quot;RELATIONSHIP_TABLE&quot;,&quot;RELATIONSHIP_CORE&quot;.toLowerCase());
+globalMap.put(&quot;SOCIAL_GROUP_TABLE&quot;,&quot;SOCIAL_GROUP_REGISTRATION_CORE&quot;.toLowerCase());
+globalMap.put(&quot;VISIT_TABLE&quot;,&quot;VISIT_REGISTRATION_CORE&quot;.toLowerCase());
+globalMap.put(&quot;DEATH_TOHOH_TABLE&quot;,&quot;DEATH_TO_HOH_CORE&quot;.toLowerCase());
+globalMap.put(&quot;DEATH_HOH_RELATIONS&quot;,&quot;DEATH_TO_HOH_MEMBERSHIPTONEWHOH&quot;.toLowerCase());
+globalMap.put(&quot;CHANGE_HOH_TABLE&quot;,&quot;CHANGE_HOH_CORE&quot;.toLowerCase());
+globalMap.put(&quot;CHANGE_HOH_RELATIONS&quot;,&quot;CHANGE_HOH_MEMBERSHIPTONEWHOH&quot;.toLowerCase());
+*/
 
 return;</string>
   </entry>

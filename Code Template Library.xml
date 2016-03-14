@@ -1,0 +1,2193 @@
+<codeTemplateLibrary version="3.3.1">
+  <id>fa655e2e-05c7-4389-936b-412b3786b68f</id>
+  <name>Library 1</name>
+  <revision>5</revision>
+  <lastModified>
+    <time>1457946776577</time>
+    <timezone>Europe/Zurich</timezone>
+  </lastModified>
+  <description>This library was added upon migration to version 3.3.0. It includes all pre-existing
+code templates, and is set to be included on all pre-existing and new channels.
+
+You should create your own new libraries and assign code templates to them as you
+see fit. You should also link libraries to specific channels, so that you&apos;re not
+necessarily including all code templates on all channels all the time.</description>
+  <includeNewChannels>true</includeNewChannels>
+  <enabledChannelIds>
+    <string>814bcc47-89b9-47af-882c-265ed71afddb</string>
+    <string>95bbf706-26dc-4af7-84ff-aed09a2607e8</string>
+    <string>2994c88e-1a79-41cc-b52d-d3e9c030cd64</string>
+    <string>dc7dee8f-2b07-4e38-93e1-f5f898296002</string>
+    <string>2e864a10-571f-422e-ad04-80e3f4f4e4df</string>
+    <string>56e2c8f7-4693-407a-829c-b199701230f8</string>
+    <string>401b50f9-5ff8-4891-8fb4-035d2440fb99</string>
+    <string>88c2cefe-e394-40e1-8163-ae25072060d7</string>
+    <string>a2211a88-5d66-4ebf-843c-997e07287252</string>
+    <string>61bd42fe-a04d-4d28-b24a-b2432182ccbd</string>
+    <string>cdc9226d-cc52-4c82-83a6-f8b63c27499c</string>
+    <string>b83fc07a-85e5-4ad6-8429-89b1185efbae</string>
+    <string>c265087d-d557-40a1-86ed-863df279ad62</string>
+  </enabledChannelIds>
+  <disabledChannelIds/>
+  <codeTemplates>
+    <codeTemplate version="3.3.1">
+      <id>a3b08a4c-19f6-4543-9816-67b2e1b40e52</id>
+      <name>CREATE::addRow</name>
+      <revision>1</revision>
+      <lastModified>
+        <time>1450105180217</time>
+        <timezone>Europe/Zurich</timezone>
+      </lastModified>
+      <type>FUNCTION</type>
+      <contextSet>
+        <delegate>
+          <contextType>CHANNEL_PREPROCESSOR</contextType>
+          <contextType>GLOBAL_POSTPROCESSOR</contextType>
+          <contextType>SOURCE_FILTER_TRANSFORMER</contextType>
+          <contextType>CHANNEL_ATTACHMENT</contextType>
+          <contextType>DESTINATION_RESPONSE_TRANSFORMER</contextType>
+          <contextType>CHANNEL_POSTPROCESSOR</contextType>
+          <contextType>CHANNEL_DEPLOY</contextType>
+          <contextType>GLOBAL_PREPROCESSOR</contextType>
+          <contextType>CHANNEL_UNDEPLOY</contextType>
+          <contextType>SOURCE_RECEIVER</contextType>
+          <contextType>GLOBAL_UNDEPLOY</contextType>
+          <contextType>DESTINATION_FILTER_TRANSFORMER</contextType>
+          <contextType>GLOBAL_DEPLOY</contextType>
+          <contextType>CHANNEL_BATCH</contextType>
+          <contextType>DESTINATION_DISPATCHER</contextType>
+        </delegate>
+      </contextSet>
+      <code>// modify function_name and parameters as you wish.
+// one function per template is recommended. i.e.) create a new code template for each new function.
+function addRow(columnName, type, defaultValue, size, allowNull) {
+	var dataEntry = &lt;columns column={columnName} name={columnName} type={type} default_value={defaultValue} size={size} allow_null={allowNull} /&gt;
+	return dataEntry;
+}</code>
+    </codeTemplate>
+    <codeTemplate version="3.3.1">
+      <id>925f7c72-ec50-4884-9cdb-fe03ea25ec81</id>
+      <name>CREATE::addSystemTables</name>
+      <revision>1</revision>
+      <lastModified>
+        <time>1450105180189</time>
+        <timezone>Europe/Zurich</timezone>
+      </lastModified>
+      <type>FUNCTION</type>
+      <contextSet>
+        <delegate>
+          <contextType>CHANNEL_PREPROCESSOR</contextType>
+          <contextType>GLOBAL_POSTPROCESSOR</contextType>
+          <contextType>SOURCE_FILTER_TRANSFORMER</contextType>
+          <contextType>CHANNEL_ATTACHMENT</contextType>
+          <contextType>DESTINATION_RESPONSE_TRANSFORMER</contextType>
+          <contextType>CHANNEL_POSTPROCESSOR</contextType>
+          <contextType>CHANNEL_DEPLOY</contextType>
+          <contextType>GLOBAL_PREPROCESSOR</contextType>
+          <contextType>CHANNEL_UNDEPLOY</contextType>
+          <contextType>SOURCE_RECEIVER</contextType>
+          <contextType>GLOBAL_UNDEPLOY</contextType>
+          <contextType>DESTINATION_FILTER_TRANSFORMER</contextType>
+          <contextType>GLOBAL_DEPLOY</contextType>
+          <contextType>CHANNEL_BATCH</contextType>
+          <contextType>DESTINATION_DISPATCHER</contextType>
+        </delegate>
+      </contextSet>
+      <code>// modify function_name and parameters as you wish.
+// one function per template is recommended. i.e.) create a new code template for each new function.
+function addSystemTables(mainElement) {
+	mainElement.children += addRow(&quot;_URI&quot;, &quot;VARCHAR&quot;, null, &quot;80&quot;, &quot;false&quot;);
+	mainElement.children += addRow(&quot;_CREATOR_URI_USER&quot;, &quot;VARCHAR&quot;, null, &quot;80&quot;, &quot;false&quot;);
+	mainElement.children += addRow(&quot;_CREATION_DATE&quot;, &quot;DATETIME&quot;, null,&quot;&quot;, &quot;false&quot;);
+	mainElement.children += addRow(&quot;_LAST_UPDATE_URI_USER&quot;, &quot;VARCHAR&quot;, null,&quot;80&quot;, &quot;true&quot;);
+	mainElement.children += addRow(&quot;_LAST_UPDATE_DATE&quot;, &quot;DATETIME&quot;, null,&quot;&quot;, &quot;false&quot;);
+	mainElement.children += addRow(&quot;_MODEL_VERSION&quot;, &quot;INT&quot;, null,&quot;9&quot;, &quot;true&quot;);
+	mainElement.children += addRow(&quot;_UI_VERSION&quot;, &quot;INT&quot;, null,&quot;9&quot;, &quot;true&quot;);
+	mainElement.children += addRow(&quot;_IS_COMPLETE&quot;, &quot;CHAR&quot;, null,&quot;1&quot;, &quot;true&quot;);
+	mainElement.children += addRow(&quot;_SUBMISSION_DATE&quot;, &quot;DATETIME&quot;, &quot;&quot;,&quot;1&quot;, &quot;true&quot;);
+	mainElement.children += addRow(&quot;_MARKED_AS_COMPLETE_DATE&quot;, &quot;DATETIME&quot;, &quot;&quot;,&quot;1&quot;, &quot;true&quot;);
+}</code>
+    </codeTemplate>
+    <codeTemplate version="3.3.1">
+      <id>c877a31c-293f-4bb2-a7af-10d6f43193a4</id>
+      <name>CREATE::filterElements</name>
+      <revision>1</revision>
+      <lastModified>
+        <time>1450105180272</time>
+        <timezone>Europe/Zurich</timezone>
+      </lastModified>
+      <type>FUNCTION</type>
+      <contextSet>
+        <delegate>
+          <contextType>CHANNEL_PREPROCESSOR</contextType>
+          <contextType>GLOBAL_POSTPROCESSOR</contextType>
+          <contextType>SOURCE_FILTER_TRANSFORMER</contextType>
+          <contextType>CHANNEL_ATTACHMENT</contextType>
+          <contextType>DESTINATION_RESPONSE_TRANSFORMER</contextType>
+          <contextType>CHANNEL_POSTPROCESSOR</contextType>
+          <contextType>CHANNEL_DEPLOY</contextType>
+          <contextType>GLOBAL_PREPROCESSOR</contextType>
+          <contextType>CHANNEL_UNDEPLOY</contextType>
+          <contextType>SOURCE_RECEIVER</contextType>
+          <contextType>GLOBAL_UNDEPLOY</contextType>
+          <contextType>DESTINATION_FILTER_TRANSFORMER</contextType>
+          <contextType>GLOBAL_DEPLOY</contextType>
+          <contextType>CHANNEL_BATCH</contextType>
+          <contextType>DESTINATION_DISPATCHER</contextType>
+        </delegate>
+      </contextSet>
+      <code>// modify function_name and parameters as you wish.
+// one function per template is recommended. i.e.) create a new code template for each new function.
+function filterElements(element, filteredElement) {
+	for each (child in element.children()) {
+
+		if(child.@type != &quot;group&quot;){
+			var name = child.@name;
+			var column = child.@column;
+			var type = child.@type;
+			var size = child.@size;
+			var allow_null = child.@allow_null;
+			var default_value = child.@default_value;
+
+			var column = &lt;columns name={column} type={type} size={size} allowNull={allow_null}&gt;&lt;/columns&gt;;
+
+			if(default_value){
+				column.@default_value = default_value;
+			}
+
+			filteredElement.children += column;
+		}
+		filterElements(child, filteredElement);
+	}
+}</code>
+    </codeTemplate>
+    <codeTemplate version="3.3.1">
+      <id>778ef4b3-5413-49ee-a331-c450e361bee8</id>
+      <name>CREATE::getAllElementsForFormId</name>
+      <revision>1</revision>
+      <lastModified>
+        <time>1450105180160</time>
+        <timezone>Europe/Zurich</timezone>
+      </lastModified>
+      <type>FUNCTION</type>
+      <contextSet>
+        <delegate>
+          <contextType>CHANNEL_PREPROCESSOR</contextType>
+          <contextType>GLOBAL_POSTPROCESSOR</contextType>
+          <contextType>SOURCE_FILTER_TRANSFORMER</contextType>
+          <contextType>CHANNEL_ATTACHMENT</contextType>
+          <contextType>DESTINATION_RESPONSE_TRANSFORMER</contextType>
+          <contextType>CHANNEL_POSTPROCESSOR</contextType>
+          <contextType>CHANNEL_DEPLOY</contextType>
+          <contextType>GLOBAL_PREPROCESSOR</contextType>
+          <contextType>CHANNEL_UNDEPLOY</contextType>
+          <contextType>SOURCE_RECEIVER</contextType>
+          <contextType>GLOBAL_UNDEPLOY</contextType>
+          <contextType>DESTINATION_FILTER_TRANSFORMER</contextType>
+          <contextType>GLOBAL_DEPLOY</contextType>
+          <contextType>CHANNEL_BATCH</contextType>
+          <contextType>DESTINATION_DISPATCHER</contextType>
+        </delegate>
+      </contextSet>
+      <code>// modify function_name and parameters as you wish.
+// one function per template is recommended. i.e.) create a new code template for each new function.
+function getAllElementsForFormId(formName, rootElement){		
+	var sql = &quot;SELECT _URI, PERSIST_AS_TABLE_NAME, ELEMENT_TYPE, ELEMENT_NAME, PARENT_URI_FORM_DATA_MODEL, PERSIST_AS_COLUMN_NAME FROM _form_data_model WHERE URI_SUBMISSION_DATA_MODEL = &quot;
+		+ &quot;(SELECT URI_SUBMISSION_DATA_MODEL FROM _form_info_submission_association WHERE SUBMISSION_FORM_ID = &apos;&quot; + formName + &quot;&apos;)&quot;;
+		
+	var connection;
+		try{
+			connection = DatabaseConnectionFactory.createConnection(&apos;com.mysql.jdbc.Driver&apos;,globalMap.get(&quot;ODK_DATABASE_URL&quot;), globalMap.get(&quot;ODK_DATABASE_USER&quot;),globalMap.get(&quot;ODK_DATABASE_PASSWORD&quot;));
+			var rs;
+			var stmt;
+
+			try{
+				stmt = connection.createStatement();
+				rs = stmt.executeQuery(sql);
+
+		    	if(rs.next()) {
+		        	var uri = rs.getString(&quot;_URI&quot;);
+		    		var tableName = rs.getString(&quot;PERSIST_AS_TABLE_NAME&quot;);
+		       		var elementType = rs.getString(&quot;ELEMENT_TYPE&quot;);
+		        	var elementName = rs.getString(&quot;ELEMENT_NAME&quot;);
+		        	var parentURI = rs.getString(&quot;PARENT_URI_FORM_DATA_MODEL&quot;);
+		        	var columnName = rs.getString(&quot;PERSIST_AS_COLUMN_NAME&quot;);
+		    	
+		        	handleGroup(uri, elementType, elementName, tableName, columnName, parentURI, rootElement, connection);
+		    	}
+			}
+			catch(e){
+			}	
+			finally{
+				if(rs != null)
+					rs.close();
+				if(stmt != null)
+					stmt.close();
+			}	    
+		} 
+		catch (e) {}
+		finally {
+			if (connection) { 
+				connection.close();
+		}
+	}
+}</code>
+    </codeTemplate>
+    <codeTemplate version="3.3.1">
+      <id>1e1875a1-6eee-4362-90d6-d401b0ee6c70</id>
+      <name>CREATE::handleElement</name>
+      <revision>1</revision>
+      <lastModified>
+        <time>1450105179930</time>
+        <timezone>Europe/Zurich</timezone>
+      </lastModified>
+      <type>FUNCTION</type>
+      <contextSet>
+        <delegate>
+          <contextType>CHANNEL_PREPROCESSOR</contextType>
+          <contextType>GLOBAL_POSTPROCESSOR</contextType>
+          <contextType>SOURCE_FILTER_TRANSFORMER</contextType>
+          <contextType>CHANNEL_ATTACHMENT</contextType>
+          <contextType>DESTINATION_RESPONSE_TRANSFORMER</contextType>
+          <contextType>CHANNEL_POSTPROCESSOR</contextType>
+          <contextType>CHANNEL_DEPLOY</contextType>
+          <contextType>GLOBAL_PREPROCESSOR</contextType>
+          <contextType>CHANNEL_UNDEPLOY</contextType>
+          <contextType>SOURCE_RECEIVER</contextType>
+          <contextType>GLOBAL_UNDEPLOY</contextType>
+          <contextType>DESTINATION_FILTER_TRANSFORMER</contextType>
+          <contextType>GLOBAL_DEPLOY</contextType>
+          <contextType>CHANNEL_BATCH</contextType>
+          <contextType>DESTINATION_DISPATCHER</contextType>
+        </delegate>
+      </contextSet>
+      <code>// modify function_name and parameters as you wish.
+// one function per template is recommended. i.e.) create a new code template for each new function.
+function handleElement(uri, elementType, elementName, tableName, columnName, parentURI, parentElement, connection){
+        if(elementType.equalsIgnoreCase(&quot;REPEAT&quot;)){
+//        	System.out.println(&quot;-------------------------------------------- REPEAT found&quot;);
+        }
+        else if(elementType.equalsIgnoreCase(&quot;GROUP&quot;)){
+//        	System.out.println(&quot;-------------------------------------------- GROUP found with name &quot; + elementName);
+        	//log(&quot;group name=&quot; + elementName);
+        	//groupIndentLevel++;
+        	
+        	handleGroup(uri, elementType, elementName, tableName, columnName, parentURI, parentElement, connection);
+        	
+        	//groupIndentLevel--;
+//        	System.out.println(&quot;-------------------------------------------- end GROUP &quot; + elementName);
+        	//log(&quot;group name=&quot; + elementName);
+        }
+        else if(elementType.equalsIgnoreCase(&quot;GEOPOINT&quot;)){
+//        	System.out.println(&quot;-------------------------------------------- GEOPOINT found&quot;);
+        }
+        else if(elementType.equalsIgnoreCase(&quot;PHANTOM&quot;)){
+//        	System.out.println(&quot;-------------------------------------------- PHANTOM table found: &quot; + tableName);
+        	handlePhantom(uri, elementType, elementName, tableName, columnName, parentURI, parentElement, connection);
+        }		        
+        else if(elementType.equalsIgnoreCase(&quot;SELECTN&quot;)){
+//        	System.out.println(&quot;-------------------------------------------- SELECTN found, table: &quot; + tableName);
+        	handleSelectNData(elementType, elementName, tableName, columnName, parentURI, parentElement, connection);
+        }
+        else if(elementType.equalsIgnoreCase(&quot;SELECT1&quot;)){
+//        	System.out.println(&quot;-------------------------------------------- SELECT1 found&quot;);
+        	handleSelectNData(elementType, elementName, tableName, columnName, parentURI, parentElement, connection);
+        }
+        else if(elementType.equalsIgnoreCase(&quot;BINARY&quot;)){
+//        	System.out.println(&quot;-------------------------------------------- BINARY found&quot;);
+        }
+        //SUPPORTING TABLES
+        else if(elementType.equalsIgnoreCase(&quot;BINARY_CONTENT_REF_BLOB&quot;)){
+//        	System.out.println(&quot;-------------------------------------------- BINARY found&quot;);
+        }
+        else if(elementType.equalsIgnoreCase(&quot;REF_BLOB&quot;)){
+//        	System.out.println(&quot;-------------------------------------------- BINARY found&quot;);
+        }
+        else{
+			//logger.info(&quot;Type: &quot; + elementType);
+        	selectData(elementType, elementName, tableName, columnName, parentElement, connection);
+        }
+}</code>
+    </codeTemplate>
+    <codeTemplate version="3.3.1">
+      <id>1320092f-449c-4ecd-b522-3a78d6e4c4f1</id>
+      <name>CREATE::handleGroup</name>
+      <revision>1</revision>
+      <lastModified>
+        <time>1450105179922</time>
+        <timezone>Europe/Zurich</timezone>
+      </lastModified>
+      <type>FUNCTION</type>
+      <contextSet>
+        <delegate>
+          <contextType>CHANNEL_PREPROCESSOR</contextType>
+          <contextType>GLOBAL_POSTPROCESSOR</contextType>
+          <contextType>SOURCE_FILTER_TRANSFORMER</contextType>
+          <contextType>CHANNEL_ATTACHMENT</contextType>
+          <contextType>DESTINATION_RESPONSE_TRANSFORMER</contextType>
+          <contextType>CHANNEL_POSTPROCESSOR</contextType>
+          <contextType>CHANNEL_DEPLOY</contextType>
+          <contextType>GLOBAL_PREPROCESSOR</contextType>
+          <contextType>CHANNEL_UNDEPLOY</contextType>
+          <contextType>SOURCE_RECEIVER</contextType>
+          <contextType>GLOBAL_UNDEPLOY</contextType>
+          <contextType>DESTINATION_FILTER_TRANSFORMER</contextType>
+          <contextType>GLOBAL_DEPLOY</contextType>
+          <contextType>CHANNEL_BATCH</contextType>
+          <contextType>DESTINATION_DISPATCHER</contextType>
+        </delegate>
+      </contextSet>
+      <code>// modify function_name and parameters as you wish.
+// one function per template is recommended. i.e.) create a new code template for each new function.
+function handleGroup(elementUri, elementType, elementName, tableName, columnName, parentURI, parentElement, conn) {
+	var sql = &quot;SELECT _URI, PERSIST_AS_TABLE_NAME, PERSIST_AS_COLUMN_NAME, ELEMENT_TYPE, PARENT_URI_FORM_DATA_MODEL, ELEMENT_NAME &quot;
+	+ &quot;FROM _form_data_model WHERE PARENT_URI_FORM_DATA_MODEL = &apos;&quot; + elementUri + &quot;&apos;&quot;;
+
+	var stmt;
+	var rs;
+	try{
+		stmt = conn.createStatement();
+		rs = stmt.executeQuery(sql);
+
+		var group = &lt;group name={elementName} tableName={tableName} type=&quot;group&quot; /&gt;;
+		var children = &lt;&gt;&lt;/&gt;;
+		group.children = children;
+
+		while(rs.next()) {
+			var _uri = rs.getString(&quot;_URI&quot;);
+		    var _tableName = rs.getString(&quot;PERSIST_AS_TABLE_NAME&quot;);
+		    var _elementType = rs.getString(&quot;ELEMENT_TYPE&quot;);
+		    var _parentURI = rs.getString(&quot;PARENT_URI_FORM_DATA_MODEL&quot;);
+		    var _elementName = rs.getString(&quot;ELEMENT_NAME&quot;);
+		    var _columnName = rs.getString(&quot;PERSIST_AS_COLUMN_NAME&quot;);
+		      
+		    handleElement(_uri, _elementType, _elementName, _tableName, _columnName, _parentURI, group, conn);
+
+			//logger.info(&quot;Found element: &quot; + _elementName + &quot; | ParentXML: &quot; + parentElement.toXMLString());
+		}  
+		parentElement.children += group;
+	}
+	catch(e){
+	}	
+	finally{
+		if(rs != null)
+			rs.close();
+		if(stmt != null)
+			stmt.close();
+	}
+}</code>
+    </codeTemplate>
+    <codeTemplate version="3.3.1">
+      <id>5c362247-21e1-441f-aa61-f1bc08d7db33</id>
+      <name>CREATE::handlePhantom</name>
+      <revision>1</revision>
+      <lastModified>
+        <time>1450105180036</time>
+        <timezone>Europe/Zurich</timezone>
+      </lastModified>
+      <type>FUNCTION</type>
+      <contextSet>
+        <delegate>
+          <contextType>CHANNEL_PREPROCESSOR</contextType>
+          <contextType>GLOBAL_POSTPROCESSOR</contextType>
+          <contextType>SOURCE_FILTER_TRANSFORMER</contextType>
+          <contextType>CHANNEL_ATTACHMENT</contextType>
+          <contextType>DESTINATION_RESPONSE_TRANSFORMER</contextType>
+          <contextType>CHANNEL_POSTPROCESSOR</contextType>
+          <contextType>CHANNEL_DEPLOY</contextType>
+          <contextType>GLOBAL_PREPROCESSOR</contextType>
+          <contextType>CHANNEL_UNDEPLOY</contextType>
+          <contextType>SOURCE_RECEIVER</contextType>
+          <contextType>GLOBAL_UNDEPLOY</contextType>
+          <contextType>DESTINATION_FILTER_TRANSFORMER</contextType>
+          <contextType>GLOBAL_DEPLOY</contextType>
+          <contextType>CHANNEL_BATCH</contextType>
+          <contextType>DESTINATION_DISPATCHER</contextType>
+        </delegate>
+      </contextSet>
+      <code>// modify function_name and parameters as you wish.
+// one function per template is recommended. i.e.) create a new code template for each new function.
+function handlePhantom(uri, elementType, elementName, tableName, columnName, parentURI, parentElement, conn){	
+	var sql = &quot;SELECT _URI, PERSIST_AS_TABLE_NAME, ELEMENT_TYPE, ELEMENT_NAME, PARENT_URI_FORM_DATA_MODEL, PERSIST_AS_COLUMN_NAME &quot;
+				+ &quot;FROM _form_data_model WHERE PARENT_URI_FORM_DATA_MODEL = &apos;&quot; + uri + &quot;&apos;&quot;;
+
+	var stmt;
+	var rs;
+	try{
+		stmt = conn.createStatement();
+		rs = stmt.executeQuery(sql);
+
+		while(rs.next()) {
+			var _uri = rs.getString(&quot;_URI&quot;);
+		    var _tableName = rs.getString(&quot;PERSIST_AS_TABLE_NAME&quot;);
+		    var _elementType = rs.getString(&quot;ELEMENT_TYPE&quot;);
+		    var _parentURI = rs.getString(&quot;PARENT_URI_FORM_DATA_MODEL&quot;);
+		    var _elementName = rs.getString(&quot;ELEMENT_NAME&quot;);
+		    var _columnName = rs.getString(&quot;PERSIST_AS_COLUMN_NAME&quot;);
+		      
+		    handleElement(_uri, _elementType, _elementName, _tableName, _columnName, _parentURI, parentElement, conn);
+
+			//logger.info(&quot;Found element: &quot; + _elementName + &quot; | ParentXML: &quot; + parentElement.toXMLString());
+		}  
+	}
+	catch(e){
+	}	
+	finally{
+		if(rs != null)
+			rs.close();
+		if(stmt != null)
+			stmt.close();
+	}
+}</code>
+    </codeTemplate>
+    <codeTemplate version="3.3.1">
+      <id>2da425d3-ad53-42e6-9e9e-001b80236f89</id>
+      <name>CREATE::handleSelectNDataData</name>
+      <revision>1</revision>
+      <lastModified>
+        <time>1450105179963</time>
+        <timezone>Europe/Zurich</timezone>
+      </lastModified>
+      <type>FUNCTION</type>
+      <contextSet>
+        <delegate>
+          <contextType>CHANNEL_PREPROCESSOR</contextType>
+          <contextType>GLOBAL_POSTPROCESSOR</contextType>
+          <contextType>SOURCE_FILTER_TRANSFORMER</contextType>
+          <contextType>CHANNEL_ATTACHMENT</contextType>
+          <contextType>DESTINATION_RESPONSE_TRANSFORMER</contextType>
+          <contextType>CHANNEL_POSTPROCESSOR</contextType>
+          <contextType>CHANNEL_DEPLOY</contextType>
+          <contextType>GLOBAL_PREPROCESSOR</contextType>
+          <contextType>CHANNEL_UNDEPLOY</contextType>
+          <contextType>SOURCE_RECEIVER</contextType>
+          <contextType>GLOBAL_UNDEPLOY</contextType>
+          <contextType>DESTINATION_FILTER_TRANSFORMER</contextType>
+          <contextType>GLOBAL_DEPLOY</contextType>
+          <contextType>CHANNEL_BATCH</contextType>
+          <contextType>DESTINATION_DISPATCHER</contextType>
+        </delegate>
+      </contextSet>
+      <code>// modify function_name and parameters as you wish.
+// one function per template is recommended. i.e.) create a new code template for each new function.
+function handleSelectNData(elementType, elementName, tableName, columnName, parentURI, parentElement, conn){		
+	var dataElement = &lt;data name={elementName} type={elementType} column={tableName} /&gt;; // Take table name instead of columnName, since this is null
+	parentElement.children += dataElement;
+}</code>
+    </codeTemplate>
+    <codeTemplate version="3.3.1">
+      <id>ed1a0fc6-7f42-48b4-bab3-892cdb1fad8e</id>
+      <name>CREATE::selectData</name>
+      <revision>1</revision>
+      <lastModified>
+        <time>1450105180314</time>
+        <timezone>Europe/Zurich</timezone>
+      </lastModified>
+      <type>FUNCTION</type>
+      <contextSet>
+        <delegate>
+          <contextType>CHANNEL_PREPROCESSOR</contextType>
+          <contextType>GLOBAL_POSTPROCESSOR</contextType>
+          <contextType>SOURCE_FILTER_TRANSFORMER</contextType>
+          <contextType>CHANNEL_ATTACHMENT</contextType>
+          <contextType>DESTINATION_RESPONSE_TRANSFORMER</contextType>
+          <contextType>CHANNEL_POSTPROCESSOR</contextType>
+          <contextType>CHANNEL_DEPLOY</contextType>
+          <contextType>GLOBAL_PREPROCESSOR</contextType>
+          <contextType>CHANNEL_UNDEPLOY</contextType>
+          <contextType>SOURCE_RECEIVER</contextType>
+          <contextType>GLOBAL_UNDEPLOY</contextType>
+          <contextType>DESTINATION_FILTER_TRANSFORMER</contextType>
+          <contextType>GLOBAL_DEPLOY</contextType>
+          <contextType>CHANNEL_BATCH</contextType>
+          <contextType>DESTINATION_DISPATCHER</contextType>
+        </delegate>
+      </contextSet>
+      <code>/**
+	UPDATE::selectData
+*/
+// modify function_name and parameters as you wish.
+// one function per template is recommended. i.e.) create a new code template for each new function.
+function selectData(elementType, elementName, tableName, columnName, parentElement, conn){
+
+	//var dataElement = &lt;{elementName} name={elementName} type={elementType} column={columnName} /&gt;;
+
+	var dataElement = &lt;data name={elementName} type={elementType} column={columnName} /&gt;;
+	
+	//logger.info(dataElement.toXMLString());
+	//var childElements = parentElement.children;
+	//childElements += dataElement;
+
+	parentElement.children += dataElement;
+}</code>
+    </codeTemplate>
+    <codeTemplate version="3.3.1">
+      <id>62092782-50c9-4182-a310-439da6c7cfa4</id>
+      <name>ExtraForm::createTableDummy</name>
+      <revision>1</revision>
+      <lastModified>
+        <time>1450105180079</time>
+        <timezone>Europe/Zurich</timezone>
+      </lastModified>
+      <type>FUNCTION</type>
+      <contextSet>
+        <delegate>
+          <contextType>CHANNEL_PREPROCESSOR</contextType>
+          <contextType>GLOBAL_POSTPROCESSOR</contextType>
+          <contextType>SOURCE_FILTER_TRANSFORMER</contextType>
+          <contextType>CHANNEL_ATTACHMENT</contextType>
+          <contextType>DESTINATION_RESPONSE_TRANSFORMER</contextType>
+          <contextType>CHANNEL_POSTPROCESSOR</contextType>
+          <contextType>CHANNEL_DEPLOY</contextType>
+          <contextType>GLOBAL_PREPROCESSOR</contextType>
+          <contextType>CHANNEL_UNDEPLOY</contextType>
+          <contextType>SOURCE_RECEIVER</contextType>
+          <contextType>GLOBAL_UNDEPLOY</contextType>
+          <contextType>DESTINATION_FILTER_TRANSFORMER</contextType>
+          <contextType>GLOBAL_DEPLOY</contextType>
+          <contextType>CHANNEL_BATCH</contextType>
+          <contextType>DESTINATION_DISPATCHER</contextType>
+        </delegate>
+      </contextSet>
+      <code>/**
+	Create XML from JS Array containing Information about odk extraform table structure
+*/
+// modify function_name and parameters as you wish.
+// one function per template is recommended. i.e.) create a new code template for each new function.
+function createTableDummy(CORE_TABLE_NAME, uuid, primaryKey, listOfObjects){
+	var table = &lt;table key={uuid} name={CORE_TABLE_NAME} primaryKey={primaryKey} /&gt;;
+
+	/* CREATE XML FROM JS ARRAY */
+	if(listOfObjects.length &gt; 0){
+		var columns = &lt;&gt;&lt;/&gt;;
+
+		listOfObjects.forEach(function(entry) {
+			var name = entry[&apos;name&apos;].toString();
+			var type = entry[&apos;type&apos;].toString();
+			var size = entry[&apos;size&apos;].toString();
+			var allow_null = entry[&apos;allow_null&apos;].toString();
+			var default_value = entry[&apos;default_value&apos;];
+
+			var column = &lt;columns name={name} type={type} size={size} allowNull={allow_null}&gt;&lt;/columns&gt;;
+
+			if(default_value){
+				column.@default_value = default_value;
+			}
+			columns += column;
+		});
+		table.columns = columns;
+	}
+	return table;
+}</code>
+    </codeTemplate>
+    <codeTemplate version="3.3.1">
+      <id>41cb0d6e-16a9-4331-a094-3d26bc95343d</id>
+      <name>ExtraForm::Get Core Table Structure</name>
+      <revision>1</revision>
+      <lastModified>
+        <time>1450105179986</time>
+        <timezone>Europe/Zurich</timezone>
+      </lastModified>
+      <type>FUNCTION</type>
+      <contextSet>
+        <delegate>
+          <contextType>CHANNEL_PREPROCESSOR</contextType>
+          <contextType>GLOBAL_POSTPROCESSOR</contextType>
+          <contextType>SOURCE_FILTER_TRANSFORMER</contextType>
+          <contextType>CHANNEL_ATTACHMENT</contextType>
+          <contextType>DESTINATION_RESPONSE_TRANSFORMER</contextType>
+          <contextType>CHANNEL_POSTPROCESSOR</contextType>
+          <contextType>CHANNEL_DEPLOY</contextType>
+          <contextType>GLOBAL_PREPROCESSOR</contextType>
+          <contextType>CHANNEL_UNDEPLOY</contextType>
+          <contextType>SOURCE_RECEIVER</contextType>
+          <contextType>GLOBAL_UNDEPLOY</contextType>
+          <contextType>DESTINATION_FILTER_TRANSFORMER</contextType>
+          <contextType>GLOBAL_DEPLOY</contextType>
+          <contextType>CHANNEL_BATCH</contextType>
+          <contextType>DESTINATION_DISPATCHER</contextType>
+        </delegate>
+      </contextSet>
+      <code>/**
+	Extracts the Table Structure from a given ExtraForm Core Table and returns a JS Array with the info
+	about each of its columns
+*/
+// modify function_name and parameters as you wish.
+// one function per template is recommended. i.e.) create a new code template for each new function.
+function getCoreTableStructure(CORE_TABLE_NAME){
+	var listOfObjects = [];
+	var connection;
+	try {
+		connection = DatabaseConnectionFactory.createConnection(&apos;com.mysql.jdbc.Driver&apos;,globalMap.get(&quot;ODK_DATABASE_URL&quot;), globalMap.get(&quot;ODK_DATABASE_USER&quot;),globalMap.get(&quot;ODK_DATABASE_PASSWORD&quot;));
+		var metaData = connection.getMetaData();	
+		var result;
+		try { 
+			result = metaData.getColumns(null, null, CORE_TABLE_NAME, null);
+			var counter = 1;
+			while (result.next()) {		
+				var columnName = result.getString(&quot;COLUMN_NAME&quot;);
+				var defaultValue = result.getString(&quot;COLUMN_DEF&quot;);
+				var dataType = result.getInt(&quot;DATA_TYPE&quot;);
+				var typeName = result.getString(&quot;TYPE_NAME&quot;);
+				var nullable = result.getInt(&quot;NULLABLE&quot;);
+				var columnSize = result.getInt(&quot;COLUMN_SIZE&quot;);
+
+				var ColumnDummy = {
+					&apos;name&apos; : columnName, 
+					&apos;type&apos; : typeName,
+					&apos;default_value&apos; : defaultValue,
+					&apos;size&apos; : columnSize,
+					&apos;allow_null&apos; : (nullable == java.sql.ResultSetMetaData.columnNoNulls)?&quot;false&quot;:&quot;true&quot;
+				}
+				listOfObjects.push(ColumnDummy);
+				counter++;
+			}
+		}
+		finally {
+			if(result){
+				result.close();
+			}
+		}
+	} finally {
+		if (connection) { 
+			connection.close();
+		}
+	}
+	return listOfObjects;
+}</code>
+    </codeTemplate>
+    <codeTemplate version="3.3.1">
+      <id>4f519d07-5871-49f1-98b8-7731eb918dcc</id>
+      <name>ExtraForm::getCoreTableFromFormName</name>
+      <revision>1</revision>
+      <lastModified>
+        <time>1450105180014</time>
+        <timezone>Europe/Zurich</timezone>
+      </lastModified>
+      <type>FUNCTION</type>
+      <contextSet>
+        <delegate>
+          <contextType>CHANNEL_PREPROCESSOR</contextType>
+          <contextType>GLOBAL_POSTPROCESSOR</contextType>
+          <contextType>SOURCE_FILTER_TRANSFORMER</contextType>
+          <contextType>CHANNEL_ATTACHMENT</contextType>
+          <contextType>DESTINATION_RESPONSE_TRANSFORMER</contextType>
+          <contextType>CHANNEL_POSTPROCESSOR</contextType>
+          <contextType>CHANNEL_DEPLOY</contextType>
+          <contextType>GLOBAL_PREPROCESSOR</contextType>
+          <contextType>CHANNEL_UNDEPLOY</contextType>
+          <contextType>SOURCE_RECEIVER</contextType>
+          <contextType>GLOBAL_UNDEPLOY</contextType>
+          <contextType>DESTINATION_FILTER_TRANSFORMER</contextType>
+          <contextType>GLOBAL_DEPLOY</contextType>
+          <contextType>CHANNEL_BATCH</contextType>
+          <contextType>DESTINATION_DISPATCHER</contextType>
+        </delegate>
+      </contextSet>
+      <code>/**
+	Extract the Core Table name for a given formId in the ODK database
+*/
+// modify function_name and parameters as you wish.
+// one function per template is recommended. i.e.) create a new code template for each new function.
+function getCoreTableFromFormName(extraFormName){		
+	var tableName;
+	var sql = &quot;SELECT _CREATION_DATE, SUBMISSION_FORM_ID, URI_SUBMISSION_DATA_MODEL FROM _form_info_submission_association&quot;;
+		
+	var connection;
+	try {
+		connection = DatabaseConnectionFactory.createConnection(&apos;com.mysql.jdbc.Driver&apos;,globalMap.get(&quot;ODK_DATABASE_URL&quot;), globalMap.get(&quot;ODK_DATABASE_USER&quot;),globalMap.get(&quot;ODK_DATABASE_PASSWORD&quot;));
+
+		var stmt = connection.createStatement(); 
+		var rs = stmt.executeQuery(sql);
+  
+		while (rs.next()) {
+			var c = rs.getString(&quot;_CREATION_DATE&quot;);
+			var form = rs.getString(&quot;SUBMISSION_FORM_ID&quot;);
+			var uri = rs.getString(&quot;URI_SUBMISSION_DATA_MODEL&quot;);
+		        
+			if(form.equalsIgnoreCase(extraFormName)){		        		
+		    	tableName = processForm(uri);
+		 	}
+		}		    
+	} catch (e) {
+	}
+	finally{
+		if(connection){
+			connection.close();
+		}
+	}
+	return tableName;
+}</code>
+    </codeTemplate>
+    <codeTemplate version="3.3.1">
+      <id>699d31d5-9c63-45b7-af5f-dcad0cc6be5b</id>
+      <name>ExtraForm::getExtraFormData</name>
+      <revision>1</revision>
+      <lastModified>
+        <time>1450105180130</time>
+        <timezone>Europe/Zurich</timezone>
+      </lastModified>
+      <type>FUNCTION</type>
+      <contextSet>
+        <delegate>
+          <contextType>CHANNEL_PREPROCESSOR</contextType>
+          <contextType>GLOBAL_POSTPROCESSOR</contextType>
+          <contextType>SOURCE_FILTER_TRANSFORMER</contextType>
+          <contextType>CHANNEL_ATTACHMENT</contextType>
+          <contextType>DESTINATION_RESPONSE_TRANSFORMER</contextType>
+          <contextType>CHANNEL_POSTPROCESSOR</contextType>
+          <contextType>CHANNEL_DEPLOY</contextType>
+          <contextType>GLOBAL_PREPROCESSOR</contextType>
+          <contextType>CHANNEL_UNDEPLOY</contextType>
+          <contextType>SOURCE_RECEIVER</contextType>
+          <contextType>GLOBAL_UNDEPLOY</contextType>
+          <contextType>DESTINATION_FILTER_TRANSFORMER</contextType>
+          <contextType>GLOBAL_DEPLOY</contextType>
+          <contextType>CHANNEL_BATCH</contextType>
+          <contextType>DESTINATION_DISPATCHER</contextType>
+        </delegate>
+      </contextSet>
+      <code>/**
+	Extracts ExtraForm Data from a given ExtraForm Table and returns a JS-Array containing objects
+	(JS-Array) for each data entry, describing its colum entries
+*/
+// modify function_name and parameters as you wish.
+// one function per template is recommended. i.e.) create a new code template for each new function.
+function getExtraFormData(tableName, rowsToFetch){
+	var listOfObjects = [];
+	var tableNameResult = null; 
+	var sql = &quot;SELECT * FROM &quot; + tableName + &quot; WHERE PROCESSED_BY_MIRTH = 0 LIMIT &quot; + rowsToFetch;
+	var connection;
+	try{
+		connection = DatabaseConnectionFactory.createConnection(&apos;com.mysql.jdbc.Driver&apos;,globalMap.get(&quot;ODK_DATABASE_URL&quot;), globalMap.get(&quot;ODK_DATABASE_USER&quot;),globalMap.get(&quot;ODK_DATABASE_PASSWORD&quot;));
+		var rs;
+		var stmt;
+		try{
+			stmt = connection.createStatement();
+			rs = stmt.executeQuery(sql);
+			var rsmd = rs.getMetaData(); //ResultSetMetaData
+
+			while(rs.next()){ //ResultSet should contain at most rowsToFetch entries due to the LIMIT rowsToFetch in SELECT above
+				var listOfColumns = [];
+				for(var counter = 1; counter &lt;= rsmd.getColumnCount(); counter++ ){
+					var columnName = rsmd.getColumnName(counter);
+					var value = rs.getString(columnName);
+					var columnTypeName = rsmd.getColumnTypeName(counter);
+
+					var columnEntry = {
+						&apos;columnName&apos; : columnName, 
+						&apos;value&apos; : value,
+						&apos;columnTypeName&apos; : columnTypeName
+					}
+					listOfColumns.push(columnEntry);
+				}
+				listOfObjects.push(listOfColumns);
+		    }
+		}
+		catch(e){
+		}
+		finally{
+			if(rs != null)
+				rs.close();
+			if(stmt != null)
+				stmt.close();
+		}
+	}
+	catch(e){
+	}
+	finally{
+		if(connection != null)
+			connection.close();
+	}
+	return listOfObjects;
+}</code>
+    </codeTemplate>
+    <codeTemplate version="3.3.1">
+      <id>cce2bb0e-524e-4a9d-9a66-9cf21efad667</id>
+      <name>ExtraForm::getPrimaryKeyList</name>
+      <revision>1</revision>
+      <lastModified>
+        <time>1450105180295</time>
+        <timezone>Europe/Zurich</timezone>
+      </lastModified>
+      <type>FUNCTION</type>
+      <contextSet>
+        <delegate>
+          <contextType>CHANNEL_PREPROCESSOR</contextType>
+          <contextType>GLOBAL_POSTPROCESSOR</contextType>
+          <contextType>SOURCE_FILTER_TRANSFORMER</contextType>
+          <contextType>CHANNEL_ATTACHMENT</contextType>
+          <contextType>DESTINATION_RESPONSE_TRANSFORMER</contextType>
+          <contextType>CHANNEL_POSTPROCESSOR</contextType>
+          <contextType>CHANNEL_DEPLOY</contextType>
+          <contextType>GLOBAL_PREPROCESSOR</contextType>
+          <contextType>CHANNEL_UNDEPLOY</contextType>
+          <contextType>SOURCE_RECEIVER</contextType>
+          <contextType>GLOBAL_UNDEPLOY</contextType>
+          <contextType>DESTINATION_FILTER_TRANSFORMER</contextType>
+          <contextType>GLOBAL_DEPLOY</contextType>
+          <contextType>CHANNEL_BATCH</contextType>
+          <contextType>DESTINATION_DISPATCHER</contextType>
+        </delegate>
+      </contextSet>
+      <code>/**
+	Get the Primary Keys for a given Extra Form Core Table as a Javascript String Array
+*/
+// modify function_name and parameters as you wish.
+// one function per template is recommended. i.e.) create a new code template for each new function.
+function getPrimaryKeyList(CORE_TABLE_NAME) {
+	var connection;
+	var primaryKeyList = [];
+	try {
+		connection = DatabaseConnectionFactory.createConnection(&apos;com.mysql.jdbc.Driver&apos;,globalMap.get(&quot;ODK_DATABASE_URL&quot;), globalMap.get(&quot;ODK_DATABASE_USER&quot;),globalMap.get(&quot;ODK_DATABASE_PASSWORD&quot;));
+		var metaData = connection.getMetaData();	
+	
+		var result;
+		try { 
+			var result = metaData.getPrimaryKeys(null, null, CORE_TABLE_NAME);
+			var counter = 0;
+			while (result.next()) {		
+				var primaryKey = result.getString(&quot;COLUMN_NAME&quot;);
+				primaryKeyList.push(primaryKey);
+				counter++;
+			}
+		}
+		finally {
+			if(result){
+				result.close();
+			}
+	}
+	} finally {
+		if (connection) { 
+			connection.close();
+		}
+	}
+	return primaryKeyList;
+}</code>
+    </codeTemplate>
+    <codeTemplate version="3.3.1">
+      <id>612198b9-5430-4ea0-b473-a61903ef82dc</id>
+      <name>ExtraForm::processForm</name>
+      <revision>1</revision>
+      <lastModified>
+        <time>1450105180065</time>
+        <timezone>Europe/Zurich</timezone>
+      </lastModified>
+      <type>FUNCTION</type>
+      <contextSet>
+        <delegate>
+          <contextType>CHANNEL_PREPROCESSOR</contextType>
+          <contextType>GLOBAL_POSTPROCESSOR</contextType>
+          <contextType>SOURCE_FILTER_TRANSFORMER</contextType>
+          <contextType>CHANNEL_ATTACHMENT</contextType>
+          <contextType>DESTINATION_RESPONSE_TRANSFORMER</contextType>
+          <contextType>CHANNEL_POSTPROCESSOR</contextType>
+          <contextType>CHANNEL_DEPLOY</contextType>
+          <contextType>GLOBAL_PREPROCESSOR</contextType>
+          <contextType>CHANNEL_UNDEPLOY</contextType>
+          <contextType>SOURCE_RECEIVER</contextType>
+          <contextType>GLOBAL_UNDEPLOY</contextType>
+          <contextType>DESTINATION_FILTER_TRANSFORMER</contextType>
+          <contextType>GLOBAL_DEPLOY</contextType>
+          <contextType>CHANNEL_BATCH</contextType>
+          <contextType>DESTINATION_DISPATCHER</contextType>
+        </delegate>
+      </contextSet>
+      <code>/**
+	Helper function to extract the Core Table Name from a given form URI in the ODK database
+*/
+// modify function_name and parameters as you wish.
+// one function per template is recommended. i.e.) create a new code template for each new function.
+function processForm(uri){
+	var tableNameResult = null; 
+	var sql = &quot;SELECT _URI, ELEMENT_TYPE, PERSIST_AS_TABLE_NAME, ELEMENT_NAME, PERSIST_AS_COLUMN_NAME, PARENT_URI_FORM_DATA_MODEL FROM _form_data_model WHERE URI_SUBMISSION_DATA_MODEL = ?&quot;;
+		
+	var connection;
+	try{
+			connection = DatabaseConnectionFactory.createConnection(&apos;com.mysql.jdbc.Driver&apos;, globalMap.get(&quot;ODK_DATABASE_URL&quot;), globalMap.get(&quot;ODK_DATABASE_USER&quot;),globalMap.get(&quot;ODK_DATABASE_PASSWORD&quot;));
+			var ps = connection.prepareStatement(sql);
+			ps.setString(1, uri);
+			
+			var rs;
+			try{
+				var rs = ps.executeQuery();
+
+			    if (rs.next()) {
+			    	var elementType = rs.getString(&quot;ELEMENT_TYPE&quot;);
+			    	var columnName = rs.getString(&quot;PERSIST_AS_COLUMN_NAME&quot;);
+			    	var element_uri = rs.getString(&quot;_URI&quot;);
+			    	var parent_uri = rs.getString(&quot;PARENT_URI_FORM_DATA_MODEL&quot;);
+			    	var tableName = rs.getString(&quot;PERSIST_AS_TABLE_NAME&quot;);
+			    	var elementName = rs.getString(&quot;ELEMENT_NAME&quot;);
+			    	
+			    	// Check for starting group 	
+			    	if(parent_uri.equals(uri) &amp;&amp; elementType.equalsIgnoreCase(&quot;GROUP&quot;) &amp;&amp; (columnName == null)){
+			    		tableNameResult = tableName;
+			    	}
+			    }
+			}
+			catch(e){
+			}
+			finally{
+				if(rs != null)
+					rs.close();
+			}
+		}
+		catch(e){
+		}
+		finally{
+			if(connection != null)
+				connection.close();
+		}
+		return tableNameResult;
+	}</code>
+    </codeTemplate>
+    <codeTemplate version="3.3.1">
+      <id>a6998047-e6e2-4dd6-bc24-0a0edc20b8bb</id>
+      <name>Mark Data Migration Record as processed</name>
+      <revision>1</revision>
+      <lastModified>
+        <time>1450105180235</time>
+        <timezone>Europe/Zurich</timezone>
+      </lastModified>
+      <type>FUNCTION</type>
+      <contextSet>
+        <delegate>
+          <contextType>CHANNEL_PREPROCESSOR</contextType>
+          <contextType>GLOBAL_POSTPROCESSOR</contextType>
+          <contextType>SOURCE_FILTER_TRANSFORMER</contextType>
+          <contextType>CHANNEL_ATTACHMENT</contextType>
+          <contextType>DESTINATION_RESPONSE_TRANSFORMER</contextType>
+          <contextType>CHANNEL_POSTPROCESSOR</contextType>
+          <contextType>CHANNEL_DEPLOY</contextType>
+          <contextType>GLOBAL_PREPROCESSOR</contextType>
+          <contextType>CHANNEL_UNDEPLOY</contextType>
+          <contextType>SOURCE_RECEIVER</contextType>
+          <contextType>GLOBAL_UNDEPLOY</contextType>
+          <contextType>DESTINATION_FILTER_TRANSFORMER</contextType>
+          <contextType>GLOBAL_DEPLOY</contextType>
+          <contextType>CHANNEL_BATCH</contextType>
+          <contextType>DESTINATION_DISPATCHER</contextType>
+        </delegate>
+      </contextSet>
+      <code>function markRecordAsProcessedMigration(rawData, status) {
+  var originalXml = new XML(rawData);
+  // retrieve the table to update
+  var tableName = originalXml[&quot;@table-name&quot;].toString();
+  var id = originalXml[&quot;id&quot;].toString();
+
+ var dbConn = DatabaseConnectionFactory.createDatabaseConnection(&apos;com.mysql.jdbc.Driver&apos;, globalMap.get(&quot;HRS_DATABASE_URL&quot;), globalMap.get(&quot;HRS_DATABASE_USER&quot;), globalMap.get(&quot;HRS_DATABASE_PASSWORD&quot;));
+  var result = dbConn.executeUpdate(&quot;UPDATE &quot; + tableName + &quot; SET processed_by_mirth = &quot; + status + &quot; WHERE id = &apos;&quot; + id + &quot;&apos;&quot;);
+  dbConn.close();
+}</code>
+    </codeTemplate>
+    <codeTemplate version="3.3.1">
+      <id>b3441bd0-63cd-4bd4-96d1-bf98d21a4cdd</id>
+      <name>Mark Record as processed</name>
+      <revision>1</revision>
+      <lastModified>
+        <time>1450105180265</time>
+        <timezone>Europe/Zurich</timezone>
+      </lastModified>
+      <type>FUNCTION</type>
+      <contextSet>
+        <delegate>
+          <contextType>CHANNEL_PREPROCESSOR</contextType>
+          <contextType>GLOBAL_POSTPROCESSOR</contextType>
+          <contextType>SOURCE_FILTER_TRANSFORMER</contextType>
+          <contextType>CHANNEL_ATTACHMENT</contextType>
+          <contextType>DESTINATION_RESPONSE_TRANSFORMER</contextType>
+          <contextType>CHANNEL_POSTPROCESSOR</contextType>
+          <contextType>CHANNEL_DEPLOY</contextType>
+          <contextType>GLOBAL_PREPROCESSOR</contextType>
+          <contextType>CHANNEL_UNDEPLOY</contextType>
+          <contextType>SOURCE_RECEIVER</contextType>
+          <contextType>GLOBAL_UNDEPLOY</contextType>
+          <contextType>DESTINATION_FILTER_TRANSFORMER</contextType>
+          <contextType>GLOBAL_DEPLOY</contextType>
+          <contextType>CHANNEL_BATCH</contextType>
+          <contextType>DESTINATION_DISPATCHER</contextType>
+        </delegate>
+      </contextSet>
+      <code>function markRecordAsProcessed(rawData, status) {
+  var originalXml = new XML(rawData);
+  // retrieve the table to update
+  var tableName = originalXml[&quot;@table-name&quot;].toString();
+  var uri = originalXml[&quot;_uri&quot;].toString();
+
+
+if (tableName == globalMap.get(&quot;VISIT_TABLE&quot;) ) {
+	var dbConn = DatabaseConnectionFactory.createDatabaseConnection(&apos;com.mysql.jdbc.Driver&apos;, globalMap.get(&quot;ODK_DATABASE_URL&quot;), globalMap.get(&quot;ODK_DATABASE_USER&quot;), globalMap.get(&quot;ODK_DATABASE_PASSWORD&quot;));
+    var result = dbConn.executeUpdate(&quot;UPDATE &quot; + tableName + &quot; SET processed_by_mirth = &quot; + status + &quot; WHERE OPENHDS_VISIT_ID = &apos;&quot; + originalXml[&quot;openhds_visit_id&quot;].toString() + &quot;&apos;&quot;);
+    dbConn.close();
+} else if (tableName !== &quot;OMGIM&quot;) {
+ var dbConn = DatabaseConnectionFactory.createDatabaseConnection(&apos;com.mysql.jdbc.Driver&apos;, globalMap.get(&quot;ODK_DATABASE_URL&quot;), globalMap.get(&quot;ODK_DATABASE_USER&quot;), globalMap.get(&quot;ODK_DATABASE_PASSWORD&quot;));
+  var result = dbConn.executeUpdate(&quot;UPDATE &quot; + tableName + &quot; SET processed_by_mirth = &quot; + status + &quot; WHERE _URI = &apos;&quot; + uri + &quot;&apos;&quot;);
+  dbConn.close();
+  } 
+}</code>
+    </codeTemplate>
+    <codeTemplate version="3.3.1">
+      <id>5b7999dc-5f95-4f03-82d9-84cc8fc8b6a1</id>
+      <name>ResetProcessedErrored</name>
+      <revision>2</revision>
+      <lastModified>
+        <time>1457946776619</time>
+        <timezone>Europe/Zurich</timezone>
+      </lastModified>
+      <type>FUNCTION</type>
+      <contextSet>
+        <delegate>
+          <contextType>CHANNEL_PREPROCESSOR</contextType>
+          <contextType>GLOBAL_POSTPROCESSOR</contextType>
+          <contextType>SOURCE_FILTER_TRANSFORMER</contextType>
+          <contextType>CHANNEL_ATTACHMENT</contextType>
+          <contextType>DESTINATION_RESPONSE_TRANSFORMER</contextType>
+          <contextType>CHANNEL_POSTPROCESSOR</contextType>
+          <contextType>CHANNEL_DEPLOY</contextType>
+          <contextType>GLOBAL_PREPROCESSOR</contextType>
+          <contextType>CHANNEL_UNDEPLOY</contextType>
+          <contextType>SOURCE_RECEIVER</contextType>
+          <contextType>GLOBAL_UNDEPLOY</contextType>
+          <contextType>DESTINATION_FILTER_TRANSFORMER</contextType>
+          <contextType>GLOBAL_DEPLOY</contextType>
+          <contextType>CHANNEL_BATCH</contextType>
+          <contextType>DESTINATION_DISPATCHER</contextType>
+        </delegate>
+      </contextSet>
+      <code>// modify function_name and parameters as you wish.
+// one function per template is recommended. i.e.) create a new code template for each new function.
+function resetProcessedErrored() {
+
+var dbConn = DatabaseConnectionFactory.createDatabaseConnection(&apos;com.mysql.jdbc.Driver&apos;, globalMap.get(&quot;ODK_DATABASE_URL&quot;), globalMap.get(&quot;ODK_DATABASE_USER&quot;), globalMap.get(&quot;ODK_DATABASE_PASSWORD&quot;));
+  
+dbConn.executeUpdate(&quot;update VISIT_REGISTRATION_CORE set PROCESSED_BY_MIRTH=0 where OPENHDS_VISIT_ID IN (select distinct OPENHDS_VISIT_ID from PREGNANCY_OBSERVATION_CORE where PROCESSED_BY_MIRTH =0)&quot;);
+dbConn.executeUpdate(&quot;update VISIT_REGISTRATION_CORE set PROCESSED_BY_MIRTH=0 where OPENHDS_VISIT_ID IN (select distinct OPENHDS_VISIT_ID from PREGNANCY_OUTCOME_CORE where PROCESSED_BY_MIRTH =0)&quot;);
+dbConn.executeUpdate(&quot;update VISIT_REGISTRATION_CORE set PROCESSED_BY_MIRTH=0 where OPENHDS_VISIT_ID IN (select distinct OPENHDS_VISIT_ID from IN_MIGRATION_CORE where PROCESSED_BY_MIRTH =0)&quot;);
+dbConn.executeUpdate(&quot;update VISIT_REGISTRATION_CORE set PROCESSED_BY_MIRTH=0 where OPENHDS_VISIT_ID IN (select distinct OPENHDS_VISIT_ID from DEATH_REGISTRATION_CORE where PROCESSED_BY_MIRTH =0)&quot;);
+dbConn.executeUpdate(&quot;update VISIT_REGISTRATION_CORE set PROCESSED_BY_MIRTH=0 where OPENHDS_VISIT_ID IN (select distinct OPENHDS_VISIT_ID from OUT_MIGRATION_REGISTRATION_CORE where PROCESSED_BY_MIRTH =0)&quot;);
+dbConn.executeUpdate(&quot;update VISIT_REGISTRATION_CORE set PROCESSED_BY_MIRTH=0 where OPENHDS_LOCATION_ID IN (select OPENHDS_LOCATION_ID from LOCATION_REGISTRATION_CORE where PROCESSED_BY_MIRTH =0)&quot;);  
+dbConn.close();  
+
+}</code>
+    </codeTemplate>
+    <codeTemplate version="3.3.1">
+      <id>00523e00-7a86-40fc-b07a-dd85cb372261</id>
+      <name>Result Set to Forms List</name>
+      <revision>1</revision>
+      <lastModified>
+        <time>1450105179877</time>
+        <timezone>Europe/Zurich</timezone>
+      </lastModified>
+      <type>FUNCTION</type>
+      <contextSet>
+        <delegate>
+          <contextType>CHANNEL_PREPROCESSOR</contextType>
+          <contextType>GLOBAL_POSTPROCESSOR</contextType>
+          <contextType>SOURCE_FILTER_TRANSFORMER</contextType>
+          <contextType>CHANNEL_ATTACHMENT</contextType>
+          <contextType>DESTINATION_RESPONSE_TRANSFORMER</contextType>
+          <contextType>CHANNEL_POSTPROCESSOR</contextType>
+          <contextType>CHANNEL_DEPLOY</contextType>
+          <contextType>GLOBAL_PREPROCESSOR</contextType>
+          <contextType>CHANNEL_UNDEPLOY</contextType>
+          <contextType>SOURCE_RECEIVER</contextType>
+          <contextType>GLOBAL_UNDEPLOY</contextType>
+          <contextType>DESTINATION_FILTER_TRANSFORMER</contextType>
+          <contextType>GLOBAL_DEPLOY</contextType>
+          <contextType>CHANNEL_BATCH</contextType>
+          <contextType>DESTINATION_DISPATCHER</contextType>
+        </delegate>
+      </contextSet>
+      <code>/**
+	Transforms a ResultSet to a List of XML forms representing as strings
+*/
+function resultsToForms(results, xmlElement) {
+  var forms = new java.util.ArrayList();
+  while(results.next()) {
+    var xml = resultSetToXml(results, xmlElement)
+    forms.add(xml.toString());
+  }
+ 
+  return forms;
+}</code>
+    </codeTemplate>
+    <codeTemplate version="3.3.1">
+      <id>6758f0cc-1618-4c7a-b3fe-3d1ae4b40246</id>
+      <name>Result Set to XML</name>
+      <revision>1</revision>
+      <lastModified>
+        <time>1450105180120</time>
+        <timezone>Europe/Zurich</timezone>
+      </lastModified>
+      <type>FUNCTION</type>
+      <contextSet>
+        <delegate>
+          <contextType>CHANNEL_PREPROCESSOR</contextType>
+          <contextType>GLOBAL_POSTPROCESSOR</contextType>
+          <contextType>SOURCE_FILTER_TRANSFORMER</contextType>
+          <contextType>CHANNEL_ATTACHMENT</contextType>
+          <contextType>DESTINATION_RESPONSE_TRANSFORMER</contextType>
+          <contextType>CHANNEL_POSTPROCESSOR</contextType>
+          <contextType>CHANNEL_DEPLOY</contextType>
+          <contextType>GLOBAL_PREPROCESSOR</contextType>
+          <contextType>CHANNEL_UNDEPLOY</contextType>
+          <contextType>SOURCE_RECEIVER</contextType>
+          <contextType>GLOBAL_UNDEPLOY</contextType>
+          <contextType>DESTINATION_FILTER_TRANSFORMER</contextType>
+          <contextType>GLOBAL_DEPLOY</contextType>
+          <contextType>CHANNEL_BATCH</contextType>
+          <contextType>DESTINATION_DISPATCHER</contextType>
+        </delegate>
+      </contextSet>
+      <code>/**
+	Converts a java.sql.ResultSet to an XML representation. The XML will have elements named after the
+	column names, and the values of those XML elements will be the column values
+*/
+// rs - the ResultSet instance
+// xmlElement - a string containing the document level xml element to use for the XML document
+function resultSetToXml(rs, xmlElement) {
+  var rsmd = rs.getMetaData();
+  var result = new XML(xmlElement);
+
+  for (var i = 1; i &lt;= rsmd.getColumnCount(); i++)  {
+	var value = rs.getString(i);
+
+    if (value === &quot;null&quot;) {
+      value = null;
+    }
+
+    result[rsmd.getColumnName(i).toLowerCase()] = value;
+  }
+
+  return result;
+}</code>
+    </codeTemplate>
+    <codeTemplate version="3.3.1">
+      <id>609da872-981f-472d-9fef-fe6d61f031c7</id>
+      <name>Retrieve Baseline Form</name>
+      <revision>1</revision>
+      <lastModified>
+        <time>1450105180047</time>
+        <timezone>Europe/Zurich</timezone>
+      </lastModified>
+      <type>FUNCTION</type>
+      <contextSet>
+        <delegate>
+          <contextType>CHANNEL_PREPROCESSOR</contextType>
+          <contextType>GLOBAL_POSTPROCESSOR</contextType>
+          <contextType>SOURCE_FILTER_TRANSFORMER</contextType>
+          <contextType>CHANNEL_ATTACHMENT</contextType>
+          <contextType>DESTINATION_RESPONSE_TRANSFORMER</contextType>
+          <contextType>CHANNEL_POSTPROCESSOR</contextType>
+          <contextType>CHANNEL_DEPLOY</contextType>
+          <contextType>GLOBAL_PREPROCESSOR</contextType>
+          <contextType>CHANNEL_UNDEPLOY</contextType>
+          <contextType>SOURCE_RECEIVER</contextType>
+          <contextType>GLOBAL_UNDEPLOY</contextType>
+          <contextType>DESTINATION_FILTER_TRANSFORMER</contextType>
+          <contextType>GLOBAL_DEPLOY</contextType>
+          <contextType>CHANNEL_BATCH</contextType>
+          <contextType>DESTINATION_DISPATCHER</contextType>
+        </delegate>
+      </contextSet>
+      <code>function addBaseline(visitId, dbConn) {
+  var results = dbConn.executeCachedQuery(&quot;SELECT _URI, INDIVIDUAL_INFO_DATE_OF_BIRTH, DATE_OF_MIGRATION, INDIVIDUAL_INFO_FIRST_NAME, INDIVIDUAL_INFO_MOTHER_ID, INDIVIDUAL_INFO_INDIVIDUAL_ID, OPENHDS_VISIT_ID, INDIVIDUAL_INFO_GENDER, OPENHDS_LOCATION_ID, OPENHDS_FIELD_WORKER_ID, INDIVIDUAL_INFO_LAST_NAME, INDIVIDUAL_INFO_PARTIAL_DATE, INDIVIDUAL_INFO_FATHER_ID, INDIVIDUAL_INFO_MIDDLE_NAME FROM &quot; + globalMap.get(&quot;BASELINE_TABLE&quot;) + &quot; WHERE OPENHDS_VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND openhds_migration_type = &apos;BASELINE&apos; AND processed_by_mirth=0 order by INDIVIDUAL_INFO_DATE_OF_BIRTH ASC&quot;);
+  var baselineForms = resultsToForms(results, &quot;&lt;baseline event=&apos;baseline&apos; table-name=&apos;&quot; + globalMap.get(&quot;BASELINE_TABLE&quot;) + &quot;&apos;/&gt;&quot;);
+  return baselineForms;
+}</code>
+    </codeTemplate>
+    <codeTemplate version="3.3.1">
+      <id>18f12a33-d47b-45c3-af56-fcb260ecbb67</id>
+      <name>Retrieve Change of HoH</name>
+      <revision>27</revision>
+      <lastModified>
+        <time>1457714061809</time>
+        <timezone>Europe/Zurich</timezone>
+      </lastModified>
+      <type>FUNCTION</type>
+      <contextSet>
+        <delegate>
+          <contextType>SOURCE_RECEIVER</contextType>
+          <contextType>SOURCE_FILTER_TRANSFORMER</contextType>
+          <contextType>DESTINATION_FILTER_TRANSFORMER</contextType>
+          <contextType>DESTINATION_RESPONSE_TRANSFORMER</contextType>
+          <contextType>DESTINATION_DISPATCHER</contextType>
+        </delegate>
+      </contextSet>
+      <code>/**
+	changeHoH(visitId, dbConn)
+
+	@param {String} arg1 - arg1 description
+	@return {String} return description
+*/
+function changeHoH(visitId, dbConn) {
+	var changeHoHForm = new java.util.ArrayList();
+	var results = dbConn.executeCachedQuery(
+			&quot;SELECT _URI, OPENHDS_VISIT_ID, OPENHDS_FIELD_WORKER_ID, OPENHDS_NEW_HOH_ID, OPENHDS_INDIVIDUAL_ID, &quot;
+			+ &quot;OPENHDS_HOUSEHOLD_ID, DATE &quot; 
+			+ &quot;FROM &quot; + globalMap.get(&quot;CHANGE_HOH_TABLE&quot;) 
+			+ &quot; WHERE OPENHDS_VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND (processed_by_mirth is null OR processed_by_mirth = 0)&quot;);
+
+	while(results.next()) {
+		var changeHoH = resultSetToXml(results, &quot;&lt;changeHoH event=&apos;change-hoh&apos; table-name=&apos;&quot; + globalMap.get(&quot;CHANGE_HOH_TABLE&quot;) + &quot;&apos; /&gt;&quot;);
+		var relations = dbConn.executeCachedQuery(
+				&quot;SELECT MEMBER_NAME, RELATIONSHIP_TO_GROUP_HEAD, EXT_ID, SOCIAL_GROUP_ID &quot; 
+				+ &quot;FROM &quot; + globalMap.get(&quot;CHANGE_HOH_RELATIONS&quot;) 
+				+ &quot; WHERE _PARENT_AURI = &apos;&quot; + changeHoH[&quot;_uri&quot;].toString() + &quot;&apos;&quot;);
+		while(relations.next()){
+			var relation = resultSetToXml(relations, &quot;&lt;relation /&gt;&quot;);
+			changeHoH.appendChild(relation);
+		}
+		changeHoHForm.add(changeHoH.toString());
+	}
+	return changeHoHForm;
+}</code>
+    </codeTemplate>
+    <codeTemplate version="3.3.1">
+      <id>f13b33f5-99ae-45c3-9d6e-b5cfad640b39</id>
+      <name>Retrieve Death Forms</name>
+      <revision>1</revision>
+      <lastModified>
+        <time>1450105180319</time>
+        <timezone>Europe/Zurich</timezone>
+      </lastModified>
+      <type>FUNCTION</type>
+      <contextSet>
+        <delegate>
+          <contextType>CHANNEL_PREPROCESSOR</contextType>
+          <contextType>GLOBAL_POSTPROCESSOR</contextType>
+          <contextType>SOURCE_FILTER_TRANSFORMER</contextType>
+          <contextType>CHANNEL_ATTACHMENT</contextType>
+          <contextType>DESTINATION_RESPONSE_TRANSFORMER</contextType>
+          <contextType>CHANNEL_POSTPROCESSOR</contextType>
+          <contextType>CHANNEL_DEPLOY</contextType>
+          <contextType>GLOBAL_PREPROCESSOR</contextType>
+          <contextType>CHANNEL_UNDEPLOY</contextType>
+          <contextType>SOURCE_RECEIVER</contextType>
+          <contextType>GLOBAL_UNDEPLOY</contextType>
+          <contextType>DESTINATION_FILTER_TRANSFORMER</contextType>
+          <contextType>GLOBAL_DEPLOY</contextType>
+          <contextType>CHANNEL_BATCH</contextType>
+          <contextType>DESTINATION_DISPATCHER</contextType>
+        </delegate>
+      </contextSet>
+      <code>/**
+	Retrieve Death Forms
+*/
+function addDeaths(visitId, dbConn) {
+  var results = dbConn.executeCachedQuery(&quot;SELECT _URI, OPENHDS_VISIT_ID, CAUSE_OF_DEATH, OPENHDS_FIELD_WORKER_ID, DATE_OF_DEATH, PLACE_OF_DEATH, OPENHDS_INDIVIDUAL_ID FROM &quot; + globalMap.get(&quot;DEATH_TABLE&quot;) + &quot; WHERE OPENHDS_VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND processed_by_mirth =0&quot;);
+  var deathForms = resultsToForms(results, &quot;&lt;death event=&apos;death&apos; table-name=&apos;&quot; + globalMap.get(&quot;DEATH_TABLE&quot;) + &quot;&apos;/&gt;&quot;);
+  return deathForms;
+}</code>
+    </codeTemplate>
+    <codeTemplate version="3.3.1">
+      <id>2201f0fc-f3bd-4058-a83d-0df9359ee211</id>
+      <name>Retrieve Death of HoH</name>
+      <revision>3</revision>
+      <lastModified>
+        <time>1457946834574</time>
+        <timezone>Europe/Zurich</timezone>
+      </lastModified>
+      <type>FUNCTION</type>
+      <contextSet>
+        <delegate>
+          <contextType>CHANNEL_PREPROCESSOR</contextType>
+          <contextType>GLOBAL_POSTPROCESSOR</contextType>
+          <contextType>SOURCE_FILTER_TRANSFORMER</contextType>
+          <contextType>CHANNEL_ATTACHMENT</contextType>
+          <contextType>DESTINATION_RESPONSE_TRANSFORMER</contextType>
+          <contextType>CHANNEL_POSTPROCESSOR</contextType>
+          <contextType>CHANNEL_DEPLOY</contextType>
+          <contextType>GLOBAL_PREPROCESSOR</contextType>
+          <contextType>CHANNEL_UNDEPLOY</contextType>
+          <contextType>SOURCE_RECEIVER</contextType>
+          <contextType>GLOBAL_UNDEPLOY</contextType>
+          <contextType>DESTINATION_FILTER_TRANSFORMER</contextType>
+          <contextType>GLOBAL_DEPLOY</contextType>
+          <contextType>CHANNEL_BATCH</contextType>
+          <contextType>DESTINATION_DISPATCHER</contextType>
+        </delegate>
+      </contextSet>
+      <code>/**
+	Retrieve the Death of Head of Households
+*/
+function addHoHDeaths(visitId, dbConn) {
+	var deathToHoHForm = new java.util.ArrayList();
+	var results = dbConn.executeCachedQuery(&quot;SELECT _URI, OPENHDS_VISIT_ID, OPENHDS_FIELD_WORKER_ID, OPENHDS_NEW_HOH_ID, OPENHDS_INDIVIDUAL_ID, OPENHDS_HOUSEHOLD_ID, PLACE_OF_DEATH, DATE, CAUSE_OF_DEATH FROM &quot; + globalMap.get(&quot;DEATH_TOHOH_TABLE&quot;) + &quot; WHERE OPENHDS_VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND processed_by_mirth = 0&quot;);
+	while(results.next()) {
+    		var deathHoh = resultSetToXml(results, &quot;&lt;deathHoH event=&apos;deathofhousehold&apos; table-name=&apos;&quot; + globalMap.get(&quot;DEATH_TOHOH_TABLE&quot;) + &quot;&apos; /&gt;&quot;);
+	    	var relations = dbConn.executeCachedQuery(&quot;SELECT MEMBER_NAME, RELATIONSHIP_TO_GROUP_HEAD, EXT_ID, SOCIAL_GROUP_ID FROM &quot; + globalMap.get(&quot;DEATH_HOH_RELATIONS&quot;) + &quot; WHERE _PARENT_AURI = &apos;&quot; + deathHoh[&quot;_uri&quot;].toString() + &quot;&apos;&quot;);
+    	
+		while(relations.next()) {
+      		var relation = resultSetToXml(relations, &quot;&lt;relation /&gt;&quot;);
+		    deathHoh.appendChild(relation);
+    		}
+	    	deathToHoHForm.add(deathHoh.toString());
+	}
+	return deathToHoHForm;
+}</code>
+    </codeTemplate>
+    <codeTemplate version="3.3.1">
+      <id>6e3b6567-ac0e-477f-91dc-d99979b47004</id>
+      <name>Retrieve External In Migration Forms</name>
+      <revision>3</revision>
+      <lastModified>
+        <time>1457947141129</time>
+        <timezone>Europe/Zurich</timezone>
+      </lastModified>
+      <type>FUNCTION</type>
+      <contextSet>
+        <delegate>
+          <contextType>CHANNEL_PREPROCESSOR</contextType>
+          <contextType>GLOBAL_POSTPROCESSOR</contextType>
+          <contextType>SOURCE_FILTER_TRANSFORMER</contextType>
+          <contextType>CHANNEL_ATTACHMENT</contextType>
+          <contextType>DESTINATION_RESPONSE_TRANSFORMER</contextType>
+          <contextType>CHANNEL_POSTPROCESSOR</contextType>
+          <contextType>CHANNEL_DEPLOY</contextType>
+          <contextType>GLOBAL_PREPROCESSOR</contextType>
+          <contextType>CHANNEL_UNDEPLOY</contextType>
+          <contextType>SOURCE_RECEIVER</contextType>
+          <contextType>GLOBAL_UNDEPLOY</contextType>
+          <contextType>DESTINATION_FILTER_TRANSFORMER</contextType>
+          <contextType>GLOBAL_DEPLOY</contextType>
+          <contextType>CHANNEL_BATCH</contextType>
+          <contextType>DESTINATION_DISPATCHER</contextType>
+        </delegate>
+      </contextSet>
+      <code>/**
+	Retrieve External In Migration Forms
+*/
+function addExternalInmigrations(visitId, dbConn) {
+//  var results = dbConn.executeCachedQuery(&quot;SELECT _URI, REASON, INDIVIDUAL_INFO_DATE_OF_BIRTH, DATE_OF_MIGRATION, INDIVIDUAL_INFO_FIRST_NAME, INDIVIDUAL_INFO_MOTHER_ID, INDIVIDUAL_INFO_INDIVIDUAL_ID, MOVEDFROM, OPENHDS_VISIT_ID, INDIVIDUAL_INFO_GENDER, OPENHDS_LOCATION_ID, OPENHDS_FIELD_WORKER_ID, INDIVIDUAL_INFO_LAST_NAME, INDIVIDUAL_INFO_PARTIAL_DATE, INDIVIDUAL_INFO_FATHER_ID, INDIVIDUAL_INFO_MIDDLE_NAME FROM &quot; + globalMap.get(&quot;IN_MIGRATION_TABLE&quot;) + &quot; WHERE OPENHDS_VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND openhds_migration_type = &apos;EXTERNAL_INMIGRATION&apos; AND processed_by_mirth=0 order by INDIVIDUAL_INFO_DATE_OF_BIRTH ASC&quot;);
+  //var results = dbConn.executeCachedQuery(&quot;SELECT _URI, REASON, INDIVIDUAL_INFO_DATE_OF_BIRTH, DATE_OF_MIGRATION, INDIVIDUAL_INFO_FIRST_NAME, INDIVIDUAL_INFO_MOTHER_ID, INDIVIDUAL_INFO_INDIVIDUAL_ID, OPENHDS_VISIT_ID, INDIVIDUAL_INFO_GENDER, OPENHDS_LOCATION_ID, OPENHDS_FIELD_WORKER_ID, INDIVIDUAL_INFO_LAST_NAME, INDIVIDUAL_INFO_PARTIAL_DATE, INDIVIDUAL_INFO_FATHER_ID, INDIVIDUAL_INFO_MIDDLE_NAME_IMM FROM &quot; + globalMap.get(&quot;IN_MIGRATION_TABLE&quot;) + &quot; WHERE OPENHDS_VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND openhds_migration_type = &apos;EXTERNAL_INMIGRATION&apos; AND processed_by_mirth=0 order by INDIVIDUAL_INFO_DATE_OF_BIRTH ASC&quot;);
+  var results = dbConn.executeCachedQuery(&quot;SELECT _URI, REASON, INDIVIDUAL_INFO_DATE_OF_BIRTH, DATE_OF_MIGRATION, INDIVIDUAL_INFO_FIRST_NAME, INDIVIDUAL_INFO_MOTHER_ID, INDIVIDUAL_INFO_INDIVIDUAL_ID, OPENHDS_VISIT_ID, INDIVIDUAL_INFO_GENDER, OPENHDS_LOCATION_ID, OPENHDS_FIELD_WORKER_ID, INDIVIDUAL_INFO_LAST_NAME, INDIVIDUAL_INFO_PARTIAL_DATE, INDIVIDUAL_INFO_FATHER_ID, INDIVIDUAL_INFO_RELIGION FROM &quot; + globalMap.get(&quot;IN_MIGRATION_TABLE&quot;) + &quot; WHERE OPENHDS_VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND openhds_migration_type = &apos;EXTERNAL_INMIGRATION&apos; AND processed_by_mirth=0 order by INDIVIDUAL_INFO_DATE_OF_BIRTH ASC&quot;); // No middle name
+  var inMigrationForms = resultsToForms(results, &quot;&lt;inmigration event=&apos;external-inmigration&apos; table-name=&apos;&quot; + globalMap.get(&quot;IN_MIGRATION_TABLE&quot;) + &quot;&apos;/&gt;&quot;);
+  return inMigrationForms;
+}</code>
+    </codeTemplate>
+    <codeTemplate version="3.3.1">
+      <id>c9ab01f4-38e6-471d-a294-c615cf2f63c7</id>
+      <name>Retrieve Internal In Migration Forms</name>
+      <revision>1</revision>
+      <lastModified>
+        <time>1450105180286</time>
+        <timezone>Europe/Zurich</timezone>
+      </lastModified>
+      <type>FUNCTION</type>
+      <contextSet>
+        <delegate>
+          <contextType>CHANNEL_PREPROCESSOR</contextType>
+          <contextType>GLOBAL_POSTPROCESSOR</contextType>
+          <contextType>SOURCE_FILTER_TRANSFORMER</contextType>
+          <contextType>CHANNEL_ATTACHMENT</contextType>
+          <contextType>DESTINATION_RESPONSE_TRANSFORMER</contextType>
+          <contextType>CHANNEL_POSTPROCESSOR</contextType>
+          <contextType>CHANNEL_DEPLOY</contextType>
+          <contextType>GLOBAL_PREPROCESSOR</contextType>
+          <contextType>CHANNEL_UNDEPLOY</contextType>
+          <contextType>SOURCE_RECEIVER</contextType>
+          <contextType>GLOBAL_UNDEPLOY</contextType>
+          <contextType>DESTINATION_FILTER_TRANSFORMER</contextType>
+          <contextType>GLOBAL_DEPLOY</contextType>
+          <contextType>CHANNEL_BATCH</contextType>
+          <contextType>DESTINATION_DISPATCHER</contextType>
+        </delegate>
+      </contextSet>
+      <code>/**
+	Retrieve Internal In Migration Forms
+*/
+function addInternalInmigrations(visitId, dbConn) {
+  var results = dbConn.executeCachedQuery(&quot;SELECT _URI, REASON, DATE_OF_MIGRATION, INDIVIDUAL_INFO_INDIVIDUAL_ID, ORIGIN, OPENHDS_VISIT_ID, OPENHDS_LOCATION_ID, OPENHDS_FIELD_WORKER_ID FROM &quot; + globalMap.get(&quot;IN_MIGRATION_TABLE&quot;) + &quot; WHERE OPENHDS_VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND openhds_migration_type = &apos;INTERNAL_INMIGRATION&apos; AND processed_by_mirth=0&quot;);
+  var inMigrationForms = resultsToForms(results, &quot;&lt;inmigration event=&apos;internal-inmigration&apos; table-name=&apos;&quot; + globalMap.get(&quot;IN_MIGRATION_TABLE&quot;) + &quot;&apos;/&gt;&quot;);
+  return inMigrationForms;
+}</code>
+    </codeTemplate>
+    <codeTemplate version="3.3.1">
+      <id>0e093113-2971-4efa-bdbc-6b6b7350a1a3</id>
+      <name>Retrieve Out Migration Forms</name>
+      <revision>1</revision>
+      <lastModified>
+        <time>1450105179911</time>
+        <timezone>Europe/Zurich</timezone>
+      </lastModified>
+      <type>FUNCTION</type>
+      <contextSet>
+        <delegate>
+          <contextType>CHANNEL_PREPROCESSOR</contextType>
+          <contextType>GLOBAL_POSTPROCESSOR</contextType>
+          <contextType>SOURCE_FILTER_TRANSFORMER</contextType>
+          <contextType>CHANNEL_ATTACHMENT</contextType>
+          <contextType>DESTINATION_RESPONSE_TRANSFORMER</contextType>
+          <contextType>CHANNEL_POSTPROCESSOR</contextType>
+          <contextType>CHANNEL_DEPLOY</contextType>
+          <contextType>GLOBAL_PREPROCESSOR</contextType>
+          <contextType>CHANNEL_UNDEPLOY</contextType>
+          <contextType>SOURCE_RECEIVER</contextType>
+          <contextType>GLOBAL_UNDEPLOY</contextType>
+          <contextType>DESTINATION_FILTER_TRANSFORMER</contextType>
+          <contextType>GLOBAL_DEPLOY</contextType>
+          <contextType>CHANNEL_BATCH</contextType>
+          <contextType>DESTINATION_DISPATCHER</contextType>
+        </delegate>
+      </contextSet>
+      <code>/**
+	Reads Out Migrations from the database
+*/
+function addOutMigrations(visitId, dbConn) {
+  var results = dbConn.executeCachedQuery(&quot;SELECT _URI, OPENHDS_VISIT_ID, NAME_OF_DESTINATION, OPENHDS_FIELD_WORKER_ID, DATE_OF_MIGRATION, REASON_FOR_OUT_MIGRATION, OPENHDS_INDIVIDUAL_ID FROM &quot; + globalMap.get(&quot;OUT_MIGRATION_TABLE&quot;) + &quot; WHERE OPENHDS_VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND processed_by_mirth =0&quot;);
+  var forms = resultsToForms(results, &quot;&lt;outmigration event=&apos;outmigration&apos; table-name=&apos;&quot; + globalMap.get(&quot;OUT_MIGRATION_TABLE&quot;) + &quot;&apos; /&gt;&quot;);
+  return forms;
+}</code>
+    </codeTemplate>
+    <codeTemplate version="3.3.1">
+      <id>286839da-5111-4bf4-b0db-a3a451b620a9</id>
+      <name>Retrieve OutMigration from IM</name>
+      <revision>1</revision>
+      <lastModified>
+        <time>1450105179946</time>
+        <timezone>Europe/Zurich</timezone>
+      </lastModified>
+      <type>FUNCTION</type>
+      <contextSet>
+        <delegate>
+          <contextType>CHANNEL_PREPROCESSOR</contextType>
+          <contextType>GLOBAL_POSTPROCESSOR</contextType>
+          <contextType>SOURCE_FILTER_TRANSFORMER</contextType>
+          <contextType>CHANNEL_ATTACHMENT</contextType>
+          <contextType>DESTINATION_RESPONSE_TRANSFORMER</contextType>
+          <contextType>CHANNEL_POSTPROCESSOR</contextType>
+          <contextType>CHANNEL_DEPLOY</contextType>
+          <contextType>GLOBAL_PREPROCESSOR</contextType>
+          <contextType>CHANNEL_UNDEPLOY</contextType>
+          <contextType>SOURCE_RECEIVER</contextType>
+          <contextType>GLOBAL_UNDEPLOY</contextType>
+          <contextType>DESTINATION_FILTER_TRANSFORMER</contextType>
+          <contextType>GLOBAL_DEPLOY</contextType>
+          <contextType>CHANNEL_BATCH</contextType>
+          <contextType>DESTINATION_DISPATCHER</contextType>
+        </delegate>
+      </contextSet>
+      <code>function addOutMigrationsIM(visitId, dbConn) {
+
+var results = dbConn.executeCachedQuery(&quot;SELECT _URI, OPENHDS_VISIT_ID, OPENHDS_LOCATION_ID NAME_OF_DESTINATION, OPENHDS_FIELD_WORKER_ID, DATE_SUB(DATE_OF_MIGRATION, INTERVAL 1 DAY) DATE_OF_MIGRATION, REASON as REASON_FOR_OUT_MIGRATION, INDIVIDUAL_INFO_INDIVIDUAL_ID as INDIVIDUAL_ID FROM &quot; + globalMap.get(&quot;IN_MIGRATION_TABLE&quot;) + &quot; WHERE OPENHDS_VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND openhds_migration_type = &apos;INTERNAL_INMIGRATION&apos; AND processed_by_mirth =0 and INDIVIDUAL_INFO_INDIVIDUAL_ID not in (select OPENHDS_INDIVIDUAL_ID FROM &quot; + globalMap.get(&quot;OUT_MIGRATION_TABLE&quot;)+&quot;)&quot;);  
+
+var forms = resultsToForms(results, &quot;&lt;outmigration event=&apos;outmigrationIM&apos; table-name=&apos;OMGIM&apos; /&gt;&quot;);
+  return forms;
+}</code>
+    </codeTemplate>
+    <codeTemplate version="3.3.1">
+      <id>63d7ca76-9a59-450e-87dc-e48fbcf87e42</id>
+      <name>Retrieve Pregnancy Observation Forms</name>
+      <revision>1</revision>
+      <lastModified>
+        <time>1450105180113</time>
+        <timezone>Europe/Zurich</timezone>
+      </lastModified>
+      <type>FUNCTION</type>
+      <contextSet>
+        <delegate>
+          <contextType>CHANNEL_PREPROCESSOR</contextType>
+          <contextType>GLOBAL_POSTPROCESSOR</contextType>
+          <contextType>SOURCE_FILTER_TRANSFORMER</contextType>
+          <contextType>CHANNEL_ATTACHMENT</contextType>
+          <contextType>DESTINATION_RESPONSE_TRANSFORMER</contextType>
+          <contextType>CHANNEL_POSTPROCESSOR</contextType>
+          <contextType>CHANNEL_DEPLOY</contextType>
+          <contextType>GLOBAL_PREPROCESSOR</contextType>
+          <contextType>CHANNEL_UNDEPLOY</contextType>
+          <contextType>SOURCE_RECEIVER</contextType>
+          <contextType>GLOBAL_UNDEPLOY</contextType>
+          <contextType>DESTINATION_FILTER_TRANSFORMER</contextType>
+          <contextType>GLOBAL_DEPLOY</contextType>
+          <contextType>CHANNEL_BATCH</contextType>
+          <contextType>DESTINATION_DISPATCHER</contextType>
+        </delegate>
+      </contextSet>
+      <code>/**
+	Retrieve Pregnancy Observations
+*/
+function addPregnancyObs(visitId, dbConn) {
+  var results = dbConn.executeCachedQuery(&quot;SELECT _URI, OPENHDS_VISIT_ID, EXPECTED_DELIVERY_DATE, OPENHDS_FIELD_WORKER_ID, OPENHDS_RECORDED_DATE, OPENHDS_INDIVIDUAL_ID FROM &quot; + globalMap.get(&quot;PREGNANCY_OBS_TABLE&quot;) + &quot; WHERE OPENHDS_VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND processed_by_mirth =0&quot;);
+  var pregnancyObsForms = resultsToForms(results, &quot;&lt;pregnancyobs event=&apos;pregnancyobs&apos; table-name=&apos;&quot; + globalMap.get(&quot;PREGNANCY_OBS_TABLE&quot;) + &quot;&apos;/&gt;&quot;);
+  return pregnancyObsForms;
+}</code>
+    </codeTemplate>
+    <codeTemplate version="3.3.1">
+      <id>4e1616a1-7ed4-4f52-b32a-e1ea48b2eaa2</id>
+      <name>Retrieve Pregnancy Outcome Forms</name>
+      <revision>1</revision>
+      <lastModified>
+        <time>1450105180002</time>
+        <timezone>Europe/Zurich</timezone>
+      </lastModified>
+      <type>FUNCTION</type>
+      <contextSet>
+        <delegate>
+          <contextType>CHANNEL_PREPROCESSOR</contextType>
+          <contextType>GLOBAL_POSTPROCESSOR</contextType>
+          <contextType>SOURCE_FILTER_TRANSFORMER</contextType>
+          <contextType>CHANNEL_ATTACHMENT</contextType>
+          <contextType>DESTINATION_RESPONSE_TRANSFORMER</contextType>
+          <contextType>CHANNEL_POSTPROCESSOR</contextType>
+          <contextType>CHANNEL_DEPLOY</contextType>
+          <contextType>GLOBAL_PREPROCESSOR</contextType>
+          <contextType>CHANNEL_UNDEPLOY</contextType>
+          <contextType>SOURCE_RECEIVER</contextType>
+          <contextType>GLOBAL_UNDEPLOY</contextType>
+          <contextType>DESTINATION_FILTER_TRANSFORMER</contextType>
+          <contextType>GLOBAL_DEPLOY</contextType>
+          <contextType>CHANNEL_BATCH</contextType>
+          <contextType>DESTINATION_DISPATCHER</contextType>
+        </delegate>
+      </contextSet>
+      <code>/**
+	Retrieve Pregnancy Outcome Forms
+*/
+// this is the most complicated function for retrieving forms
+// the following assumptions were made when writing this function:
+// In Migrations will be processed before pregnancy outcomes. 
+// This ensures if a women has in migrated, the individual will be created in the system before the pregnancy outcome
+// Also, it&apos;s possible this pregnancy outcome depends 
+function addPregnancyOutcomes(visitId, dbConn) {
+  var forms = new java.util.ArrayList();
+  var results = dbConn.executeCachedQuery(&quot;SELECT _URI, OPENHDS_VISIT_ID, OPENHDS_MOTHER_ID, PARTIAL_DATE, OPENHDS_FIELD_WORKER_ID, RECORDED_DATE, OPENHDS_FATHER_ID FROM &quot; + globalMap.get(&quot;PREGNANCY_OUTCOME_TABLE&quot;) + &quot; WHERE OPENHDS_VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND processed_by_mirth =0&quot;);
+  while(results.next()) {
+    var pregOut = resultSetToXml(results, &quot;&lt;pregnancyoutcome event=&apos;pregnancyoutcome&apos; table-name=&apos;&quot; + globalMap.get(&quot;PREGNANCY_OUTCOME_TABLE&quot;) + &quot;&apos; /&gt;&quot;);
+    // are there any outcomes for this pregnancy outcome?
+    var outcomes = dbConn.executeCachedQuery(&quot;SELECT OUTCOME_TYPE, FIRST_NAME, SOCIAL_GROUP_ID, GENDER, RELATIONSHIP_TO_GROUP_HEAD, CHILD_ID, LAST_NAME, MIDDLE_NAME FROM &quot; + globalMap.get(&quot;OUTCOMES_TABLE&quot;) + &quot; WHERE _PARENT_AURI = &apos;&quot; + pregOut[&quot;_uri&quot;].toString() + &quot;&apos;&quot;);
+    while(outcomes.next()) {
+      var outcome = resultSetToXml(outcomes, &quot;&lt;outcome /&gt;&quot;);
+      pregOut.appendChild(outcome);
+    }
+
+    forms.add(pregOut.toString());
+  }
+
+  return forms;
+}</code>
+    </codeTemplate>
+    <codeTemplate version="3.3.1">
+      <id>9fdec34b-f789-405b-b14e-a06cc1031d61</id>
+      <name>SEND::addDataElement</name>
+      <revision>1</revision>
+      <lastModified>
+        <time>1450105180211</time>
+        <timezone>Europe/Zurich</timezone>
+      </lastModified>
+      <type>FUNCTION</type>
+      <contextSet>
+        <delegate>
+          <contextType>CHANNEL_PREPROCESSOR</contextType>
+          <contextType>GLOBAL_POSTPROCESSOR</contextType>
+          <contextType>SOURCE_FILTER_TRANSFORMER</contextType>
+          <contextType>CHANNEL_ATTACHMENT</contextType>
+          <contextType>DESTINATION_RESPONSE_TRANSFORMER</contextType>
+          <contextType>CHANNEL_POSTPROCESSOR</contextType>
+          <contextType>CHANNEL_DEPLOY</contextType>
+          <contextType>GLOBAL_PREPROCESSOR</contextType>
+          <contextType>CHANNEL_UNDEPLOY</contextType>
+          <contextType>SOURCE_RECEIVER</contextType>
+          <contextType>GLOBAL_UNDEPLOY</contextType>
+          <contextType>DESTINATION_FILTER_TRANSFORMER</contextType>
+          <contextType>GLOBAL_DEPLOY</contextType>
+          <contextType>CHANNEL_BATCH</contextType>
+          <contextType>DESTINATION_DISPATCHER</contextType>
+        </delegate>
+      </contextSet>
+      <code>// modify function_name and parameters as you wish.
+// one function per template is recommended. i.e.) create a new code template for each new function.
+function addDataElement(parentElement, columnName, type, value) {
+	//logger.info(&quot;Adding &quot; + columnName + &quot; to &quot; + type);
+	var data = &lt;data type={type} columnName={columnName} value={value} /&gt;;
+	parentElement.children += data;
+}</code>
+    </codeTemplate>
+    <codeTemplate version="3.3.1">
+      <id>6db0f3e4-6a6b-4068-950f-1102ec741cb5</id>
+      <name>SEND::getDataFromElement</name>
+      <revision>1</revision>
+      <lastModified>
+        <time>1450105180137</time>
+        <timezone>Europe/Zurich</timezone>
+      </lastModified>
+      <type>FUNCTION</type>
+      <contextSet>
+        <delegate>
+          <contextType>CHANNEL_PREPROCESSOR</contextType>
+          <contextType>GLOBAL_POSTPROCESSOR</contextType>
+          <contextType>SOURCE_FILTER_TRANSFORMER</contextType>
+          <contextType>CHANNEL_ATTACHMENT</contextType>
+          <contextType>DESTINATION_RESPONSE_TRANSFORMER</contextType>
+          <contextType>CHANNEL_POSTPROCESSOR</contextType>
+          <contextType>CHANNEL_DEPLOY</contextType>
+          <contextType>GLOBAL_PREPROCESSOR</contextType>
+          <contextType>CHANNEL_UNDEPLOY</contextType>
+          <contextType>SOURCE_RECEIVER</contextType>
+          <contextType>GLOBAL_UNDEPLOY</contextType>
+          <contextType>DESTINATION_FILTER_TRANSFORMER</contextType>
+          <contextType>GLOBAL_DEPLOY</contextType>
+          <contextType>CHANNEL_BATCH</contextType>
+          <contextType>DESTINATION_DISPATCHER</contextType>
+        </delegate>
+      </contextSet>
+      <code>function getDataFromElement(submissionUri, coreTableName, uri, elementType, elementName, tableName, columnName, parentURI, parentElement, connection){
+	var sql;
+
+    //if(parentURI.indexOf(&quot;phantom&quot;) &gt; -1 &amp;&amp; !tableName.equalsIgnoreCase(coreTableName)){
+	if(!tableName.equalsIgnoreCase(coreTableName)){
+    	sql = &quot;SELECT &quot; + columnName + &quot; FROM &quot; + tableName + &quot; WHERE _TOP_LEVEL_AURI = &apos;&quot; + submissionUri + &quot;&apos;&quot; ;
+    }
+    else{
+    	sql = &quot;SELECT &quot; + columnName + &quot; FROM &quot; + tableName + &quot; WHERE _URI = &apos;&quot; + submissionUri + &quot;&apos;&quot;;
+    }
+	var stmt;
+	var rs;
+	try{
+		stmt = connection.createStatement();
+		rs = stmt.executeQuery(sql);
+
+		while(rs.next()) {
+			var dataEntry = rs.getString(columnName);
+		    var element = &lt;data columnTypeName={elementType} value={dataEntry} columnName={columnName} type={elementType} /&gt;;
+			parentElement.children += element;
+		}  
+	}
+	catch(e){
+	}	
+	finally{
+		if(rs != null)
+			rs.close();
+		if(stmt != null)
+			stmt.close();
+	}
+}</code>
+    </codeTemplate>
+    <codeTemplate version="3.3.1">
+      <id>b1ce4948-cb9f-4487-99d8-36dad94c4988</id>
+      <name>SEND::getDataFromGroup</name>
+      <revision>1</revision>
+      <lastModified>
+        <time>1450105180247</time>
+        <timezone>Europe/Zurich</timezone>
+      </lastModified>
+      <type>FUNCTION</type>
+      <contextSet>
+        <delegate>
+          <contextType>CHANNEL_PREPROCESSOR</contextType>
+          <contextType>GLOBAL_POSTPROCESSOR</contextType>
+          <contextType>SOURCE_FILTER_TRANSFORMER</contextType>
+          <contextType>CHANNEL_ATTACHMENT</contextType>
+          <contextType>DESTINATION_RESPONSE_TRANSFORMER</contextType>
+          <contextType>CHANNEL_POSTPROCESSOR</contextType>
+          <contextType>CHANNEL_DEPLOY</contextType>
+          <contextType>GLOBAL_PREPROCESSOR</contextType>
+          <contextType>CHANNEL_UNDEPLOY</contextType>
+          <contextType>SOURCE_RECEIVER</contextType>
+          <contextType>GLOBAL_UNDEPLOY</contextType>
+          <contextType>DESTINATION_FILTER_TRANSFORMER</contextType>
+          <contextType>GLOBAL_DEPLOY</contextType>
+          <contextType>CHANNEL_BATCH</contextType>
+          <contextType>DESTINATION_DISPATCHER</contextType>
+        </delegate>
+      </contextSet>
+      <code>/**
+	SEND::getDataFromGroup
+*/
+// modify function_name and parameters as you wish.
+// one function per template is recommended. i.e.) create a new code template for each new function.
+function getDataFromGroup(submissionUri, coreTableName, elementUri, elementType, elementName, tableName, columnName, parentURI, parentElement, conn) {
+	var sql = &quot;SELECT _URI, PERSIST_AS_TABLE_NAME, PERSIST_AS_COLUMN_NAME, ELEMENT_TYPE, PARENT_URI_FORM_DATA_MODEL, ELEMENT_NAME &quot;
+				+ &quot;FROM _form_data_model WHERE PARENT_URI_FORM_DATA_MODEL = &apos;&quot; + elementUri + &quot;&apos;&quot;;
+	var stmt;
+	var rs;
+	try{
+		stmt = conn.createStatement();
+		rs = stmt.executeQuery(sql);
+
+		var group = &lt;group name={elementName} tableName={tableName} type=&quot;group&quot; /&gt;;
+		var children = &lt;&gt;&lt;/&gt;;
+		group.children = children;
+
+		while(rs.next()) {
+			var _uri = rs.getString(&quot;_URI&quot;);
+		    var _tableName = rs.getString(&quot;PERSIST_AS_TABLE_NAME&quot;);
+		    var _elementType = rs.getString(&quot;ELEMENT_TYPE&quot;);
+		    var _parentURI = rs.getString(&quot;PARENT_URI_FORM_DATA_MODEL&quot;);
+		    var _elementName = rs.getString(&quot;ELEMENT_NAME&quot;);
+		    var _columnName = rs.getString(&quot;PERSIST_AS_COLUMN_NAME&quot;);
+		      
+		    handleElementsGetData(submissionUri, coreTableName, _uri, _elementType, _elementName, _tableName, _columnName, _parentURI, group, conn);
+			//logger.info(&quot;Found element: &quot; + _elementName + &quot; | groupXML: &quot; + group.toXMLString());
+		}  
+		parentElement.children += group;
+	}
+	catch(e){
+	}	
+	finally{
+		if(rs != null)
+			rs.close();
+		if(stmt != null)
+			stmt.close();
+	}
+}</code>
+    </codeTemplate>
+    <codeTemplate version="3.3.1">
+      <id>f63c98b6-17ed-4285-86a1-4274babaa69c</id>
+      <name>SEND::getDataFromPhantom</name>
+      <revision>1</revision>
+      <lastModified>
+        <time>1450105180332</time>
+        <timezone>Europe/Zurich</timezone>
+      </lastModified>
+      <type>FUNCTION</type>
+      <contextSet>
+        <delegate>
+          <contextType>CHANNEL_PREPROCESSOR</contextType>
+          <contextType>GLOBAL_POSTPROCESSOR</contextType>
+          <contextType>SOURCE_FILTER_TRANSFORMER</contextType>
+          <contextType>CHANNEL_ATTACHMENT</contextType>
+          <contextType>DESTINATION_RESPONSE_TRANSFORMER</contextType>
+          <contextType>CHANNEL_POSTPROCESSOR</contextType>
+          <contextType>CHANNEL_DEPLOY</contextType>
+          <contextType>GLOBAL_PREPROCESSOR</contextType>
+          <contextType>CHANNEL_UNDEPLOY</contextType>
+          <contextType>SOURCE_RECEIVER</contextType>
+          <contextType>GLOBAL_UNDEPLOY</contextType>
+          <contextType>DESTINATION_FILTER_TRANSFORMER</contextType>
+          <contextType>GLOBAL_DEPLOY</contextType>
+          <contextType>CHANNEL_BATCH</contextType>
+          <contextType>DESTINATION_DISPATCHER</contextType>
+        </delegate>
+      </contextSet>
+      <code>function getDataFromPhantom(submissionUri, coreTableName, elementUri, elementType, elementName, tableName, columnName, parentURI, parentElement, conn) {
+
+	//logger.info(&quot;Get elements for elementURI: &quot; + elementUri);
+
+	var sql = &quot;SELECT _URI, PERSIST_AS_TABLE_NAME, ELEMENT_TYPE, ELEMENT_NAME, PARENT_URI_FORM_DATA_MODEL, PERSIST_AS_COLUMN_NAME &quot; +
+		&quot;FROM _form_data_model WHERE PARENT_URI_FORM_DATA_MODEL = &apos;&quot; + elementUri + &quot;&apos;&quot;;
+	var stmt;
+	var rs;
+	try{
+		stmt = conn.createStatement();
+		rs = stmt.executeQuery(sql);
+		while(rs.next()) {
+			var _uri = rs.getString(&quot;_URI&quot;);
+		    var _tableName = rs.getString(&quot;PERSIST_AS_TABLE_NAME&quot;);
+		    var _elementType = rs.getString(&quot;ELEMENT_TYPE&quot;);
+		    var _parentURI = rs.getString(&quot;PARENT_URI_FORM_DATA_MODEL&quot;);
+		    var _elementName = rs.getString(&quot;ELEMENT_NAME&quot;);
+		    var _columnName = rs.getString(&quot;PERSIST_AS_COLUMN_NAME&quot;);  
+		      
+		    handleElementsGetData(submissionUri, coreTableName, _uri, _elementType, _elementName, _tableName, _columnName, _parentURI, parentElement, conn);
+			//logger.info(&quot;Found element: &quot; + _elementName + &quot; | groupXML: &quot; + group.toXMLString());
+			//logger.info(&quot;Phantom element of type: &quot; + _elementType);
+		}  
+		parentElement.children += group;
+	}
+	catch(e){
+	}	
+	finally{
+		if(rs != null)
+			rs.close();
+		if(stmt != null)
+			stmt.close();
+	}
+}</code>
+    </codeTemplate>
+    <codeTemplate version="3.3.1">
+      <id>48fbde5f-4e37-4c31-86be-9914d7c8fdc4</id>
+      <name>SEND::getDataFromSelectN</name>
+      <revision>1</revision>
+      <lastModified>
+        <time>1450105179994</time>
+        <timezone>Europe/Zurich</timezone>
+      </lastModified>
+      <type>FUNCTION</type>
+      <contextSet>
+        <delegate>
+          <contextType>CHANNEL_PREPROCESSOR</contextType>
+          <contextType>GLOBAL_POSTPROCESSOR</contextType>
+          <contextType>SOURCE_FILTER_TRANSFORMER</contextType>
+          <contextType>CHANNEL_ATTACHMENT</contextType>
+          <contextType>DESTINATION_RESPONSE_TRANSFORMER</contextType>
+          <contextType>CHANNEL_POSTPROCESSOR</contextType>
+          <contextType>CHANNEL_DEPLOY</contextType>
+          <contextType>GLOBAL_PREPROCESSOR</contextType>
+          <contextType>CHANNEL_UNDEPLOY</contextType>
+          <contextType>SOURCE_RECEIVER</contextType>
+          <contextType>GLOBAL_UNDEPLOY</contextType>
+          <contextType>DESTINATION_FILTER_TRANSFORMER</contextType>
+          <contextType>GLOBAL_DEPLOY</contextType>
+          <contextType>CHANNEL_BATCH</contextType>
+          <contextType>DESTINATION_DISPATCHER</contextType>
+        </delegate>
+      </contextSet>
+      <code>// modify function_name and parameters as you wish.
+// one function per template is recommended. i.e.) create a new code template for each new function.
+function getDataFromSelectN(submissionUri, coreTableName, uri, elementType, elementName, tableName, columnName, parentURI, parentElement, connection) {
+	var sql = &quot;SELECT &quot; + columnName + &quot; FROM &quot; + tableName + &quot; WHERE _PARENT_AURI = &apos;&quot; + parentURI + &quot;&apos;&quot;;
+	var stmt;
+	var rs;
+	try{
+		stmt = connection.createStatement();
+		rs = stmt.executeQuery(sql);
+
+		while(rs.next()) {
+			var dataEntry = rs.getString(&quot;value&quot;);
+		    var element = &lt;data columnTypeName={elementType} value={dataEntry} columnName={tableName} type={elementType} /&gt;; // Take tableName instead of columnName, since this is null
+			parentElement.children += element;
+		}  
+	}
+	catch(e){
+	}	
+	finally{
+		if(rs != null)
+			rs.close();
+		if(stmt != null)
+			stmt.close();
+	}
+}</code>
+    </codeTemplate>
+    <codeTemplate version="3.3.1">
+      <id>fe1e1e7b-aecd-428f-a99b-18ba35a0f018</id>
+      <name>SEND::getSubmissionCoreData</name>
+      <revision>1</revision>
+      <lastModified>
+        <time>1450105180351</time>
+        <timezone>Europe/Zurich</timezone>
+      </lastModified>
+      <type>FUNCTION</type>
+      <contextSet>
+        <delegate>
+          <contextType>CHANNEL_PREPROCESSOR</contextType>
+          <contextType>GLOBAL_POSTPROCESSOR</contextType>
+          <contextType>SOURCE_FILTER_TRANSFORMER</contextType>
+          <contextType>CHANNEL_ATTACHMENT</contextType>
+          <contextType>DESTINATION_RESPONSE_TRANSFORMER</contextType>
+          <contextType>CHANNEL_POSTPROCESSOR</contextType>
+          <contextType>CHANNEL_DEPLOY</contextType>
+          <contextType>GLOBAL_PREPROCESSOR</contextType>
+          <contextType>CHANNEL_UNDEPLOY</contextType>
+          <contextType>SOURCE_RECEIVER</contextType>
+          <contextType>GLOBAL_UNDEPLOY</contextType>
+          <contextType>DESTINATION_FILTER_TRANSFORMER</contextType>
+          <contextType>GLOBAL_DEPLOY</contextType>
+          <contextType>CHANNEL_BATCH</contextType>
+          <contextType>DESTINATION_DISPATCHER</contextType>
+        </delegate>
+      </contextSet>
+      <code>function getSubmissionCoreData(submissionUri, coreTableName, rootElement, connection) {
+	var sql = &quot;SELECT _URI, _CREATOR_URI_USER, _CREATION_DATE, _LAST_UPDATE_URI_USER, _LAST_UPDATE_DATE, _MODEL_VERSION, _UI_VERSION, _IS_COMPLETE, _SUBMISSION_DATE, _MARKED_AS_COMPLETE_DATE &quot;
+				+ &quot;FROM &quot; + coreTableName + &quot; WHERE _URI = &apos;&quot; + submissionUri + &quot;&apos;&quot;;
+	var stmt;
+	var rs;
+	try{
+		stmt = connection.createStatement();
+		rs = stmt.executeQuery(sql);
+
+		if(rs.next()) {
+			var _uri = rs.getString(&quot;_URI&quot;);
+		    var _creatorUriUser = rs.getString(&quot;_CREATOR_URI_USER&quot;);
+		    var _creationDate = rs.getString(&quot;_CREATION_DATE&quot;);
+		    var _lastUpdateUriUser = rs.getString(&quot;_LAST_UPDATE_URI_USER&quot;);
+		    var _lastUpdateDate = rs.getString(&quot;_LAST_UPDATE_DATE&quot;);
+		    var _modelVersion = rs.getString(&quot;_MODEL_VERSION&quot;);
+		    var _uiVersion = rs.getString(&quot;_UI_VERSION&quot;);
+		    var _isComplete = rs.getString(&quot;_IS_COMPLETE&quot;);
+		    var _submissionDate = rs.getString(&quot;_SUBMISSION_DATE&quot;);
+		    var _markedAsCompleteDate = rs.getString(&quot;_MARKED_AS_COMPLETE_DATE&quot;);
+
+			addDataElement(rootElement, &quot;_URI&quot;, &quot;VARCHAR&quot;, _uri);
+			addDataElement(rootElement, &quot;_CREATOR_URI_USER&quot;, &quot;VARCHAR&quot;, _creatorUriUser);
+			addDataElement(rootElement, &quot;_CREATION_DATE&quot;, &quot;DATETIME&quot;, _creationDate);
+			addDataElement(rootElement, &quot;_LAST_UPDATE_URI_USER&quot;, &quot;VARCHAR&quot;, _lastUpdateUriUser);
+			addDataElement(rootElement, &quot;_LAST_UPDATE_DATE&quot;, &quot;DATETIME&quot;, _lastUpdateDate);
+			addDataElement(rootElement, &quot;_MODEL_VERSION&quot;, &quot;INT&quot;, _modelVersion);
+			addDataElement(rootElement, &quot;_UI_VERSION&quot;, &quot;INT&quot;, _uiVersion);
+			addDataElement(rootElement, &quot;_IS_COMPLETE&quot;, &quot;CHAR&quot;, _isComplete);
+			addDataElement(rootElement, &quot;_SUBMISSION_DATE&quot;, &quot;DATETIME&quot;, _submissionDate);
+			addDataElement(rootElement, &quot;_MARKED_AS_COMPLETE_DATE&quot;, &quot;DATETIME&quot;, _markedAsCompleteDate);
+		}  
+	}
+	catch(e){
+	}	
+	finally{
+		if(rs != null)
+			rs.close();
+		if(stmt != null)
+			stmt.close();
+	}
+}</code>
+    </codeTemplate>
+    <codeTemplate version="3.3.1">
+      <id>8aa3355e-f4ba-4e49-b9dd-54b89299245c</id>
+      <name>SEND::getSubmissionList</name>
+      <revision>1</revision>
+      <lastModified>
+        <time>1450105180176</time>
+        <timezone>Europe/Zurich</timezone>
+      </lastModified>
+      <type>FUNCTION</type>
+      <contextSet>
+        <delegate>
+          <contextType>CHANNEL_PREPROCESSOR</contextType>
+          <contextType>GLOBAL_POSTPROCESSOR</contextType>
+          <contextType>SOURCE_FILTER_TRANSFORMER</contextType>
+          <contextType>CHANNEL_ATTACHMENT</contextType>
+          <contextType>DESTINATION_RESPONSE_TRANSFORMER</contextType>
+          <contextType>CHANNEL_POSTPROCESSOR</contextType>
+          <contextType>CHANNEL_DEPLOY</contextType>
+          <contextType>GLOBAL_PREPROCESSOR</contextType>
+          <contextType>CHANNEL_UNDEPLOY</contextType>
+          <contextType>SOURCE_RECEIVER</contextType>
+          <contextType>GLOBAL_UNDEPLOY</contextType>
+          <contextType>DESTINATION_FILTER_TRANSFORMER</contextType>
+          <contextType>GLOBAL_DEPLOY</contextType>
+          <contextType>CHANNEL_BATCH</contextType>
+          <contextType>DESTINATION_DISPATCHER</contextType>
+        </delegate>
+      </contextSet>
+      <code>// modify function_name and parameters as you wish.
+// one function per template is recommended. i.e.) create a new code template for each new function.
+function getSubmissionList(tableName, connection){
+	var rowsToFetch = 10;
+	var sql = &quot;SELECT _URI FROM &quot; + tableName + &quot; WHERE PROCESSED_BY_MIRTH = 0 LIMIT &quot; + rowsToFetch;  //For production also add a WHERE PROCESSEDBYMIRTH = 0 !
+	//var sql = &quot;SELECT _URI FROM &quot; + tableName + &quot; LIMIT &quot; + rowsToFetch;  //For production also add a WHERE PROCESSEDBYMIRTH = 0 !
+
+	var submissionURIList = [];
+	var stmt;
+	var rs;
+
+	try{
+		stmt = connection.createStatement();
+		rs = stmt.executeQuery(sql);
+		while(rs.next()) {
+			var _uri = rs.getString(&quot;_URI&quot;);
+			//logger.info(&quot;Found submission with uri: &quot; + _uri);
+		    submissionURIList.push(_uri);
+		}  
+		return submissionURIList;
+	}
+	catch(e){
+	}	
+	finally{
+		if(rs != null)
+			rs.close();
+		if(stmt != null)
+			stmt.close();
+	}
+}</code>
+    </codeTemplate>
+    <codeTemplate version="3.3.1">
+      <id>deaab814-5141-49e6-bee4-54fa9d0aa60f</id>
+      <name>SEND::handleElementsGetData</name>
+      <revision>1</revision>
+      <lastModified>
+        <time>1450105180303</time>
+        <timezone>Europe/Zurich</timezone>
+      </lastModified>
+      <type>FUNCTION</type>
+      <contextSet>
+        <delegate>
+          <contextType>CHANNEL_PREPROCESSOR</contextType>
+          <contextType>GLOBAL_POSTPROCESSOR</contextType>
+          <contextType>SOURCE_FILTER_TRANSFORMER</contextType>
+          <contextType>CHANNEL_ATTACHMENT</contextType>
+          <contextType>DESTINATION_RESPONSE_TRANSFORMER</contextType>
+          <contextType>CHANNEL_POSTPROCESSOR</contextType>
+          <contextType>CHANNEL_DEPLOY</contextType>
+          <contextType>GLOBAL_PREPROCESSOR</contextType>
+          <contextType>CHANNEL_UNDEPLOY</contextType>
+          <contextType>SOURCE_RECEIVER</contextType>
+          <contextType>GLOBAL_UNDEPLOY</contextType>
+          <contextType>DESTINATION_FILTER_TRANSFORMER</contextType>
+          <contextType>GLOBAL_DEPLOY</contextType>
+          <contextType>CHANNEL_BATCH</contextType>
+          <contextType>DESTINATION_DISPATCHER</contextType>
+        </delegate>
+      </contextSet>
+      <code>// modify function_name and parameters as you wish.
+// one function per template is recommended. i.e.) create a new code template for each new function.
+function handleElementsGetData(submissionUri, coreTableName, uri, elementType, elementName, tableName, columnName, parentURI, parentElement, connection) {
+	    if(elementType.equalsIgnoreCase(&quot;REPEAT&quot;)){
+        }
+        else if(elementType.equalsIgnoreCase(&quot;GROUP&quot;)){
+        	getDataFromGroup(submissionUri, coreTableName, uri, elementType, elementName, tableName, columnName, parentURI, parentElement, connection);
+        }
+        else if(elementType.equalsIgnoreCase(&quot;GEOPOINT&quot;)){
+        }
+        else if(elementType.equalsIgnoreCase(&quot;PHANTOM&quot;)){
+        	getDataFromPhantom(submissionUri, coreTableName, uri, elementType, elementName, tableName, columnName, parentURI, parentElement, connection);
+        }		        
+        else if(elementType.equalsIgnoreCase(&quot;SELECTN&quot;)){
+        	getDataFromSelectN(submissionUri, coreTableName, uri, elementType, elementName, tableName, columnName, parentURI, parentElement, connection);
+        }
+        else if(elementType.equalsIgnoreCase(&quot;SELECT1&quot;)){
+        	getDataFromSelectN(submissionUri, coreTableName, uri, elementType, elementName, tableName, columnName, parentURI, parentElement, connection);
+        }
+        else if(elementType.equalsIgnoreCase(&quot;BINARY&quot;)){
+        }
+        //SUPPORTING TABLES
+        else if(elementType.equalsIgnoreCase(&quot;BINARY_CONTENT_REF_BLOB&quot;)){
+        }
+        else if(elementType.equalsIgnoreCase(&quot;REF_BLOB&quot;)){
+        }
+        else{
+        	getDataFromElement(submissionUri, coreTableName, uri, elementType, elementName, tableName, columnName, parentURI, parentElement, connection);
+        }
+}</code>
+    </codeTemplate>
+    <codeTemplate version="3.3.1">
+      <id>2f291ba6-3ed3-48e6-ac3a-b216d54c7460</id>
+      <name>SEND::readDataXml</name>
+      <revision>1</revision>
+      <lastModified>
+        <time>1450105179974</time>
+        <timezone>Europe/Zurich</timezone>
+      </lastModified>
+      <type>FUNCTION</type>
+      <contextSet>
+        <delegate>
+          <contextType>CHANNEL_PREPROCESSOR</contextType>
+          <contextType>GLOBAL_POSTPROCESSOR</contextType>
+          <contextType>SOURCE_FILTER_TRANSFORMER</contextType>
+          <contextType>CHANNEL_ATTACHMENT</contextType>
+          <contextType>DESTINATION_RESPONSE_TRANSFORMER</contextType>
+          <contextType>CHANNEL_POSTPROCESSOR</contextType>
+          <contextType>CHANNEL_DEPLOY</contextType>
+          <contextType>GLOBAL_PREPROCESSOR</contextType>
+          <contextType>CHANNEL_UNDEPLOY</contextType>
+          <contextType>SOURCE_RECEIVER</contextType>
+          <contextType>GLOBAL_UNDEPLOY</contextType>
+          <contextType>DESTINATION_FILTER_TRANSFORMER</contextType>
+          <contextType>GLOBAL_DEPLOY</contextType>
+          <contextType>CHANNEL_BATCH</contextType>
+          <contextType>DESTINATION_DISPATCHER</contextType>
+        </delegate>
+      </contextSet>
+      <code>function readDataXml(formId, coreTable){	
+	var list = new java.util.ArrayList();
+	var sql = &quot;SELECT _URI, &quot;
+		+ &quot;PERSIST_AS_TABLE_NAME, ELEMENT_TYPE, ELEMENT_NAME, PARENT_URI_FORM_DATA_MODEL, PERSIST_AS_COLUMN_NAME &quot;
+		+ &quot;FROM _form_data_model WHERE URI_SUBMISSION_DATA_MODEL = &quot;
+		+ &quot;(SELECT URI_SUBMISSION_DATA_MODEL FROM _form_info_submission_association WHERE SUBMISSION_FORM_ID = &apos;&quot; + formId + &quot;&apos;)&quot;;		
+	var connection;
+		try{
+			connection = DatabaseConnectionFactory.createConnection(&apos;com.mysql.jdbc.Driver&apos;,globalMap.get(&quot;ODK_DATABASE_URL&quot;), globalMap.get(&quot;ODK_DATABASE_USER&quot;),globalMap.get(&quot;ODK_DATABASE_PASSWORD&quot;));
+			var rs;
+			var stmt;
+			try{
+				stmt = connection.createStatement();
+				rs = stmt.executeQuery(sql);
+
+		    	while(rs.next()) {
+					var _elementName = rs.getString(&quot;ELEMENT_NAME&quot;);
+
+					if(_elementName!= null &amp;&amp; _elementName.equalsIgnoreCase(formId)){	
+				    	var _uri = rs.getString(&quot;_URI&quot;);
+				    	var _tableName = rs.getString(&quot;PERSIST_AS_TABLE_NAME&quot;);
+				    	var _elementType = rs.getString(&quot;ELEMENT_TYPE&quot;);
+				    	var _parentURI = rs.getString(&quot;PARENT_URI_FORM_DATA_MODEL&quot;);
+				    	var _columnName = rs.getString(&quot;PERSIST_AS_COLUMN_NAME&quot;);
+		        		
+						var submissionList = getSubmissionList(_tableName, connection);;
+						for	(var index = 0; index &lt; submissionList.length; index++) {
+
+							var rootElement = &lt;extraform formName={formId} coreTable={coreTable} /&gt;;
+							var children = &lt;&gt;&lt;/&gt;;
+							rootElement.children = children;
+
+							var currentSubmissionURI = submissionList[index];
+							//rootElement.@coreTable = _tableName;
+							//rootElement.@uri = currentSubmissionURI;
+							getSubmissionCoreData(currentSubmissionURI, _tableName, rootElement, connection);
+							getDataFromGroup(currentSubmissionURI, _tableName, _uri, _elementType, _elementName, _tableName, _columnName, _parentURI, rootElement, connection);
+
+							//filteredRootElement.@coreTable = _tableName;
+							//filteredRootElement.@uri = currentSubmissionURI;
+
+							//filteredRootElement = &lt;extraform formName={formId} /&gt;;
+							filteredRootElement = &lt;extraform formName={formId} coreTable={coreTable} uri={currentSubmissionURI}/&gt;;
+							var new_children = &lt;&gt;&lt;/&gt;;
+							filteredRootElement.data = new_children;
+				
+							filterDataElements(rootElement, filteredRootElement);	
+
+							list.add(filteredRootElement);
+
+							//logger.info(&quot;Filtered: &quot; + filteredRootElement.toXMLString());
+						}				
+					}
+		    	}
+			}
+			catch(e){
+			}	
+			finally{
+				if(rs != null)
+					rs.close();
+				if(stmt != null)
+					stmt.close();
+			}	    
+		} 
+		catch (e) {}
+		finally {
+			if (connection) { 
+				connection.close();
+		}
+	}
+	return list;
+}</code>
+    </codeTemplate>
+    <codeTemplate version="3.3.1">
+      <id>98b821bf-3e92-4424-a763-2bffa39130c0</id>
+      <name>SEND:filterDataElements</name>
+      <revision>1</revision>
+      <lastModified>
+        <time>1450105180197</time>
+        <timezone>Europe/Zurich</timezone>
+      </lastModified>
+      <type>FUNCTION</type>
+      <contextSet>
+        <delegate>
+          <contextType>CHANNEL_PREPROCESSOR</contextType>
+          <contextType>GLOBAL_POSTPROCESSOR</contextType>
+          <contextType>SOURCE_FILTER_TRANSFORMER</contextType>
+          <contextType>CHANNEL_ATTACHMENT</contextType>
+          <contextType>DESTINATION_RESPONSE_TRANSFORMER</contextType>
+          <contextType>CHANNEL_POSTPROCESSOR</contextType>
+          <contextType>CHANNEL_DEPLOY</contextType>
+          <contextType>GLOBAL_PREPROCESSOR</contextType>
+          <contextType>CHANNEL_UNDEPLOY</contextType>
+          <contextType>SOURCE_RECEIVER</contextType>
+          <contextType>GLOBAL_UNDEPLOY</contextType>
+          <contextType>DESTINATION_FILTER_TRANSFORMER</contextType>
+          <contextType>GLOBAL_DEPLOY</contextType>
+          <contextType>CHANNEL_BATCH</contextType>
+          <contextType>DESTINATION_DISPATCHER</contextType>
+        </delegate>
+      </contextSet>
+      <code>// modify function_name and parameters as you wish.
+// one function per template is recommended. i.e.) create a new code template for each new function.
+function filterDataElements(element, filteredElement) {
+	for each (child in element.children()) {
+		if(child.@type != &quot;group&quot;){
+			var column = child.@columnName;
+			var type = child.@columnTypeName;
+			var value = child.@value;
+			var elementType = child.@type;
+			var newValue = value;
+			var data = &lt;data type={elementType} columnName={column} value={value} &gt;{newValue}&lt;/data&gt;;
+			filteredElement.data += data;
+
+			if(value &amp;&amp; value.length &gt; 0){
+				logger.info(&quot;Element has value: &quot; + value);
+			}
+		}
+		filterDataElements(child, filteredElement);
+	}
+}</code>
+    </codeTemplate>
+  </codeTemplates>
+</codeTemplateLibrary>
