@@ -1,0 +1,196 @@
+<list>
+  <codeTemplate>
+    <id>6758f0cc-1618-4c7a-b3fe-3d1ae4b40246</id>
+    <name>Result Set to XML</name>
+    <tooltip>Converts a java.sql.ResultSet to an XML representation. The XML will have elements named after the column names, and the values of those XML elements will be the column values</tooltip>
+    <code>// rs - the ResultSet instance
+// xmlElement - a string containing the document level xml element to use for the XML document
+function resultSetToXml(rs, xmlElement) {
+  var rsmd = rs.getMetaData();
+  var result = new XML(xmlElement);
+
+  for (var i = 1; i &lt;= rsmd.getColumnCount(); i++)  {
+	var value = rs.getString(i);
+
+    if (value === &quot;null&quot;) {
+      value = null;
+    }
+
+    result[rsmd.getColumnName(i).toLowerCase()] = value;
+  }
+
+  return result;
+}</code>
+    <type>FUNCTION</type>
+    <scope>0</scope>
+    <version>2.2.2.6388</version>
+  </codeTemplate>
+  <codeTemplate>
+    <id>0e093113-2971-4efa-bdbc-6b6b7350a1a3</id>
+    <name>Retrieve Out Migration Forms</name>
+    <tooltip>Reads Out Migrations from the database</tooltip>
+    <code>function addOutMigrations(visitId, dbConn) {
+  var results = dbConn.executeCachedQuery(&quot;SELECT _URI, VISIT_ID, NAME_OF_DESTINATION, FIELD_WORKER_ID, DATE_OF_MIGRATION, REASON_FOR_OUT_MIGRATION, INDIVIDUAL_ID FROM &quot; + globalMap.get(&quot;OUT_MIGRATION_TABLE&quot;) + &quot; WHERE VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND processed_by_mirth is null&quot;);
+  var forms = resultsToForms(results, &quot;&lt;outmigration event=&apos;outmigration&apos; table-name=&apos;&quot; + globalMap.get(&quot;OUT_MIGRATION_TABLE&quot;) + &quot;&apos; /&gt;&quot;);
+  return forms;
+}</code>
+    <type>FUNCTION</type>
+    <scope>0</scope>
+    <version>2.2.2.6388</version>
+  </codeTemplate>
+  <codeTemplate>
+    <id>00523e00-7a86-40fc-b07a-dd85cb372261</id>
+    <name>Result Set to Forms List</name>
+    <tooltip>Transforms a ResultSet to a List of XML forms representing as strings</tooltip>
+    <code>function resultsToForms(results, xmlElement) {
+  var forms = new java.util.ArrayList();
+  while(results.next()) {
+    var xml = resultSetToXml(results, xmlElement)
+    forms.add(xml.toString());
+  }
+ 
+  return forms;
+}</code>
+    <type>FUNCTION</type>
+    <scope>0</scope>
+    <version>2.2.2.6388</version>
+  </codeTemplate>
+  <codeTemplate>
+    <id>f13b33f5-99ae-45c3-9d6e-b5cfad640b39</id>
+    <name>Retrieve Death Forms</name>
+    <tooltip>Retrieve Death Forms</tooltip>
+    <code>function addDeaths(visitId, dbConn) {
+  var results = dbConn.executeCachedQuery(&quot;SELECT _URI, VISIT_ID, CAUSE_OF_DEATH, FIELD_WORKER_ID, DATE_OF_DEATH, PLACE_OF_DEATH, INDIVIDUAL_ID FROM &quot; + globalMap.get(&quot;DEATH_TABLE&quot;) + &quot; WHERE VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND processed_by_mirth is null&quot;);
+  var deathForms = resultsToForms(results, &quot;&lt;death event=&apos;death&apos; table-name=&apos;&quot; + globalMap.get(&quot;DEATH_TABLE&quot;) + &quot;&apos;/&gt;&quot;);
+  return deathForms;
+}</code>
+    <type>FUNCTION</type>
+    <scope>0</scope>
+    <version>2.2.2.6388</version>
+  </codeTemplate>
+  <codeTemplate>
+    <id>63d7ca76-9a59-450e-87dc-e48fbcf87e42</id>
+    <name>Retrieve Pregnancy Observation Forms</name>
+    <tooltip>Retrieve Pregnancy Observations</tooltip>
+    <code>function addPregnancyObs(visitId, dbConn) {
+  var results = dbConn.executeCachedQuery(&quot;SELECT _URI, VISIT_ID, DATE_ADD(EXPECTED_DELIVERY_DATE,INTERVAL 9 MONTH) EXPECTED_DELIVERY_DATE, FIELD_WORKER_ID, RECORDED_DATE, INDIVIDUAL_ID FROM &quot; + globalMap.get(&quot;PREGNANCY_OBS_TABLE&quot;) + &quot; WHERE VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND processed_by_mirth is null&quot;);
+  var pregnancyObsForms = resultsToForms(results, &quot;&lt;pregnancyobs event=&apos;pregnancyobs&apos; table-name=&apos;&quot; + globalMap.get(&quot;PREGNANCY_OBS_TABLE&quot;) + &quot;&apos;/&gt;&quot;);
+  return pregnancyObsForms;
+}</code>
+    <type>FUNCTION</type>
+    <scope>0</scope>
+    <version>2.2.2.6388</version>
+  </codeTemplate>
+  <codeTemplate>
+    <id>c9ab01f4-38e6-471d-a294-c615cf2f63c7</id>
+    <name>Retrieve Internal In Migration Forms</name>
+    <tooltip>Retrieve Internal In Migration Forms</tooltip>
+    <code>function addInternalInmigrations(visitId, dbConn) {
+  var results = dbConn.executeCachedQuery(&quot;SELECT _URI, REASON, DATE_OF_MIGRATION, INDIVIDUAL_INFO_INDIVIDUAL_ID, ORIGIN, VISIT_ID, LOCATION_ID, FIELD_WORKER_ID  FROM &quot; + globalMap.get(&quot;IN_MIGRATION_TABLE&quot;) + &quot; WHERE VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND migration_type = &apos;INTERNAL_INMIGRATION&apos; AND processed_by_mirth is null&quot;);
+  var inMigrationForms = resultsToForms(results, &quot;&lt;inmigration event=&apos;internal-inmigration&apos; table-name=&apos;&quot; + globalMap.get(&quot;IN_MIGRATION_TABLE&quot;) + &quot;&apos;/&gt;&quot;);
+  return inMigrationForms;
+}</code>
+    <type>FUNCTION</type>
+    <scope>0</scope>
+    <version>2.2.2.6388</version>
+  </codeTemplate>
+  <codeTemplate>
+    <id>6e3b6567-ac0e-477f-91dc-d99979b47004</id>
+    <name>Retrieve External In Migration Forms</name>
+    <tooltip>Retreive External In Migration Forms</tooltip>
+    <code>function addExternalInmigrations(visitId, dbConn) {
+  var results = dbConn.executeCachedQuery(&quot;SELECT _URI, REASON, INDIVIDUAL_INFO_DATE_OF_BIRTH, DATE_OF_MIGRATION, INDIVIDUAL_INFO_FIRST_NAME, INDIVIDUAL_INFO_MOTHER_ID, INDIVIDUAL_INFO_INDIVIDUAL_ID, ORIGIN, VISIT_ID, INDIVIDUAL_INFO_GENDER, LOCATION_ID, FIELD_WORKER_ID, INDIVIDUAL_INFO_LAST_NAME, INDIVIDUAL_INFO_PARTIAL_DATE, INDIVIDUAL_INFO_FATHER_ID FROM &quot; + globalMap.get(&quot;IN_MIGRATION_TABLE&quot;) + &quot; WHERE VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND migration_type = &apos;EXTERNAL_INMIGRATION&apos; AND processed_by_mirth is null&quot;);
+  var inMigrationForms = resultsToForms(results, &quot;&lt;inmigration event=&apos;external-inmigration&apos; table-name=&apos;&quot; + globalMap.get(&quot;IN_MIGRATION_TABLE&quot;) + &quot;&apos;/&gt;&quot;);
+  return inMigrationForms;
+}</code>
+    <type>FUNCTION</type>
+    <scope>0</scope>
+    <version>2.2.2.6388</version>
+  </codeTemplate>
+  <codeTemplate>
+    <id>4e1616a1-7ed4-4f52-b32a-e1ea48b2eaa2</id>
+    <name>Retrieve Pregnancy Outcome Forms</name>
+    <tooltip>Retrieve Pregnancy Outcome Forms</tooltip>
+    <code>// this is the most complicated function for retrieving forms
+// the following assumptions were made when writing this function:
+// In Migrations will be processed before pregnancy outcomes. 
+// This ensures if a women has in migrated, the individual will be created in the system before the pregnancy outcome
+// Also, it&apos;s possible this pregnancy outcome depends 
+function addPregnancyOutcomes(visitId, dbConn) {
+  var forms = new java.util.ArrayList();
+  var results = dbConn.executeCachedQuery(&quot;SELECT _URI, VISIT_ID, MOTHER_ID, PARTIAL_DATE,FIELD_WORKER_ID, RECORDED_DATE, FATHER_ID FROM &quot; + globalMap.get(&quot;PREGNANCY_OUTCOME_TABLE&quot;) + &quot; WHERE VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND processed_by_mirth is null&quot;);
+  while(results.next()) {
+    var pregOut = resultSetToXml(results, &quot;&lt;pregnancyoutcome event=&apos;pregnancyoutcome&apos; table-name=&apos;&quot; + globalMap.get(&quot;PREGNANCY_OUTCOME_TABLE&quot;) + &quot;&apos; /&gt;&quot;);
+    // are there any outcomes for this pregnancy outcome?
+    var outcomes = dbConn.executeCachedQuery(&quot;SELECT OUTCOME_TYPE, FIRST_NAME, SOCIAL_GROUP_ID, GENDER, RELATIONSHIP_TO_GROUP_HEAD, CHILD_ID, LAST_NAME FROM &quot; + globalMap.get(&quot;OUTCOMES_TABLE&quot;) + &quot; WHERE _PARENT_AURI = &apos;&quot; + pregOut[&quot;_uri&quot;].toString() + &quot;&apos;&quot;);
+    while(outcomes.next()) {
+      var outcome = resultSetToXml(outcomes, &quot;&lt;outcome /&gt;&quot;);
+      pregOut.appendChild(outcome);
+    }
+
+    forms.add(pregOut.toString());
+  }
+
+  return forms;
+}
+</code>
+    <type>FUNCTION</type>
+    <scope>0</scope>
+    <version>2.2.2.6388</version>
+  </codeTemplate>
+  <codeTemplate>
+    <id>b3441bd0-63cd-4bd4-96d1-bf98d21a4cdd</id>
+    <name>Mark Record as processed</name>
+    <tooltip></tooltip>
+    <code>function markRecordAsProcessed(rawData) {
+  var originalXml = new XML(rawData);
+  // retrieve the table to update
+  var tableName = originalXml[&quot;@table-name&quot;].toString();
+  var uri = originalXml[&quot;_uri&quot;].toString();
+
+    if (tableName !== &quot;OMGIM&quot;) {
+  var dbConn = DatabaseConnectionFactory.createDatabaseConnection(&apos;com.mysql.jdbc.Driver&apos;, globalMap.get(&quot;ODK_DATABASE_URL&quot;), globalMap.get(&quot;ODK_DATABASE_USER&quot;), globalMap.get(&quot;ODK_DATABASE_PASSWORD&quot;));
+  var result = dbConn.executeUpdate(&quot;UPDATE &quot; + tableName + &quot; SET processed_by_mirth = true WHERE _URI = &apos;&quot; + uri + &quot;&apos;&quot;);
+  dbConn.close();
+} 
+}</code>
+    <type>FUNCTION</type>
+    <scope>0</scope>
+    <version>2.2.2.6388</version>
+  </codeTemplate>
+  <codeTemplate>
+    <id>286839da-5111-4bf4-b0db-a3a451b620a9</id>
+    <name>Retrieve OutMigration from IM</name>
+    <tooltip></tooltip>
+    <code>function addOutMigrationsIM(visitId, dbConn) {
+
+var results = dbConn.executeCachedQuery(&quot;SELECT _URI, VISIT_ID, LOCATION_ID NAME_OF_DESTINATION, FIELD_WORKER_ID, DATE_SUB(DATE_OF_MIGRATION, INTERVAL 1 DAY) DATE_OF_MIGRATION, REASON REASON_FOR_OUT_MIGRATION, INDIVIDUAL_INFO_INDIVIDUAL_ID INDIVIDUAL_ID FROM &quot; + globalMap.get(&quot;IN_MIGRATION_TABLE&quot;) + &quot; WHERE VISIT_ID = &apos;&quot; + visitId + &quot;&apos; AND migration_type = &apos;INTERNAL_INMIGRATION&apos; AND processed_by_mirth is null and INDIVIDUAL_INFO_INDIVIDUAL_ID not in (select INDIVIDUAL_ID FROM &quot; + globalMap.get(&quot;OUT_MIGRATION_TABLE&quot;)+&quot;)&quot;);  
+
+var forms = resultsToForms(results, &quot;&lt;outmigration event=&apos;outmigrationIM&apos; table-name=&apos;OMGIM&apos; /&gt;&quot;);
+  return forms;
+}</code>
+    <type>FUNCTION</type>
+    <scope>0</scope>
+    <version>2.2.2.6388</version>
+  </codeTemplate>
+  <codeTemplate>
+    <id>92237dfa-421d-4632-a91b-222893451884</id>
+    <name>Mark record as processed Rural</name>
+    <tooltip></tooltip>
+    <code>function markRecordAsProcessedRural(rawData) {
+  var originalXml = new XML(rawData);
+  // retrieve the table to update
+  var tableName = originalXml[&quot;@table-name&quot;].toString();
+  var uri = originalXml[&quot;_uri&quot;].toString();
+
+    if (tableName !== &quot;OMGIM&quot;) {
+  var dbConn = DatabaseConnectionFactory.createDatabaseConnection(&apos;com.mysql.jdbc.Driver&apos;, globalMap.get(&quot;ODK_RUR_DATABASE_URL&quot;), globalMap.get(&quot;ODK_DATABASE_USER&quot;), globalMap.get(&quot;ODK_DATABASE_PASSWORD&quot;));
+  var result = dbConn.executeUpdate(&quot;UPDATE &quot; + tableName + &quot; SET processed_by_mirth = true WHERE _URI = &apos;&quot; + uri + &quot;&apos;&quot;);
+  dbConn.close();
+} 
+}</code>
+    <type>FUNCTION</type>
+    <scope>0</scope>
+    <version>2.2.2.6388</version>
+  </codeTemplate>
+</list>

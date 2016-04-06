@@ -1,0 +1,52 @@
+<map>
+  <entry>
+    <string>Shutdown</string>
+    <string>// This script executes once when all channels shut down from a redeploy
+// You only have access to the globalMap here to persist data
+return;</string>
+  </entry>
+  <entry>
+    <string>Deploy</string>
+    <string>// This script executes once when all channels start up from a redeploy
+// You only have access to the globalMap here to persist data
+
+// odk information
+globalMap.put(&apos;ODK_DATABASE_URL&apos;,&apos;jdbc:mysql://localhost/odk_prod&apos;);
+globalMap.put(&apos;ODK_DATABASE_USER&apos;,&apos;odk_user&apos;);
+globalMap.put(&apos;ODK_DATABASE_PASSWORD&apos;,&apos;odk_password&apos;);
+
+
+
+// openhds information
+globalMap.put(&apos;OPENHDS_PATH&apos;,&apos;&apos;);
+globalMap.put(&apos;OPENHDS_USER&apos;,&apos;admin&apos;);
+globalMap.put(&apos;OPENHDS_PASSWORD&apos;,&apos;test&apos;);
+
+// odk tables
+globalMap.put(&apos;DEATH_TABLE&apos;,&apos;DEATH_REGISTRATION_CORE&apos;);
+globalMap.put(&apos;IN_MIGRATION_TABLE&apos;,&apos;IN_MIGRATION_CORE&apos;);
+globalMap.put(&apos;LOCATION_TABLE&apos;,&apos;LOCATION_REGISTRATION_CORE&apos;);
+globalMap.put(&apos;MEMBERSHIP_TABLE&apos;,&apos;MEMBERSHIP_CORE&apos;);
+globalMap.put(&apos;OUT_MIGRATION_TABLE&apos;,&apos;OUT_MIGRATION_REGISTRATION_CORE&apos;);
+globalMap.put(&apos;PREGNANCY_OBS_TABLE&apos;,&apos;PREGNANCY_OBSERVATION_CORE&apos;);
+globalMap.put(&apos;PREGNANCY_OUTCOME_TABLE&apos;,&apos;PREGNANCY_OUTCOME_CORE&apos;);
+globalMap.put(&apos;OUTCOMES_TABLE&apos;,&apos;PREGNANCY_OUTCOME_OUTCOMES&apos;);
+globalMap.put(&apos;RELATIONSHIP_TABLE&apos;,&apos;RELATIONSHIP_CORE&apos;);
+globalMap.put(&apos;SOCIAL_GROUP_TABLE&apos;,&apos;SOCIAL_GROUP_REGISTRATION_CORE&apos;);
+globalMap.put(&apos;VISIT_TABLE&apos;,&apos;VISIT_REGISTRATION_CORE&apos;);
+
+return;</string>
+  </entry>
+  <entry>
+    <string>Preprocessor</string>
+    <string>// Modify the message variable below to pre process data
+// This script applies across all channels
+return message;</string>
+  </entry>
+  <entry>
+    <string>Postprocessor</string>
+    <string>// This script executes once after a message has been processed
+// This script applies across all channels
+return;</string>
+  </entry>
+</map>
