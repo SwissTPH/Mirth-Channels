@@ -11,10 +11,10 @@ Visit &#xd;
 Any events...</description>
   <enabled>true</enabled>
   <lastModified>
-    <time>1462264272924</time>
+    <time>1462288109309</time>
     <timezone>Europe/Berlin</timezone>
   </lastModified>
-  <revision>6</revision>
+  <revision>7</revision>
   <sourceConnector version="3.4.0">
     <metaDataId>0</metaDataId>
     <name>sourceConnector</name>
@@ -70,7 +70,7 @@ var round = dbConn.executeCachedQuery(&quot;select id, ROUND_NUM, str_to_date(ST
 forms.addAll(resultsToForms(round, &quot;&lt;round event=&apos;round&apos; table-name=&apos;round&apos;/&gt;&quot;));
 
 
-var location = dbConn.executeCachedQuery(&quot;SELECT id, subvillageId , LOCATIONID, FIELDWORKER, &apos;RUR&apos; LOCATION_TYPE, ACCURACY, ALTITUDE, LONGITUDE, LATITUDE FROM location WHERE processed_by_mirth =0&quot;);
+var location = dbConn.executeCachedQuery(&quot;SELECT id, lowestLocationId , LOCATIONID, FIELDWORKER, &apos;RUR&apos; LOCATION_TYPE, ACCURACY, ALTITUDE, LONGITUDE, LATITUDE FROM location WHERE processed_by_mirth =0&quot;);
   
 forms.addAll(resultsToForms(location, &quot;&lt;location event=&apos;location&apos; table-name=&apos;location&apos;/&gt;&quot;));
 
@@ -562,7 +562,7 @@ L2VuZERhdGU+Cjwvcm91bmQ+</outboundTemplate>
           <step>
             <sequenceNumber>1</sequenceNumber>
             <name>locationLevel - extId (out)</name>
-            <script>tmp[&apos;locationLevel&apos;][&apos;extId&apos;] = validate(msg[&apos;subvillageid&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
+            <script>tmp[&apos;locationLevel&apos;][&apos;extId&apos;] = validate(msg[&apos;lowestlocationid&apos;].toString().toUpperCase(), &apos;&apos;, new Array());</script>
             <type>Message Builder</type>
             <data>
               <entry>
@@ -571,7 +571,7 @@ L2VuZERhdGU+Cjwvcm91bmQ+</outboundTemplate>
               </entry>
               <entry>
                 <string>Mapping</string>
-                <string>msg[&apos;subvillageid&apos;].toString().toUpperCase()</string>
+                <string>msg[&apos;lowestlocationid&apos;].toString().toUpperCase()</string>
               </entry>
               <entry>
                 <string>DefaultValue</string>
@@ -753,12 +753,12 @@ L2VuZERhdGU+Cjwvcm91bmQ+</outboundTemplate>
           </step>
         </steps>
         <inboundTemplate encoding="base64">PGxvY2F0aW9uIGV2ZW50PSJsb2NhdGlvbiIgdGFibGUtbmFtZT0ibG9jYXRpb24iPgogICAgPGlk
-PjwvaWQ+CiAgICA8c3VidmlsbGFnZWlkPjwvc3VidmlsbGFnZWlkPgogICAgPGxvY2F0aW9uaWQ+
-PC9sb2NhdGlvbmlkPgogICAgPGZpZWxkd29ya2VyPjwvZmllbGR3b3JrZXI+CiAgICA8bG9jYXRp
-b25fdHlwZT48L2xvY2F0aW9uX3R5cGU+CiAgICA8bG9jYXRpb25fbmFtZT48L2xvY2F0aW9uX25h
-bWU+CiAgICA8YWNjdXJhY3k+PC9hY2N1cmFjeT4KICAgIDxhbHRpdHVkZT48L2FsdGl0dWRlPgog
-ICAgPGxvbmdpdHVkZT48L2xvbmdpdHVkZT4KICAgIDxsYXRpdHVkZT48L2xhdGl0dWRlPgo8L2xv
-Y2F0aW9uPg==</inboundTemplate>
+PjwvaWQ+CiAgICA8bG93ZXN0bG9jYXRpb25pZD48L2xvd2VzdGxvY2F0aW9uaWQ+CiAgICA8bG9j
+YXRpb25pZD48L2xvY2F0aW9uaWQ+CiAgICA8ZmllbGR3b3JrZXI+PC9maWVsZHdvcmtlcj4KICAg
+IDxsb2NhdGlvbl90eXBlPjwvbG9jYXRpb25fdHlwZT4KICAgIDxsb2NhdGlvbl9uYW1lPjwvbG9j
+YXRpb25fbmFtZT4KICAgIDxhY2N1cmFjeT48L2FjY3VyYWN5PgogICAgPGFsdGl0dWRlPjwvYWx0
+aXR1ZGU+CiAgICA8bG9uZ2l0dWRlPjwvbG9uZ2l0dWRlPgogICAgPGxhdGl0dWRlPjwvbGF0aXR1
+ZGU+CjwvbG9jYXRpb24+</inboundTemplate>
         <outboundTemplate encoding="base64">PGxvY2F0aW9uPgogICAgPGV4dElkPjwvZXh0SWQ+CiAgICA8Y29sbGVjdGVkQnk+CiAgICAgICAg
 PGV4dElkPjwvZXh0SWQ+CiAgICA8L2NvbGxlY3RlZEJ5PgogICAgPGxvY2F0aW9uTGV2ZWw+CiAg
 ICAgICAgPGV4dElkPjwvZXh0SWQ+CiAgICA8L2xvY2F0aW9uTGV2ZWw+CiAgICA8bG9jYXRpb25O
