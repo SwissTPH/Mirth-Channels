@@ -1,30 +1,54 @@
-<channel version="3.1.1">
+<channel version="3.3.1">
   <id>dc7dee8f-2b07-4e38-93e1-f5f898296002</id>
   <nextMetaDataId>2</nextMetaDataId>
   <name>ExtraFormGroupSendSubmissions</name>
   <description></description>
   <enabled>true</enabled>
   <lastModified>
-    <time>1444122878553</time>
+    <time>1470916978523</time>
     <timezone>Europe/Berlin</timezone>
   </lastModified>
-  <revision>55</revision>
-  <sourceConnector version="3.1.1">
+  <revision>13</revision>
+  <sourceConnector version="3.3.1">
     <metaDataId>0</metaDataId>
     <name>sourceConnector</name>
-    <properties class="com.mirth.connect.connectors.js.JavaScriptReceiverProperties" version="3.1.1">
+    <properties class="com.mirth.connect.connectors.js.JavaScriptReceiverProperties" version="3.3.1">
       <pluginProperties/>
-      <pollConnectorProperties version="3.1.1">
-        <pollingType>interval</pollingType>
+      <pollConnectorProperties version="3.3.1">
+        <pollingType>INTERVAL</pollingType>
+        <pollOnStart>true</pollOnStart>
+        <pollingFrequency>5000</pollingFrequency>
         <pollingHour>0</pollingHour>
         <pollingMinute>0</pollingMinute>
-        <pollingFrequency>5000</pollingFrequency>
+        <cronJobs/>
+        <pollConnectorPropertiesAdvanced>
+          <weekly>true</weekly>
+          <inactiveDays>
+            <boolean>false</boolean>
+            <boolean>false</boolean>
+            <boolean>false</boolean>
+            <boolean>false</boolean>
+            <boolean>false</boolean>
+            <boolean>false</boolean>
+            <boolean>false</boolean>
+            <boolean>false</boolean>
+          </inactiveDays>
+          <dayOfMonth>1</dayOfMonth>
+          <allDay>true</allDay>
+          <startingHour>8</startingHour>
+          <startingMinute>0</startingMinute>
+          <endingHour>17</endingHour>
+          <endingMinute>0</endingMinute>
+        </pollConnectorPropertiesAdvanced>
       </pollConnectorProperties>
-      <sourceConnectorProperties version="3.1.1">
+      <sourceConnectorProperties version="3.3.1">
         <responseVariable>None</responseVariable>
         <respondAfterProcessing>true</respondAfterProcessing>
         <processBatch>false</processBatch>
         <firstResponse>false</firstResponse>
+        <resourceIds class="linked-hash-set">
+          <string>Default Resource</string>
+        </resourceIds>
       </sourceConnectorProperties>
       <script>var dbConn;
 var result;
@@ -37,10 +61,10 @@ var list = new java.util.ArrayList();
 
 try {
 	dbConn = DatabaseConnectionFactory.createDatabaseConnection(&apos;com.mysql.jdbc.Driver&apos;,globalMap.get(&quot;OPENHDS_DATABASE_URL&quot;), globalMap.get(&quot;OPENHDS_DATABASE_USER&quot;),globalMap.get(&quot;OPENHDS_DATABASE_PASSWORD&quot;));
-	result = dbConn.executeCachedQuery(&quot;SELECT uuid, formName, active, deleted, CORE_TABLE, status FROM form&quot;);
+	result = dbConn.executeCachedQuery(&quot;SELECT uuid, formName, active, deleted, coreTable, status FROM form where deleted=0 and status=2&quot;);
 
 	while(result.next()){
-			var coreTable = result.getString(&quot;CORE_TABLE&quot;);
+			var coreTable = result.getString(&quot;coreTable&quot;);
 			var uuid = result.getString(&quot;uuid&quot;);
 			var formName = result.getString(&quot;formName&quot;);
 			var active = result.getString(&quot;active&quot;);
@@ -51,6 +75,7 @@ try {
 						&amp;&amp; (active != null &amp;&amp; active.equalsIgnoreCase(&quot;yes&quot;))
 						&amp;&amp; status == 2)
 			{
+				//logger.info(&quot;status 2, Proceed...&quot; + formName)
 				list = readDataXml(formName, coreTable);
 				/*
 				logger.info(&quot;Entries in list: &quot; + list.size());
@@ -60,6 +85,7 @@ try {
 				*/
 			}
 	}
+		//logger.info(&quot;List size: &quot; + list.size());
 	return list;
 } 
 finally {
@@ -71,15 +97,15 @@ finally {
 	}
 }</script>
     </properties>
-    <transformer version="3.1.1">
+    <transformer version="3.3.1">
       <steps/>
       <inboundDataType>XML</inboundDataType>
       <outboundDataType>XML</outboundDataType>
-      <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
-        <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
+      <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.3.1">
+        <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.3.1">
           <stripNamespaces>true</stripNamespaces>
         </serializationProperties>
-        <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+        <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.3.1">
           <splitType>Element_Name</splitType>
           <elementName></elementName>
           <level>1</level>
@@ -87,11 +113,11 @@ finally {
           <batchScript></batchScript>
         </batchProperties>
       </inboundProperties>
-      <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
-        <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
+      <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.3.1">
+        <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.3.1">
           <stripNamespaces>true</stripNamespaces>
         </serializationProperties>
-        <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+        <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.3.1">
           <splitType>Element_Name</splitType>
           <elementName></elementName>
           <level>1</level>
@@ -100,7 +126,7 @@ finally {
         </batchProperties>
       </outboundProperties>
     </transformer>
-    <filter version="3.1.1">
+    <filter version="3.3.1">
       <rules/>
     </filter>
     <transportName>JavaScript Reader</transportName>
@@ -109,20 +135,24 @@ finally {
     <waitForPrevious>true</waitForPrevious>
   </sourceConnector>
   <destinationConnectors>
-    <connector version="3.1.1">
+    <connector version="3.3.1">
       <metaDataId>1</metaDataId>
       <name>Destination 1</name>
-      <properties class="com.mirth.connect.connectors.http.HttpDispatcherProperties" version="3.1.1">
+      <properties class="com.mirth.connect.connectors.http.HttpDispatcherProperties" version="3.3.1">
         <pluginProperties/>
-        <destinationConnectorProperties version="3.1.1">
+        <destinationConnectorProperties version="3.3.1">
           <queueEnabled>false</queueEnabled>
           <sendFirst>false</sendFirst>
           <retryIntervalMillis>10000</retryIntervalMillis>
           <regenerateTemplate>false</regenerateTemplate>
           <retryCount>0</retryCount>
           <rotate>false</rotate>
+          <includeFilterTransformer>false</includeFilterTransformer>
           <threadCount>1</threadCount>
           <validateResponse>false</validateResponse>
+          <resourceIds class="linked-hash-set">
+            <string>Default Resource</string>
+          </resourceIds>
         </destinationConnectorProperties>
         <host>${OPENHDS_PATH}/extraform/insert</host>
         <useProxyServer>false</useProxyServer>
@@ -148,7 +178,7 @@ finally {
         <charset>UTF-8</charset>
         <socketTimeout>30000</socketTimeout>
       </properties>
-      <transformer version="3.1.1">
+      <transformer version="3.3.1">
         <steps>
           <step>
             <sequenceNumber>0</sequenceNumber>
@@ -173,11 +203,11 @@ delete formData.@uri;</string>
         <outboundTemplate encoding="base64"></outboundTemplate>
         <inboundDataType>XML</inboundDataType>
         <outboundDataType>XML</outboundDataType>
-        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
+        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.3.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.3.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
-          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.3.1">
             <splitType>Element_Name</splitType>
             <elementName></elementName>
             <level>1</level>
@@ -185,11 +215,11 @@ delete formData.@uri;</string>
             <batchScript></batchScript>
           </batchProperties>
         </inboundProperties>
-        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.3.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.3.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
-          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.3.1">
             <splitType>Element_Name</splitType>
             <elementName></elementName>
             <level>1</level>
@@ -198,15 +228,15 @@ delete formData.@uri;</string>
           </batchProperties>
         </outboundProperties>
       </transformer>
-      <responseTransformer version="3.1.1">
+      <responseTransformer version="3.3.1">
         <steps/>
         <inboundDataType>XML</inboundDataType>
         <outboundDataType>XML</outboundDataType>
-        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
+        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.3.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.3.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
-          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.3.1">
             <splitType>Element_Name</splitType>
             <elementName></elementName>
             <level>1</level>
@@ -214,11 +244,11 @@ delete formData.@uri;</string>
             <batchScript></batchScript>
           </batchProperties>
         </inboundProperties>
-        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.1.1">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.1.1">
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="3.3.1">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="3.3.1">
             <stripNamespaces>true</stripNamespaces>
           </serializationProperties>
-          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.1.1">
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="3.3.1">
             <splitType>Element_Name</splitType>
             <elementName></elementName>
             <level>1</level>
@@ -227,7 +257,7 @@ delete formData.@uri;</string>
           </batchProperties>
         </outboundProperties>
       </responseTransformer>
-      <filter version="3.1.1">
+      <filter version="3.3.1">
         <rules/>
       </filter>
       <transportName>HTTP Sender</transportName>
@@ -262,7 +292,7 @@ var tableName = rawMessage.@coreTable;
 var _URI = rawMessage.@uri;
 
 if(tableName &amp;&amp; _URI){
-	var dbConn = DatabaseConnectionFactory.createDatabaseConnection(&apos;com.mysql.jdbc.Driver&apos;,&apos;jdbc:mysql://localhost:3306/odk_prod&apos;,&apos;data&apos;,&apos;data&apos;);
+	var dbConn = DatabaseConnectionFactory.createDatabaseConnection(&apos;com.mysql.jdbc.Driver&apos;,globalMap.get(&quot;ODK_DATABASE_URL&quot;),globalMap.get(&quot;ODK_DATABASE_USER&quot;),globalMap.get(&quot;ODK_DATABASE_PASSWORD&quot;));
 	var result = dbConn.executeUpdate(&quot;UPDATE &quot; + tableName + &quot; SET PROCESSED_BY_MIRTH = &quot; + processedByMirthStatus + &quot; WHERE _URI = &apos;&quot; + _URI + &quot;&apos;&quot;);
 	dbConn.close();
 }
@@ -276,11 +306,12 @@ return;</deployScript>
   <undeployScript>// This script executes once when the channel is undeployed
 // You only have access to the globalMap and globalChannelMap here to persist data
 return;</undeployScript>
-  <properties version="3.1.1">
+  <properties version="3.3.1">
     <clearGlobalChannelMap>true</clearGlobalChannelMap>
-    <messageStorageMode>DEVELOPMENT</messageStorageMode>
+    <messageStorageMode>PRODUCTION</messageStorageMode>
     <encryptData>false</encryptData>
     <removeContentOnCompletion>false</removeContentOnCompletion>
+    <removeOnlyFilteredOnCompletion>false</removeOnlyFilteredOnCompletion>
     <removeAttachmentsOnCompletion>false</removeAttachmentsOnCompletion>
     <initialState>STARTED</initialState>
     <storeAttachments>false</storeAttachments>
@@ -301,6 +332,11 @@ return;</undeployScript>
       <type>None</type>
       <properties/>
     </attachmentProperties>
+    <pruneMetaDataDays>15</pruneMetaDataDays>
     <archiveEnabled>true</archiveEnabled>
+    <resourceIds class="linked-hash-set">
+      <string>Default Resource</string>
+    </resourceIds>
   </properties>
+  <codeTemplateLibraries/>
 </channel>

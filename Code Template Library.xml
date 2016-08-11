@@ -2180,7 +2180,7 @@ function filterDataElements(element, filteredElement) {
 			filteredElement.data += data;
 
 			if(value &amp;&amp; value.length &gt; 0){
-				logger.info(&quot;Element has value: &quot; + value);
+				//logger.info(&quot;Element has value: &quot; + value);
 			}
 		}
 		filterDataElements(child, filteredElement);
