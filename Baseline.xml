@@ -13,10 +13,10 @@ Visit &#xd;
 Any events...</description>
   <enabled>true</enabled>
   <lastModified>
-    <time>1472143227931</time>
+    <time>1472410891586</time>
     <timezone>Europe/Berlin</timezone>
   </lastModified>
-  <revision>4</revision>
+  <revision>5</revision>
   <sourceConnector version="3.3.1">
     <metaDataId>0</metaDataId>
     <name>sourceConnector</name>
@@ -61,7 +61,7 @@ Any events...</description>
       <script>var forms = new java.util.ArrayList()
 
 var dbConn = DatabaseConnectionFactory.createDatabaseConnection(&apos;com.mysql.jdbc.Driver&apos;, globalMap.get(&quot;ODK_DATABASE_URL&quot;), globalMap.get(&quot;ODK_DATABASE_USER&quot;), globalMap.get(&quot;ODK_DATABASE_PASSWORD&quot;));
-var visitResult = dbConn.executeCachedQuery(&quot;SELECT DISTINCT VISIT_DATE, OPENHDS_VISIT_ID, OPENHDS_LOCATION_ID, OPENHDS_FIELD_WORKER_ID, 0 ROUND_NUMBER , 0 REAL_VISIT FROM &quot; + globalMap.get(&quot;BASELINE_TABLE&quot;) + &quot; WHERE processed_by_mirth=0 order by START ASC&quot;);
+var visitResult = dbConn.executeCachedQuery(&quot;SELECT DISTINCT VISIT_DATE, OPENHDS_VISIT_ID, OPENHDS_LOCATION_ID, OPENHDS_FIELD_WORKER_ID, 0 ROUND_NUMBER , 0 REAL_VISIT FROM &quot; + globalMap.get(&quot;BASELINE_TABLE&quot;) + &quot; WHERE processed_by_mirth=0 order by VISIT_DATE ASC&quot;);
 
 while(visitResult.next()) {
   var visitXml = resultSetToXml(visitResult, &quot;&lt;visit event=&apos;visit&apos; table-name=&apos;&quot; + globalMap.get(&quot;VISIT_TABLE&quot;) + &quot;&apos;/&gt;&quot;);
