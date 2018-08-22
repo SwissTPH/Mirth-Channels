@@ -656,13 +656,13 @@ Z2l0dWRlPjwvbG9uZ2l0dWRlPgogICAgPGxhdGl0dWRlPjwvbGF0aXR1ZGU+CjwvbG9jYXRpb24+
           </step>
           <step>
             <sequenceNumber>5</sequenceNumber>
-            <name>real_visit (out) &lt;-- real_visit (in)</name>
-            <script>tmp[&apos;real_visit&apos;] = validate(msg[&apos;real_visit&apos;].toString(), &apos;&apos;, new Array());</script>
+            <name>realVisit (out) &lt;-- real_visit (in)</name>
+            <script>tmp[&apos;realVisit&apos;] = validate(msg[&apos;real_visit&apos;].toString(), &apos;&apos;, new Array());</script>
             <type>Message Builder</type>
             <data>
               <entry>
                 <string>Variable</string>
-                <string>tmp[&apos;real_visit&apos;]</string>
+                <string>tmp[&apos;realVisit&apos;]</string>
               </entry>
               <entry>
                 <string>Mapping</string>
